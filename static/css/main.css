@@ -53,7 +53,16 @@ nav ul {
   gap: 1.2rem;
 }
 
-.gallery-grid picture,
+/* <picture> isn't a replaced element the way <img> is, so
+   aspect-ratio/object-fit on it directly is unreliable across
+   browsers (confirmed: WebKit/Safari ignored it and rendered the
+   image at something close to its natural ratio instead of square).
+   display: contents removes <picture> from the box model entirely —
+   its <img> child is what actually gets sized. */
+.gallery-grid picture {
+  display: contents;
+}
+
 .gallery-grid img {
   display: block;
   width: 100%;
