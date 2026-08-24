@@ -1,0 +1,97 @@
+baseURL = "https://brawer.ch/"
+title = "Sascha Brawer"
+
+defaultContentLanguage = "en"
+defaultContentLanguageInSubdir = false   # English at /, German at /de/
+
+# Pretty URLs like /art/golden-retriever/ instead of /art/golden-retriever.html
+uglyURLs = false
+
+# Generate /tags/<tag>/ pages automatically from the `tags` front matter field.
+[taxonomies]
+  tag = "tags"
+
+[languages]
+  [languages.en]
+    languageName = "English"
+    weight = 1
+
+    [languages.en.params]
+      intro = "TODO: one or two sentences about who you are / what you do, in English."
+
+    [[languages.en.menu.main]]
+      name = "Resume"
+      url = "/resume/"
+      weight = 10
+    [[languages.en.menu.main]]
+      name = "Programming"
+      url = "/programming/"
+      weight = 20
+    [[languages.en.menu.main]]
+      name = "Publications"
+      url = "/publications/"
+      weight = 30
+    [[languages.en.menu.main]]
+      name = "Art"
+      url = "/art/"
+      weight = 40
+
+  [languages.de]
+    languageName = "Deutsch"
+    weight = 2
+
+    [languages.de.params]
+      intro = "TODO: ein bis zwei Sätze über dich, auf Deutsch."
+
+    [[languages.de.menu.main]]
+      name = "Lebenslauf"
+      url = "/resume/"
+      weight = 10
+    [[languages.de.menu.main]]
+      name = "Programmieren"
+      url = "/programming/"
+      weight = 20
+    [[languages.de.menu.main]]
+      name = "Publikationen"
+      url = "/publications/"
+      weight = 30
+    [[languages.de.menu.main]]
+      name = "Kunst"
+      url = "/art/"
+      weight = 40
+
+# Language-independent params, inherited by both languages above
+# (each language's own [params] block can still override individual keys).
+[params]
+  fullName = "Sascha Brawer"
+
+  [params.social]
+    github = "https://github.com/brawer/"
+    linkedin = "https://www.linkedin.com/in/sascha-brawer/"
+    email = "sascha@brawer.ch"
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+
+# Image processing defaults used when rendering responsive art thumbnails.
+[imaging]
+  resampleFilter = "Lanczos"
+  quality = 85
+  anchor = "smart"
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = false
+
+[minify]
+  disableXML = true
+
+[privacy]
+  [privacy.vimeo]
+    disabled = true
+  [privacy.twitter]
+    disabled = true
+  [privacy.youtube]
+    disabled = true
