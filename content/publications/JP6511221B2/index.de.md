@@ -10,7 +10,7 @@ authors: ["Sascha Brawer", "Martin Jansche", "Richard Sproat", "Hiroshi Takenaka
 venue: "Japanisches Patentamt"
 patent_number: "JP6511221B2"
 patent_status: "granted"
-assignee: "Google"
+assignee: "Google LLC"
 abstract: >
   Ein Verfahren zur Umwandlung von Zeichenketten geografischer Namen von
   einer Schrift oder Sprache in eine andere durch Kombination zweier

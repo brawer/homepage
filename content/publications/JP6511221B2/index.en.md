@@ -10,7 +10,7 @@ authors: ["Sascha Brawer", "Martin Jansche", "Richard Sproat", "Hiroshi Takenaka
 venue: "Japan Patent Office"
 patent_number: "JP6511221B2"
 patent_status: "granted"
-assignee: "Google"
+assignee: "Google LLC"
 abstract: >
   A method for converting strings of geographic names from one script or
   language into another by combining two techniques: translating words

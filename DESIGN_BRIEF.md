@@ -139,7 +139,7 @@ string), `abstract`, `image` (WebP
 teaser, curated per item — no automatic source the way art has). Optional:
 `degree` (thesis only), `patent_number` + `patent_status` + `assignee`
 (patent only — `assignee` is the company/entity the patent was
-assigned to, e.g. "Google"), `original_title` + `original_language`
+assigned to, e.g. "Google LLC"), `original_title` + `original_language`
 (any kind, when applicable), `pdf` (single-PDF items only — absent
 for the lecture-series item, which instead has resource links
 directly in the Markdown body).

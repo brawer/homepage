@@ -140,7 +140,9 @@ verified against source for patents), `venue`, `abstract`.
 - Type-specific optional fields: `degree` (thesis), `patent_number` +
   `patent_status` + `assignee` (patent — `assignee` is the entity the
   patent was assigned to, typically the employer at the time of
-  invention, e.g. `"Google"`; a single string, same value in both
+  invention, e.g. `"Google LLC"` — use the assignee's official current
+  name (check patents.google.com), not an informal shorthand; a
+  single string, same value in both
   languages since it's a fact, not display text — don't translate it
   the way `kind` gets translated for display).
 - `original_title` + `original_language` (BCP-47 tag) — for when the
