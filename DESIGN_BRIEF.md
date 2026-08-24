@@ -16,6 +16,15 @@ data model renders correctly but makes no real visual-design
 decisions; that's still entirely this brief's job. See CLAUDE.md's
 "Templates" section for exactly what exists and what was verified.
 
+**Known rough edge to pick up here**: gallery grid thumbnails don't
+actually render square in Safari/Chrome, despite the underlying image
+files genuinely being square (confirmed at the file level) and a
+`display: contents` fix attempt in `main.css` (see git history)
+already tried. Pixel-measured from a real screenshot: 613×799px, not
+613×613. Not chased further this session — needs real DevTools access
+on the actual computed styles, which is exactly a `/design`-mode
+activity. See CLAUDE.md's Known open items for the full note.
+
 ## Site map & page types
 
 | URL pattern              | Page type          | Purpose                                                                 |

@@ -466,6 +466,21 @@ as a design decision, just a structural one.
   actual grid aspect ratio/column counts beyond the current bare
   hard-coded 3-column square grid) — everything in the "Templates"
   section above is structural/functional only.
+- **Gallery grid thumbnails don't render square in Safari/Chrome**,
+  found 2026-08-24. Confirmed by pixel-measuring a real screenshot:
+  613×799px (ratio 0.77), not 613×613 — real, substantial, not a
+  rounding thing. The `display: contents` fix in
+  `static/css/main.css` (see git history) did *not* resolve it, and
+  further remote debugging wasn't productive without eyes on the
+  actual DevTools computed styles. Deliberately **not** chased further
+  now — the parts that mattered for this session's derisking goal are
+  confirmed fine (image files are genuinely square at the file level;
+  `<picture>`/`<img>`/`srcset` markup is standard and correct; grid
+  columns compute to equal widths). This is purely a CSS box-sizing
+  question, not evidence of a structural/data problem, so it's
+  deferred to `/design` mode rather than blocking further work. Start
+  there with real DevTools access (computed styles on `.gallery-grid
+  img`), not more guessing from screenshots.
 - `content/resume/` still has no icons/timeline layout — see the
   "Resume bundle front matter" section above.
 - Section list pages (`content/art/_index.*.md`,
@@ -473,8 +488,9 @@ as a design decision, just a structural one.
   `content/projects/_index.*.md`) don't exist yet. Optional —
   Hugo auto-generates a bare list page without them — but worth
   adding for section-level intro copy, same pattern as the tag pages.
-  Until these exist, list-page `<h1>` titles are Hugo's un-translated
-  auto-generated section names (e.g. always "Art", never "Kunst") —
-  a known, minor bilingual gap in UI chrome, not content.
+  (List-page `<h1>` titles are already correctly translated without
+  these, by borrowing the label from `hugo.toml`'s nav menu — see
+  `layouts/_default/list.html` — so that's not a reason to add them;
+  section-level intro copy is.)
 - `content/projects/` has zero entries — `layouts/projects/single.html`
   exists but is unverified against real content.
