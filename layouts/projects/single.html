@@ -9,7 +9,7 @@
     {{ end }}
   {{ end }}
   <h1>{{ .Title }}</h1>
-  {{ if .Params.open_source }}<p class="metadata">{{ i18n "open_source_label" }}</p>{{ end }}
+  {{ if .Params.open_source }}<p><span class="kind-badge">{{ i18n "open_source_label" }}</span></p>{{ end }}
   {{ with .Params.link }}<p><a href="{{ . }}">{{ . }}</a></p>{{ end }}
   {{ .Content }}
   {{ with .GetTerms "tags" }}

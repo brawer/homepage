@@ -66,7 +66,11 @@ nav ul {
   color: inherit;
 }
 
-.gallery-item .kind-badge {
+/* Small uppercase pill — a publication's kind (Talk/Paper/...) in the
+   gallery grid and on its detail page's byline, or a project's
+   Open Source indicator. One rule, not scoped to .gallery-item, so
+   it looks the same wherever it's used. */
+.kind-badge {
   display: inline-block;
   font-size: .7rem;
   text-transform: uppercase;
@@ -89,19 +93,32 @@ nav ul {
   height: auto;
 }
 
-.metadata {
+/* Shared small/muted look for a detail page's secondary text lines —
+   an art piece's caption, a publication's byline or original-title
+   subtitle, a project's Open Source note. Each keeps its own class so
+   /design mode can give them different treatment later without
+   fighting one overloaded name; this rule is just the current shared
+   baseline. */
+.caption,
+.byline,
+.original-title {
   font-size: .9rem;
   opacity: .8;
 }
 
-.metadata dt {
+.fields {
+  font-size: .9rem;
+  opacity: .8;
+}
+
+.fields dt {
   font-weight: bold;
   float: left;
   clear: left;
   margin-right: .5rem;
 }
 
-.metadata dd {
+.fields dd {
   margin: 0 0 .3rem 0;
 }
 

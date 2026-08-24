@@ -15,7 +15,7 @@
        html/template auto-escaper would mangle it if it were inside
        an action's returned string), so it stays as plain, legible
        ASCII in the file rather than a near-invisible raw character. */}}
-  <p class="metadata">
+  <p class="caption">
     {{ .Params.medium }} &middot; {{ .Params.height_cm }}&#x202F;&times;&#x202F;{{ .Params.width_cm }}&#x202F;cm &middot; {{ .Date.Format "2006" }}
   </p>
   {{ .Content }}

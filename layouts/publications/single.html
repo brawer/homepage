@@ -7,9 +7,9 @@
   {{ end }}
   <h1>{{ .Title }}</h1>
   {{ with .Params.original_title }}
-    <p class="metadata">{{ i18n "original_title_label" (dict "Language" $.Params.original_language) }} {{ . }}</p>
+    <p class="original-title">{{ i18n "original_title_label" (dict "Language" $.Params.original_language) }} {{ . }}</p>
   {{ end }}
-  <p class="metadata">
+  <p class="byline">
     <span class="kind-badge">{{ i18n (printf "kind_%s" .Params.kind) }}</span>
     {{ with .Params.authors }}· {{ delimit . ", " }}{{ end }}
     {{/* venue may contain inline Markdown links (e.g. KOGIS/swisstopo) —
@@ -20,7 +20,7 @@
 
   {{/* Type-specific optional fields. */}}
   {{ if or .Params.degree .Params.patent_number .Params.assignee }}
-  <dl class="metadata">
+  <dl class="fields">
     {{ with .Params.degree }}<dt>{{ . }}</dt><dd></dd>{{ end }}
     {{ with .Params.patent_number }}
       <dt>{{ i18n "patent_number_label" }}</dt>
