@@ -12,7 +12,7 @@ templates/CSS via `/design` mode.
   or `/programming/` anywhere it's stale and should be fixed),
   Publications (`/publications/` — renamed from "papers" partway
   through; if you see "papers" anywhere it's stale and should be
-  fixed), Résumé (`/resume/`, doesn't exist yet).
+  fixed), Résumé (`/resume/`).
 - Menu order (see `hugo.toml` weights): Résumé, Projects,
   Publications, Art.
 - Homepage (`content/_index.*.md`) is deliberately just a greeting.
@@ -158,6 +158,53 @@ verified against source for patents), `venue`, `abstract`.
   relative links to bundle resources, which Hugo resolves
   automatically; no custom front-matter schema needed for that case.
 
+## Resume bundle front matter
+
+`content/resume/index.<lang>.md` (a page bundle, like art/publications,
+in case a downloadable PDF or a photo gets added later). Ported from
+the old `brawer.ch/cv/` page; not a Hugo taxonomy or list — it's a
+single structured page, so the CV table maps to structured front
+matter (like `venue`) rather than free-form Markdown, so a future
+template can render it consistently (icons, timeline layout, etc.)
+rather than parsing prose.
+
+- `title` — "Resume" / "Lebenslauf", matching the nav label in
+  `hugo.toml`.
+- `experience` — list of jobs/roles, each with `date_range` (display
+  string, e.g. `"10/2019 – 9/2021"` or `"Since 10/2021"`/`"Seit
+  10/2021"` — not split into structured start/end fields, same
+  reasoning as `venue`: nothing here needs to compute on the date,
+  only display it), `location`, `organization` + `organization_url`
+  (both omitted, not empty-stringed, for entries with no employer —
+  independent work, the 2018–2019 sabbatical), `role`, and
+  `highlights` (list of strings, may contain inline Markdown links —
+  render through `markdownify`, same as `venue`).
+- `education` — list with `date_range`, `institution` +
+  `institution_url`, `degree`, `details`.
+- `skills` — object with `programming_languages`, `operating_systems`,
+  `libraries` (each a prose string, may contain Markdown links).
+- `spoken_languages` — list of plain strings (e.g. `"English
+  (fluent)"`).
+- Job/institution titles are translated per language where they read
+  naturally in German (e.g. "External Lecturer" → "Externer Dozent"),
+  but industry-standard leveled titles are kept in English in both
+  languages (e.g. "Senior Staff Software Engineer (L7, ...)",
+  "Director of Engineering") since translating those would obscure
+  their actual (internationally recognized) meaning.
+- **Deliberately left out, unlike the old page**: postal address and
+  birth date. The old `brawer.ch/cv/` had both; dropped when porting
+  here — don't re-add without asking first, this was an explicit call
+  by Sascha, not an oversight.
+- **Not yet added**: a short stint helping out at cradle.bio
+  (March–May 2025, a startup founded by former Google colleagues) —
+  deliberately deferred to a follow-up. When adding it, phrase it as
+  helping out friends in an emergency (their only SRE went on leave,
+  the backup was on paternity leave, the next backup couldn't start
+  for 3 months) rather than as a formal SRE role — Sascha was
+  explicit he doesn't want to be pictured as "an SRE" here, even
+  though the work (kept systems running, optimized machine cost,
+  wrote lab-automation scripts) was exactly that.
+
 ## Images
 
 - Store as WebP, not JPEG/HEIC:
@@ -180,8 +227,9 @@ verified against source for patents), `venue`, `abstract`.
 - No Hugo layout templates exist yet at all — that's the immediate
   next step, via `/design` mode. A `hugo build` right now won't
   produce readable HTML regardless of content completeness.
-- `content/resume/` doesn't exist yet — needs real biographical
-  content from Sascha before it can be drafted.
+- `content/resume/` is ported but missing the cradle.bio (2025) stint
+  and has no icons/timeline layout yet — see the "Resume bundle front
+  matter" section above for both.
 - Section list pages (`content/art/_index.*.md`,
   `content/publications/_index.*.md`,
   `content/projects/_index.*.md`) don't exist yet. Optional —
