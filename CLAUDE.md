@@ -149,6 +149,14 @@ templates/CSS via `/design` mode.
   lowercase convention (`NLP` stays all-caps, `i18n` stays all
   lowercase — treat these as the general rule, not one-off
   exceptions).
+- **Tag order on art pieces: subject-matter tags first, `Oil`/`Öl`
+  last** — e.g. `["Memes", "Animals", "Oil"]`,
+  `["Tools", "Oil"]`, `["People", "Oil"]`. `Oil` is the shared
+  medium/technique tag nearly every piece carries, so it trails as
+  the least specific descriptor; subject tags (what the piece
+  depicts) lead. Retrofitted 2026-08-24 across all existing pieces
+  for consistency — before that, order was inconsistent (some had
+  `Oil` first).
 
 ## Art bundle front matter
 

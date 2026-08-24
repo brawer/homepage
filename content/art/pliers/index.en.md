@@ -2,7 +2,7 @@
 title: "Pliers"
 date: 2019-05-23
 publishDate: 2026-08-24
-tags: ["Oil", "Tools"]
+tags: ["Tools", "Oil"]
 medium: "Oil on canvas"
 height_cm: 40
 width_cm: 50
