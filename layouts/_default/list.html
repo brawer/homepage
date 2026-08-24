@@ -1,5 +1,25 @@
+{{/*
+  No content/<section>/_index.<lang>.md files exist yet (see
+  CLAUDE.md's Known open items), so Hugo has no translated title to
+  give this page — .Title would fall back to an auto-generated,
+  always-English section name (e.g. always "Art", never "Kunst").
+  Rather than create section-index content files just to fix a
+  heading whose fate isn't decided yet (it may end up removed in
+  favor of highlighting the nav item instead, per Sascha), reuse the
+  label already sitting in hugo.toml's per-language nav menu — it's
+  the same section, already correctly translated, single source of
+  truth. Falls back to .Title if a page ever has no matching menu
+  entry (e.g. Projects before it's in the nav, or if the menu changes
+  without this being updated).
+*/}}
 {{ define "main" }}
-<h1>{{ .Title }}</h1>
+{{ $heading := .Title }}
+{{ range site.Menus.main }}
+  {{ if eq (strings.Trim .URL "/") $.Section }}
+    {{ $heading = .Name }}
+  {{ end }}
+{{ end }}
+<h1>{{ $heading }}</h1>
 {{ .Content }}
 {{ partial "gallery-grid.html" (dict "pages" .Pages) }}
 {{ end }}
