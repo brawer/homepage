@@ -17,15 +17,21 @@ uglyURLs = false
     weight = 1
 
     [languages.en.params]
-      intro = "TODO: one or two sentences about who you are / what you do, in English."
+      intro = """\
+        I’ve been curious about how things work for as long as I can remember, \
+	and that curiosity shows up everywhere — in the open-source code I write, \
+	the books I read, and the paintings I make. I especially like taking \
+	something complicated and making it simple — simple enough that \
+	it’s actually useful to real people.\
+	"""
 
     [[languages.en.menu.main]]
       name = "Resume"
       url = "/resume/"
       weight = 10
     [[languages.en.menu.main]]
-      name = "Programming"
-      url = "/programming/"
+      name = "Projects"
+      url = "/projects/"
       weight = 20
     [[languages.en.menu.main]]
       name = "Publications"
@@ -41,7 +47,14 @@ uglyURLs = false
     weight = 2
 
     [languages.de.params]
-      intro = "TODO: ein bis zwei Sätze über dich, auf Deutsch."
+      intro = """\
+        Solange ich zurückdenken kann, bin ich neugierig darauf, wie \
+        Dinge funktionieren – und diese Neugier zeigt sich überall: im \
+        Open-Source-Code, den ich schreibe, in den Büchern, die ich \
+        lese, und in den Bildern, die ich male. Am liebsten nehme ich \
+        etwas Kompliziertes und mache es einfach – so einfach, dass \
+        es für Menschen nützlich ist.\
+        """
 
     [[languages.de.menu.main]]
       name = "Lebenslauf"
@@ -61,7 +74,7 @@ uglyURLs = false
       weight = 40
 
 # Language-independent params, inherited by both languages above
-# (each language's own [params] block can still override individual keys).
+# (each language’s own [params] block can still override individual keys).
 [params]
   fullName = "Sascha Brawer"
 
