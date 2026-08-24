@@ -5,14 +5,14 @@ Checks both front matter (recursively, so nested fields like
 resume's experience[].highlights[] are covered) and the Markdown
 body, for every language:
 
-  EN: no straight quotes/apostrophes anywhere -- policy is always
-      "curly double"/'curly single' -- Goldmark's typographer
-      extension is deliberately disabled (hugo.toml) so this can't
+  EN: no straight quotes/apostrophes anywhere — policy is always
+      “curly double”/‘curly single’ — Goldmark’s typographer
+      extension is deliberately disabled (hugo.toml) so this can’t
       be silently auto-fixed and hidden; it must be correct at the
       source.
-  DE: no em dash (--), no German-German low-high quotes (../..), no
-      straight quotes/apostrophes anywhere -- policy is en dash (-)
-      and .guillemets./.single guillemets. (de-CH).
+  DE: no em dash (—), no German-German low-high quotes („/‚), no
+      straight quotes/apostrophes anywhere — policy is en dash (–)
+      and «guillemets»/‹single guillemets› (de-CH).
 
 Exits non-zero (with every violation printed) if anything is found.
 """
