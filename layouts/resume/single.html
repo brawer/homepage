@@ -1,0 +1,48 @@
+{{ define "main" }}
+<h1>{{ .Title }}</h1>
+{{ .Content }}
+
+<h2>{{ i18n "resume_experience" }}</h2>
+{{ range .Params.experience }}
+  {{ $exp := . }}
+  <div class="experience-item">
+    <p class="date-range">{{ $exp.date_range }} — {{ $exp.location }}</p>
+    <h3>
+      {{ if $exp.organization }}
+        {{ if $exp.organization_url }}<a href="{{ $exp.organization_url }}">{{ $exp.organization }}</a>{{ else }}{{ $exp.organization }}{{ end }},
+      {{ end }}
+      {{ $exp.role }}
+    </h3>
+    <ul>
+      {{/* highlights may contain inline Markdown links — markdownify,
+           not raw output. */}}
+      {{ range $exp.highlights }}<li>{{ . | markdownify }}</li>{{ end }}
+    </ul>
+  </div>
+{{ end }}
+
+<h2>{{ i18n "resume_education" }}</h2>
+{{ range .Params.education }}
+  {{ $edu := . }}
+  <div class="education-item">
+    <p class="date-range">{{ $edu.date_range }}</p>
+    <h3>{{ if $edu.institution_url }}<a href="{{ $edu.institution_url }}">{{ $edu.institution }}</a>{{ else }}{{ $edu.institution }}{{ end }}</h3>
+    <p>{{ $edu.degree }}{{ with $edu.details }} — {{ . }}{{ end }}</p>
+  </div>
+{{ end }}
+
+<h2>{{ i18n "resume_skills" }}</h2>
+<dl>
+  <dt>{{ i18n "resume_programming_languages" }}</dt>
+  <dd>{{ .Params.skills.programming_languages | markdownify }}</dd>
+  <dt>{{ i18n "resume_operating_systems" }}</dt>
+  <dd>{{ .Params.skills.operating_systems | markdownify }}</dd>
+  <dt>{{ i18n "resume_libraries" }}</dt>
+  <dd>{{ .Params.skills.libraries | markdownify }}</dd>
+</dl>
+
+<h2>{{ i18n "resume_spoken_languages" }}</h2>
+<ul>
+  {{ range .Params.spoken_languages }}<li>{{ . }}</li>{{ end }}
+</ul>
+{{ end }}

@@ -17,10 +17,10 @@ and then deliberately refuse to deliver one. Instead you get the flat,
 literal, faintly deadpan answer — the format traces back to the oldest
 anti-joke there is: “Why did the chicken cross the road? To get to the
 other side.” No twist, no wordplay, just the obvious answer stated
-completely straight. That's the whole joke — the anticlimax is the
+completely straight. That’s the whole joke — the anticlimax is the
 punchline.
 
 I liked the idea of taking a format built entirely around not
 delivering what you expect, and rendering it in a medium — oil
-painting — that's usually reserved for things people take very
+painting — that’s usually reserved for things people take very
 seriously.

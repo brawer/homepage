@@ -1,0 +1,10 @@
+{{/* Tag pages reuse the exact same gallery grid as section list pages
+     — DESIGN_BRIEF: "a tag page doesn't need per-section styling
+     logic even when it mixes items from different sections." Some
+     tag pages (e.g. Memes) carry their own intro body content, which
+     .Content renders above the grid. */}}
+{{ define "main" }}
+<h1>{{ .Title }}</h1>
+{{ .Content }}
+{{ partial "gallery-grid.html" (dict "pages" .Pages) }}
+{{ end }}

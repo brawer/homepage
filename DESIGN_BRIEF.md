@@ -8,6 +8,14 @@ bilingual (English/German). Content already exists in the repo as Markdown +
 images/PDFs; this brief is for designing the CSS/templates only — the content
 model is fixed.
 
+**Status as of 2026-08-24**: a bare-bones, near-zero-CSS template pass
+already exists (`layouts/`, `static/css/main.css`) — home, list/detail
+pages for each section, tag pages, resume, the shared gallery grid,
+the language switcher, responsive `<picture>` images. It proves the
+data model renders correctly but makes no real visual-design
+decisions; that's still entirely this brief's job. See CLAUDE.md's
+"Templates" section for exactly what exists and what was verified.
+
 ## Site map & page types
 
 | URL pattern              | Page type          | Purpose                                                                 |

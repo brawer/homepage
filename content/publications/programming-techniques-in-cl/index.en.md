@@ -82,4 +82,4 @@ with Lisp, was *the* language of choice in artificial intelligence.
 : A simple chart parser in Prolog using the Earley algorithm. Note: two bugs are left as exercises to fix!
 
 [Keyword Recognition](listings/keyword.pl)
-: A Prolog program that recognizes certain keywords in natural-language (English) input and issues corresponding "database" queries. Requires the [Tokenizer](listings/tokenizer.pl).
+: A Prolog program that recognizes certain keywords in natural-language (English) input and issues corresponding “database” queries. Requires the [Tokenizer](listings/tokenizer.pl).

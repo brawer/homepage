@@ -1,0 +1,134 @@
+/* Deliberately minimal — this is the bare-bones structural pass, not
+   the visual design (that's /design mode's job, once there's more
+   content to design against). Just enough to make the shared grid,
+   nav, and detail pages legible while we prove the templates work. */
+
+:root {
+  color-scheme: light dark;
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 0 1rem 3rem;
+  line-height: 1.5;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 1rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid CanvasText;
+  margin-bottom: 2rem;
+}
+
+nav ul {
+  list-style: none;
+  display: flex;
+  gap: 1.2rem;
+  margin: 0;
+  padding: 0;
+}
+
+.social-icons {
+  display: flex;
+  gap: .8rem;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.language-switcher {
+  font-size: .85rem;
+}
+
+/* Shared gallery grid — used by section list pages and tag pages. */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.2rem;
+}
+
+.gallery-grid picture,
+.gallery-grid img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+}
+
+.gallery-item {
+  text-decoration: none;
+  color: inherit;
+}
+
+.gallery-item .kind-badge {
+  display: inline-block;
+  font-size: .7rem;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  border: 1px solid currentColor;
+  border-radius: .25rem;
+  padding: .1rem .4rem;
+  margin-bottom: .2rem;
+}
+
+.gallery-item h3 {
+  font-size: .95rem;
+  margin: .4rem 0 0;
+}
+
+/* Detail pages */
+.detail-image picture,
+.detail-image img {
+  max-width: 100%;
+  height: auto;
+}
+
+.metadata {
+  font-size: .9rem;
+  opacity: .8;
+}
+
+.metadata dt {
+  font-weight: bold;
+  float: left;
+  clear: left;
+  margin-right: .5rem;
+}
+
+.metadata dd {
+  margin: 0 0 .3rem 0;
+}
+
+.tags {
+  margin-top: 1rem;
+  font-size: .85rem;
+}
+
+.tags a {
+  margin-right: .5rem;
+}
+
+/* Resume */
+.experience-item, .education-item {
+  margin-bottom: 1.5rem;
+}
+
+.experience-item .date-range,
+.education-item .date-range {
+  font-size: .85rem;
+  opacity: .7;
+}
+
+footer {
+  margin-top: 3rem;
+  padding-top: 1rem;
+  border-top: 1px solid CanvasText;
+  font-size: .85rem;
+  opacity: .7;
+}

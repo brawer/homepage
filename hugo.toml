@@ -98,6 +98,16 @@ uglyURLs = false
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = false
+    # Disabled deliberately (2026-08-24): this extension auto-converts
+    # straight quotes/apostrophes to curly ones, which silently masked
+    # three straight apostrophes in English content that had skipped
+    # review (CLAUDE.md's typography policy already said not to rely
+    # on this, for a different reason -- it can't produce guillemets --
+    # but discovered this session it was also hiding real violations
+    # rather than catching them). With it off, a missed straight quote
+    # now renders visibly wrong instead of silently looking fine.
+    [markup.goldmark.extensions.typographer]
+      disable = true
 
 [minify]
   disableXML = true

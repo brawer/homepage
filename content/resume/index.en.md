@@ -16,7 +16,7 @@ experience:
         From March to May 2025, filled in on short notice at
         [cradle.bio](https://cradle.bio/), a startup founded by former
         Google colleagues, after their only infrastructure person
-        went on leave and the two backups lined up to cover weren't
+        went on leave and the two backups lined up to cover weren’t
         available for months either — was up and running within two
         days, kept the systems running, brought machine costs down,
         and wrote scripts to automate parts of their lab workflows.

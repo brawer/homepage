@@ -75,6 +75,14 @@ templates/CSS via `/design` mode.
 - Write these characters directly in Markdown source — don't rely on
   Goldmark's typographer extension to produce them automatically; its
   substitution table isn't per-language and won't produce guillemets.
+  **This is enforced, not just advised**: `hugo.toml` explicitly sets
+  `[markup.goldmark.extensions.typographer] disable = true`. It was
+  briefly *not* disabled (Hugo's default), and while building the
+  first real templates (2026-08-24) that turned out to have silently
+  auto-converted several straight apostrophes in English content to
+  curly ones at render time — the page looked correct, but the source
+  was wrong and nothing said so. Content must be correct at the
+  source; the build must not paper over it.
 - `hugo.toml`'s `[languages.de]` block sets `locale = "de-CH"` (not
   plain `de`) specifically to flag this convention, even though the
   language *key* (and therefore file suffixes/`de` URL prefix) stayed
@@ -83,11 +91,19 @@ templates/CSS via `/design` mode.
   config string. (This field used to be named `languageCode`; renamed
   to `locale` when fixing Hugo's deprecation warning for it — same
   value, same purpose.)
-- Fully retrofitted as of 2026-08-24: no remaining German-German
-  „low-high" quotes or stray em dashes anywhere in `content/**/*.de.md`
-  (verified by grepping for `„` and `—` across all German content —
-  zero matches). If you see either again, it's new content that
-  skipped review, not a known pre-existing gap.
+- Fully retrofitted as of 2026-08-24, verified by
+  `scripts/check_typography.py` (also wired into CI, see "Verifying
+  content structure" below) — a real YAML-aware scan of every
+  language's front matter *and* body, not a Markdown-body-only grep.
+  That distinction mattered in practice: the grep-based version of
+  this check (used until this session) only ever looked at German
+  content and only at the Markdown body, so it missed straight
+  apostrophes in **English** content (masked by the typographer
+  extension, see above) and a straight quote inside a **front-matter**
+  field (`resume`'s `experience[].highlights[]`, and a `"database"` in
+  `programming-techniques-in-cl`'s body that had been fixed in German
+  but never in English) — all now fixed. If you see a violation again,
+  it's new content that skipped review, not a known pre-existing gap.
 - See `DESIGN_BRIEF.md` for the template-side implications (don't
   hardcode straight quotes/plain hyphens in UI chrome strings).
 
@@ -294,20 +310,20 @@ whether there's a layout to render them with:
   front-matter field doesn't resolve to an actual bundle resource
   (checked via `Resources.GetMatch`, same ground-truth-over-filesystem
   reasoning as the translation check).
-- **de-CH typography and LFS integrity are also enforced in CI**,
-  added 2026-08-24: a plain grep step fails on any em dash (—) or
-  German-German low-high quote („/‚) anywhere in `content/**/*.de.md`,
-  or a straight double quote (`"`) in the Markdown body specifically
-  (front matter's `"..."` YAML delimiters are deliberately not
-  scanned — see the workflow file for why that split is needed). A
+- **Typography and LFS integrity are also enforced in CI**, added
+  2026-08-24: `scripts/check_typography.py` (a real YAML-aware
+  front-matter + body scan, both languages — see the Typography
+  section above for why this replaced an earlier grep-only,
+  German-only, body-only version that missed real violations) runs as
+  a CI step via `pip install pyyaml && python3
+  scripts/check_typography.py`; run it locally the same way. A
   separate step checks every LFS-tracked `*.webp`/`*.pdf` isn't an
-  unresolved pointer file. When testing grep-based checks locally on
-  macOS: plain `grep` here is fine (bracket character classes like
-  `[—„‚]` are POSIX, no `-P`/`-E` needed) — but note this environment
-  aliases the `grep` command to `ugrep`, which is more permissive than
-  either BSD grep (macOS default) or GNU grep (Ubuntu, what CI
-  actually runs); if you need to verify true portability, test with
-  `/usr/bin/grep` explicitly, not just an interactive shell.
+  unresolved pointer file. When testing *shell/grep*-based CI checks
+  locally on macOS specifically: note this environment aliases the
+  `grep` command to `ugrep`, which is more permissive than either BSD
+  grep (macOS default) or GNU grep (Ubuntu, what CI actually runs);
+  test with `/usr/bin/grep` explicitly if you need to verify true
+  portability of a grep-based check.
 - **Still not covered by CI** (deliberately, filed as follow-up
   issues rather than built now): internal Markdown link resolution
   (hand-written per-language links like `/tags/memes/` vs.
@@ -317,25 +333,87 @@ whether there's a layout to render them with:
   anywhere; currently caught by review, which won't scale once
   `content/projects/` has entries and the content set grows).
 
+## Templates (bare-bones, pre-/design)
+
+A first functional template pass exists as of 2026-08-24 — deliberately
+minimal/near-zero CSS (`static/css/main.css`), built to prove the
+content/data model actually renders correctly end-to-end (including
+the specific things most likely to have hidden problems:
+`markdownify` fields, the lecture-series body-only content, one
+shared grid across three content types) *before* either adding a lot
+more content or committing to real visual design. Real visual design
+is still entirely `/design` mode's job — nothing here should be taken
+as a design decision, just a structural one.
+
+- `layouts/_default/baseof.html` + `head.html`/`nav.html`/
+  `language-switcher.html`/`social-icons.html`/`footer.html` partials
+  — the shared page shell. Nav and social icons are template-driven
+  from `Site.Menus.main`/`Site.Params.social`, per the Homepage bullet
+  above. The language switcher hides itself via `.IsTranslated` rather
+  than ever linking to a 404 — belt-and-suspenders alongside the CI
+  bilingual-coverage check, not a replacement for it (CI only guards
+  `main`; a page can briefly lack a translation in a local working
+  tree while it's being authored, and the template shouldn't assume
+  otherwise).
+- `layouts/partials/gallery-grid.html` — the one shared grid component
+  for Art/Publications/Projects list pages *and* tag pages, per
+  DESIGN_BRIEF. Used by `layouts/_default/list.html` and
+  `layouts/_default/term.html`, which are otherwise nearly identical
+  (list pages differ from tag pages only in where `.Pages` comes
+  from — Hugo handles that automatically).
+- Per-section detail templates: `layouts/art/single.html`,
+  `layouts/publications/single.html`, `layouts/resume/single.html`,
+  `layouts/projects/single.html` (untested against real content —
+  `content/projects/` is still empty — but matches the documented
+  schema). The publications template does **not** special-case
+  `kind == "lecture"` structurally: `programming-techniques-in-cl`'s
+  body is already valid Markdown (headings, lists, a definition list)
+  with no `pdf` field, so plain `.Content` renders it correctly as-is.
+  Making it *look* like a grouped table/accordion rather than a plain
+  list remains a CSS/`/design`-mode concern, per DESIGN_BRIEF — it was
+  never actually a templating problem, just looked like one before
+  anyone had built and looked at it.
+- `i18n/en.toml` + `i18n/de.toml` — every piece of UI chrome text
+  (kind badges, "Download PDF", resume section headings, etc.) is a
+  key here, translated for both languages, per the fully-bilingual
+  policy applying to chrome as much as content.
+- Verified concretely, not just "the build didn't error": inspected
+  actual rendered HTML output for the home page, an art detail page,
+  a standard publication, the patent (kind-specific fields), the
+  lecture-series item (body-only rendering), the resume (nested
+  `experience`/`education`/`skills`, `markdownify` on `highlights`),
+  a tag page, and the language switcher on a translated page.
+- The "H × W cm" art dimension string uses U+202F (narrow no-break
+  space) around the × and before "cm" — non-breaking *and* narrower
+  than a plain space (the correct typographic spacing here, not just
+  a line-break fix). Written as the numeric HTML entity `&#8239;` in
+  template source text, deliberately *outside* any `{{ }}` action —
+  Go's `html/template` auto-escaper would mangle it (double-escape the
+  `&`) if it were inside a string an action returns. If you need this
+  elsewhere, copy that pattern, not a `{{ printf "... ..." }}`
+  approach — writing `\uXXXX` inside a Go template action's string
+  literal is fragile in an AI-assisted editing workflow specifically:
+  it reads as a JSON/text unicode escape to tooling upstream of the
+  file write, not as literal source text, and silently resolves to
+  the raw (nearly invisible) character instead of staying as legible
+  escape text. Verified this exact failure mode while building this.
+
 ## Known open items (as of last content session)
 
-- No Hugo *page* layout templates exist yet (home/list/detail HTML) —
-  that's the immediate next step, via `/design` mode. A `hugo build`
-  right now won't produce readable HTML regardless of content
-  completeness. Two reusable image partials do already exist, see
-  "Images" above — that's deliberately ahead of the rest of the
-  template work since it was worth derisking early (Hugo's AVIF
-  support, srcset behavior) rather than discovering a problem there
-  after `/design` mode has built a lot on top of it.
-- `content/resume/` is ported and now includes the cradle.bio (2025)
-  stint, but still has no icons/timeline layout — see the "Resume
-  bundle front matter" section above.
+- `/design` mode: real visual design (color, type scale, spacing,
+  the lecture-series list treatment, resume icons/timeline, deciding
+  actual grid aspect ratio/column counts beyond the current bare
+  hard-coded 3-column square grid) — everything in the "Templates"
+  section above is structural/functional only.
+- `content/resume/` still has no icons/timeline layout — see the
+  "Resume bundle front matter" section above.
 - Section list pages (`content/art/_index.*.md`,
   `content/publications/_index.*.md`,
   `content/projects/_index.*.md`) don't exist yet. Optional —
   Hugo auto-generates a bare list page without them — but worth
   adding for section-level intro copy, same pattern as the tag pages.
-- `content/projects/` has zero entries.
-- Missing German translation for `content/publications/JP6511221B2/`
-  — see Bilingual section above for why this now matters
-  (fully-bilingual is policy, not a nice-to-have).
+  Until these exist, list-page `<h1>` titles are Hugo's un-translated
+  auto-generated section names (e.g. always "Art", never "Kunst") —
+  a known, minor bilingual gap in UI chrome, not content.
+- `content/projects/` has zero entries — `layouts/projects/single.html`
+  exists but is unverified against real content.

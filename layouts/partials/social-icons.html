@@ -1,0 +1,7 @@
+{{/* No icon graphics yet (plain text links) — that's a /design-mode
+     concern; this just proves the data wiring from Site.Params.social. */}}
+<ul class="social-icons">
+  {{ with .Site.Params.social.github }}<li><a href="{{ . }}">GitHub</a></li>{{ end }}
+  {{ with .Site.Params.social.linkedin }}<li><a href="{{ . }}">LinkedIn</a></li>{{ end }}
+  {{ with .Site.Params.social.email }}<li><a href="mailto:{{ . }}">{{ . }}</a></li>{{ end }}
+</ul>

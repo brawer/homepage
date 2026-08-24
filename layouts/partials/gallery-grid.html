@@ -1,0 +1,29 @@
+{{/*
+  Shared gallery/grid component used by section list pages (Art,
+  Publications, Projects) and tag pages, per DESIGN_BRIEF: "All three
+  content sections now share one gallery-style grid... a tag page
+  doesn't need per-section styling logic even when it mixes items
+  from different sections." Renders whatever mix of pages it's given
+  uniformly — a kind badge is the only thing that varies (publications
+  only).
+
+  Params (dict):
+    pages (required) — a Pages collection to render as a grid.
+*/}}
+{{ $pages := .pages }}
+{{ if eq (len $pages) 0 }}
+  <p>{{ i18n "gallery_empty" }}</p>
+{{ else }}
+<div class="gallery-grid">
+  {{ range $pages }}
+    {{ $page := . }}
+    {{ $img := "" }}
+    {{ if $page.Params.image }}{{ $img = $page.Resources.GetMatch $page.Params.image }}{{ end }}
+    <a class="gallery-item" href="{{ $page.RelPermalink }}">
+      {{ with $img }}{{ partial "picture-thumbnail.html" (dict "image" . "alt" $page.Title) }}{{ end }}
+      {{ with $page.Params.kind }}<span class="kind-badge">{{ i18n (printf "kind_%s" .) }}</span>{{ end }}
+      <h3>{{ $page.Title }}</h3>
+    </a>
+  {{ end }}
+</div>
+{{ end }}
