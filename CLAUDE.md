@@ -15,6 +15,10 @@ templates/CSS via `/design` mode.
   fixed), Résumé (`/resume/`).
 - Menu order (see `hugo.toml` weights): Résumé, Projects,
   Publications, Art.
+- Imprint (`/imprint/`, legal notice — titled "Impressum" on the
+  German page) is not a section and not in the main nav — a single
+  standalone page, linked only from the per-page footer. See "Imprint
+  bundle front matter" below.
 - Homepage (`content/_index.*.md`) is deliberately just a greeting.
   Intro sentence, location, social icons, and section links are
   template-driven from `Site.Params.intro`, `Site.Params.location`,
@@ -348,6 +352,54 @@ rather than parsing prose.
   as a formal role — deliberately never says "SRE", even though the
   underlying work (kept systems running, optimized machine cost,
   wrote lab-automation scripts) was exactly that.
+
+## Imprint bundle front matter
+
+`content/imprint/index.<lang>.md` (a page bundle, like resume — not
+a Hugo taxonomy or list). Added 2026-08-24 once Sascha mentioned he
+does paid consulting work and holds a Swiss UID, which plausibly
+triggers Swiss UWG Art. 3(1)(s) identity-disclosure requirements for
+commercial offerings (narrower than Germany's Impressumspflicht, but
+the same idea). Not linked from the main nav menu (`hugo.toml`
+weights) — only reachable via a small link in the page footer
+(`layouts/partials/footer.html`), rendered on every page via
+`{{ with site.GetPage "/imprint" }}`, which resolves within the
+*current* page's own language site automatically, so no manual `/de/`
+prefixing is needed; the link label is just the page's own (already
+localized) `.Title`, no separate i18n key.
+
+- **Bundle folder is named `imprint` (the English term), not
+  `impressum`** — deliberate, following the same URL-slug convention
+  as `/resume/` (see "Bilingual" below): the folder name is shared
+  across languages and never localized, so pick the English word for
+  it regardless of which language "owns" the term. `/imprint/` and
+  `/de/imprint/` both exist; the German page's `title` is "Impressum"
+  even though the URL says "imprint", exactly mirroring how the
+  German resume page is titled "Lebenslauf" at a URL that still says
+  "resume".
+- `title` only in front matter ("Imprint" / "Impressum"); everything
+  else is free-form Markdown body (`layouts/imprint/single.html` is
+  just `<h1>{{ .Title }}</h1>{{ .Content }}`, same minimal pattern as
+  other single pages) — unlike resume, there's no future rendering
+  need (icons, timeline) that would justify structured fields here.
+- Content: legal name, postal address (Länggassstrasse 27, 3012 Bern),
+  email (`mailto:` link), UID (CHE-484.325.065), a sentence stating
+  VAT-registration exemption due to low annual turnover, and an
+  explicit "this site does not use cookies" statement (true — no
+  cookies are set anywhere on the site, so this was safe to state
+  flatly rather than hedge).
+- **Deliberate asymmetry with the resume's "no postal address"
+  decision**: the resume omits the postal address (explicit call by
+  Sascha, privacy preference for a CV), but the imprint page *does*
+  include it, since Swiss commercial-identity disclosure is plausibly
+  a legal requirement here, not a style choice — don't "fix" this
+  inconsistency by adding or removing either one without asking.
+- Template lives at the section-specific path
+  `layouts/imprint/single.html`, not `layouts/_default/single.html`
+  — following the same convention adopted after the `term.html`
+  lookup bug (see "Templates" below): section-specific paths are
+  known to resolve reliably in this Hugo setup, `_default/` ones
+  aren't always reachable.
 
 ## Images
 
