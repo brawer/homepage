@@ -4,7 +4,7 @@ original_title: "Proper Name Transcription/Transliteration with ICU Transforms"
 original_language: "en"
 date: 2010-10-19
 publishDate: 2026-08-23
-tags: ["Geo", "NLP"]
+tags: ["Geo", "NLP", "Google", "Unicode", "Quelloffen"]
 kind: "talk"
 authors: ["Sascha Brawer", "Martin Jansche", "Hiroshi Takenaka", "Yui Terashima"]
 venue: "34. Internationalization & Unicode Conference (2010)"

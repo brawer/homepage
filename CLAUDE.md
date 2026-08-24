@@ -92,15 +92,26 @@ templates/CSS via `/design` mode.
 ## Tags (taxonomy)
 
 - `[taxonomies] tag = "tags"` in `hugo.toml`.
-- Some tags share one term across both languages (e.g. `Memes` — a
-  loanword, deliberately not translated).
-- Some tags are translated (`Animals`/`Tiere`, `Oil`/`Öl`) — each pair
-  lives at `content/tags/<term>/_index.<lang>.md` in *different*
-  folders, and each page MUST carry a matching `translationKey` (e.g.
-  `tag-animals`) so Hugo knows they're the same concept — it can't
-  infer that from differing folder names the way it does for
-  `index.en.md`/`index.de.md` pairs. Naming convention:
-  `tag-<english-term-lowercase>` (e.g. `tag-memes`, `tag-oil`).
+- Some tags share one term across both languages (e.g. `Memes`,
+  `Google`, `Unicode` — loanwords/proper nouns, deliberately not
+  translated). These need no dedicated tag page or `translationKey`
+  at all — verified via `hugo build` that Hugo auto-pairs
+  auto-generated term pages across languages whenever the term string
+  is identical, e.g. `Google` used on both an English and a German
+  item's `tags` list produces `/tags/google/` and `/de/tags/google/`
+  that are already `.Translations` of each other, with no
+  `content/tags/google/` files needed.
+- Some tags are translated (`Animals`/`Tiere`, `Oil`/`Öl`,
+  `Open Source`/`Quelloffen`) — each pair lives at
+  `content/tags/<term>/_index.<lang>.md` in *different* folders, and
+  each page MUST carry a matching `translationKey` (e.g.
+  `tag-animals`) so Hugo knows they're the same concept — unlike the
+  shared-term case above, it can't auto-pair different strings.
+  Verified: without `translationKey`, two differently-named term pages
+  are just unrelated pages with no language switcher link between
+  them. Naming convention: `tag-<english-term-lowercase>` (e.g.
+  `tag-memes`, `tag-oil`, `tag-open-source` — hyphenate multi-word
+  terms).
 - Tag pages can hold real body content — e.g.
   `content/tags/memes/_index.*.md` explains the "memes painted in
   oil, as a series" concept once; individual art pieces link to the
