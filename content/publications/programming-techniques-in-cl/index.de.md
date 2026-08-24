@@ -15,11 +15,11 @@ abstract: >
 image: "teaser.webp"
 ---
 Universität Zürich, [Institut für Informatik](http://www.ifi.uzh.ch/),
-Computerlinguistik — Wintersemester 1997/98 bis und mit Sommersemester 1999
+Computerlinguistik – Wintersemester 1997/98 bis und mit Sommersemester 1999
 
 Diese Vorlesung habe ich von Grund auf selbst konzipiert. Prolog wäre
-nicht unbedingt meine erste Wahl für diesen Kurs gewesen — ich selbst
-programmiere lieber systemnah —, doch das Institut bestand darauf,
+nicht unbedingt meine erste Wahl für diesen Kurs gewesen – ich selbst
+programmiere lieber systemnah –, doch das Institut bestand darauf,
 dass ich genau diese Sprache unterrichte. Aus heutiger Sicht mag das
 einigermassen kurios wirken, aber in den 1990er Jahren war Prolog,
 zusammen mit Lisp, *die* Sprache der Wahl in der Künstlichen Intelligenz.
@@ -80,4 +80,4 @@ zusammen mit Lisp, *die* Sprache der Wahl in der Künstlichen Intelligenz.
 : Ein einfacher Chart-Parser in Prolog, der den Earley-Algorithmus benutzt. Achtung: zwei Fehler sind als Übungsaufgaben zu korrigieren!
 
 [Stichwort-Erkennung](listings/keyword.pl)
-: Ein Prolog-Programm, das in einer natürlichsprachlichen (englischen) Eingabe bestimmte Stichwörter erkennt und daraufhin entsprechende „Datenbank“-Anfragen stellt. Benötigt den [Tokenizer](listings/tokenizer.pl).
+: Ein Prolog-Programm, das in einer natürlichsprachlichen (englischen) Eingabe bestimmte Stichwörter erkennt und daraufhin entsprechende «Datenbank»-Anfragen stellt. Benötigt den [Tokenizer](listings/tokenizer.pl).
