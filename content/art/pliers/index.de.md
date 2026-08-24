@@ -18,7 +18,7 @@ und Medium. Ölfarbe ist weich und nachgiebig – man kann sie
 verstreichen, verschieben, sich Zeit lassen –, und ich wollte sehen,
 ob sich damit trotzdem etwas so Scharfkantiges und Präzises wie ein
 Metallwerkzeug malen lässt. Herauszufinden, wie man Farbe scharf
-aussehen lässt, war eine viel bessere Lektion, als ich es einem so
+aussehen lässt, war deutlich interessanter, als ich es einem so
 bescheidenen Motiv zugetraut hätte. Dass ich mich damit gerade in die
 Ölmalerei zu verlieben begann, wusste ich zu diesem Zeitpunkt noch
 nicht.
