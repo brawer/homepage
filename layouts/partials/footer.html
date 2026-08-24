@@ -1,3 +1,12 @@
 <footer>
-  <p>{{ i18n "footer_copyright" (dict "Year" now.Year) }}</p>
+  <p>
+    {{ i18n "footer_copyright" (dict "Year" now.Year) }}
+    {{/* site.GetPage resolves within the CURRENT page's own language
+         site, so this correctly links to the German Impressum from a
+         German page and the English Imprint from an English page —
+         no manual /de/ prefixing needed. .Title is already the
+         localized page title ("Imprint"/"Impressum"), so no separate
+         i18n key needed for the link label either. */}}
+    {{ with site.GetPage "/imprint" }}· <a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+  </p>
 </footer>
