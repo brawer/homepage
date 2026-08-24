@@ -48,6 +48,25 @@ other = "Eingereicht"
 [open_source_label]
 other = "Quelloffen"
 
+# siehe i18n/en.toml
+[role_creator]
+other = "Urheber"
+[role_maintainer]
+other = "Betreuer"
+[role_contributor]
+other = "Mitwirkender"
+
+[project_status_active]
+other = "Noch aktiv dabei"
+[project_status_inactive]
+other = "Nicht mehr aktiv dabei"
+
+[view_on_github]
+other = "Auf GitHub ansehen"
+
+[related_label]
+other = "Siehe auch:"
+
 [resume_experience]
 other = "Werdegang"
 [resume_education]

@@ -8,9 +8,10 @@
   show their translated `kind` (Talk/Paper/...), art shows `medium`
   verbatim (already per-language free text like "Oil on canvas", not
   a controlled vocabulary, so no i18n lookup for it — see CLAUDE.md's
-  Art bundle front matter section for why this isn't a `kind` field).
-  Neither is shown for pages with neither field (e.g. projects, for
-  now).
+  Art bundle front matter section for why this isn't a `kind` field),
+  and projects show their translated `role` (Creator/Maintainer/
+  Contributor — see CLAUDE.md's Projects bundle front matter section).
+  None of these three is shown for pages with none of the three fields.
 
   Params (dict):
     pages (required) — a Pages collection to render as a grid.
@@ -47,6 +48,8 @@
         <span class="kind-badge">{{ i18n (printf "kind_%s" $page.Params.kind) }}</span>
       {{ else if $page.Params.medium }}
         <span class="kind-badge">{{ $page.Params.medium }}</span>
+      {{ else if $page.Params.role }}
+        <span class="kind-badge">{{ i18n (printf "role_%s" $page.Params.role) }}</span>
       {{ end }}
       <h3>{{ $page.Title }}</h3>
     </a>
