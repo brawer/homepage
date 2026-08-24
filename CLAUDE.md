@@ -129,6 +129,14 @@ not display text; translate it for display via i18n strings, e.g.
 front matter value itself), `authors` (list, order matters —
 verified against source for patents), `venue`, `abstract`.
 
+- `venue` can contain inline Markdown links, not just plain text —
+  e.g. `modellieren-raumbezogener-daten` links the coordinating body's
+  name to its own site (`KOGIS` in German, `COGIS` in English — same
+  body, different acronym per language, plus `swisstopo`, each with
+  its own link). Templates must render `venue` through `markdownify`
+  rather than outputting it as a raw string, or these links won't
+  render.
+
 - Type-specific optional fields: `degree` (thesis), `patent_number` +
   `patent_status` (patent).
 - `original_title` + `original_language` (BCP-47 tag) — for when the

@@ -7,7 +7,7 @@ publishDate: 2026-08-23
 tags: ["Geo"]
 kind: "book"
 authors: ["Joseph Dorfschmid", "Sascha Brawer"]
-venue: "KOGIS/swisstopo"
+venue: "[COGIS](https://www.swisstopo.admin.ch/en/coordination-geo-information-and-services-cogis), [swisstopo](https://www.swisstopo.admin.ch/en/)"
 abstract: >
   An accessible introduction to modeling spatial data with UML and
   INTERLIS, built around the fictional town of Ilistal. The 117-page
@@ -21,7 +21,7 @@ image: "teaser.webp"
 pdf: "Modellieren_raumbezogener_Daten.pdf"
 ---
 Co-authored with Joseph Dorfschmid, commissioned by KOGIS/swisstopo. The
-texbook was written and published in German for a German-speaking audience
+textbook was written and published in German for a German-speaking audience
 — the PDF linked here is the original German text, not a translation.
 It alternates between the narrated Ilistal story and the
 underlying theory, so readers can go as deep as their interest and
