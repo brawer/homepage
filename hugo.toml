@@ -43,6 +43,7 @@ uglyURLs = false
       weight = 40
 
   [languages.de]
+    languageCode = "de-CH"
     languageName = "Deutsch"
     weight = 2
 
