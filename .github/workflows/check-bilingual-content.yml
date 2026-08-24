@@ -1,21 +1,24 @@
 name: Check bilingual content
 
-# Enforces CLAUDE.md's "fully bilingual, no exceptions" policy: every
-# content page must have a real translation in the other language.
-#
-# This does NOT just check that matching filenames exist on disk —
-# that alone is not enough. On 2026-08-24 we found that a symlinked
-# content/.../index.de.md is silently invisible to Hugo (never becomes
-# a page at all, no warning, no error) even though `git ls-files -s`
-# happily reports it as a correct symlink. See CLAUDE.md's Bilingual
-# section for the full story. So this workflow checks two things:
-#   1. No file under content/ is a symlink, ever.
+# Content-structure checks that don't need real templates to run —
+# Hugo parses front matter and wires up bundles/taxonomies regardless
+# of whether there's a layout to render them with, so this catches
+# real content bugs long before any /design work exists. Checks:
+#   1. No file under content/ is a symlink, ever. On 2026-08-24 we
+#      found that a symlinked content/.../index.de.md is silently
+#      invisible to Hugo (never becomes a page at all, no warning, no
+#      error) even though `git ls-files -s` happily reports it as a
+#      correct symlink. See CLAUDE.md's Bilingual section.
 #   2. Every page Hugo actually builds has at least one translation,
 #      using Hugo's own page-translation linking (hugo.Sites / .Pages
 #      / .Translations) as the source of truth — not a hand-rolled
 #      reimplementation of Hugo's pairing rules (which include some
 #      non-obvious behavior, like auto-pairing same-string taxonomy
 #      terms with no backing content file at all).
+#   3. Every `image`/`pdf` front-matter field on a page resolves to an
+#      actual bundle resource — catches typos/renamed files that
+#      would otherwise only surface once templates exist and try to
+#      render a broken link.
 
 on:
   push:
@@ -64,6 +67,38 @@ jobs:
           {{ $path := .Kind }}
           {{ with .File }}{{ $path = .Path }}{{ end }}
           {{ errorf "%s (lang=%s, kind=%s) has no translation in another language — every content item must be fully bilingual, see CLAUDE.md" $path .Lang .Kind }}
+          {{ end }}
+          {{ end }}
+          {{ end }}
+          <html></html>
+          TMPL
+          hugo build --gc --cleanDestinationDir
+          rm -rf layouts public resources .hugo_build.lock
+
+      - name: Verify image/pdf front-matter references resolve
+        run: |
+          set -e
+          mkdir -p layouts
+          # Same throwaway-template approach as the previous step, for
+          # the same reason: Hugo's own Resources.GetMatch is the
+          # ground truth for "does this bundle actually contain that
+          # file", not a hand-rolled filesystem check.
+          cat > layouts/index.html <<'TMPL'
+          {{ range hugo.Sites }}
+          {{ range .Pages }}
+          {{ if eq .Kind "page" }}
+          {{ $path := .Kind }}
+          {{ with .File }}{{ $path = .Path }}{{ end }}
+          {{ if .Params.image }}
+          {{ if not (.Resources.GetMatch .Params.image) }}
+          {{ errorf "%s: image %q not found among bundle resources" $path .Params.image }}
+          {{ end }}
+          {{ end }}
+          {{ if .Params.pdf }}
+          {{ if not (.Resources.GetMatch .Params.pdf) }}
+          {{ errorf "%s: pdf %q not found among bundle resources" $path .Params.pdf }}
+          {{ end }}
+          {{ end }}
           {{ end }}
           {{ end }}
           {{ end }}
