@@ -93,6 +93,19 @@ known gaps.
   per-section styling logic even when it mixes items from different
   sections. Some tag pages (e.g. `/tags/memes/`) have their own intro
   paragraph in front — render that above the grid, not as a separate page.
+- **Résumé page**: should read as a 2026-appropriate CV, not the old
+  `brawer.ch/cv/` page's plain HTML table (still viewable there for
+  reference) — a timeline/card layout rather than a literal table.
+  Sascha suggested small icons per organization; if pursued, use
+  generic/neutral iconography (initials, a monogram, a generic
+  building/institution glyph) rather than employers' actual logos —
+  those are trademarks and this site isn't licensed to display them.
+  The front matter already separates `organization` from
+  `organization_url`, so an icon slot could key off the org name
+  without a new content field, if a small fixed icon set covers the
+  ~10 organizations involved. Some entries (independent work, a
+  sabbatical) have no `organization` at all — the layout needs to
+  degrade gracefully for those, not assume every row has a company.
 - **Typography preference**: use proper typographic quotes throughout, in
   both languages — but note each language has its own convention, not one
   shared glyph set. English uses “curly double” and ‘curly single’ quotes.
@@ -147,6 +160,17 @@ directly in the Markdown body).
 **Project bundle** (`content/projects/<slug>/index.<lang>.md`, no
 entries yet): `title`, `date`, `tags`, `image` (WebP teaser), `open_source`
 (bool), optional repo/demo `link`, body = description.
+
+**Resume bundle** (`content/resume/index.<lang>.md`, single page, not a
+list): `title`, `experience` (list of `{date_range, location,
+organization?, organization_url?, role, highlights[]}` — `organization`
+omitted for entries with no employer), `education` (list of
+`{date_range, institution, institution_url, degree, details}`),
+`skills` (`{programming_languages, operating_systems, libraries}`,
+each a prose string), `spoken_languages` (list of strings). `venue`-
+style fields (`highlights`, `skills.*`) may contain inline Markdown
+links — render through `markdownify`. See `CLAUDE.md` for full field
+rationale.
 
 ## Out of scope for this brief
 - Hosting/deployment mechanics (GitHub Actions build, container vs scp) —
