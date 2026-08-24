@@ -61,8 +61,8 @@ uglyURLs = false
       url = "/resume/"
       weight = 10
     [[languages.de.menu.main]]
-      name = "Programmieren"
-      url = "/programming/"
+      name = "Projekte"
+      url = "/projects/"
       weight = 20
     [[languages.de.menu.main]]
       name = "Publikationen"
