@@ -1,0 +1,73 @@
+name: Check bilingual content
+
+# Enforces CLAUDE.md's "fully bilingual, no exceptions" policy: every
+# content page must have a real translation in the other language.
+#
+# This does NOT just check that matching filenames exist on disk —
+# that alone is not enough. On 2026-08-24 we found that a symlinked
+# content/.../index.de.md is silently invisible to Hugo (never becomes
+# a page at all, no warning, no error) even though `git ls-files -s`
+# happily reports it as a correct symlink. See CLAUDE.md's Bilingual
+# section for the full story. So this workflow checks two things:
+#   1. No file under content/ is a symlink, ever.
+#   2. Every page Hugo actually builds has at least one translation,
+#      using Hugo's own page-translation linking (hugo.Sites / .Pages
+#      / .Translations) as the source of truth — not a hand-rolled
+#      reimplementation of Hugo's pairing rules (which include some
+#      non-obvious behavior, like auto-pairing same-string taxonomy
+#      terms with no backing content file at all).
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Set up Hugo
+        uses: peaceiris/actions-hugo@v3
+        with:
+          hugo-version: "0.165.0"
+          extended: true
+
+      - name: Reject symlinked content files
+        run: |
+          symlinks="$(find content -type l)"
+          if [ -n "$symlinks" ]; then
+            echo "::error::Symlinked file(s) found under content/ — Hugo silently ignores these, they never become pages. Write a real file instead (see CLAUDE.md's Bilingual section):"
+            echo "$symlinks"
+            exit 1
+          fi
+
+      - name: Verify every page has a translation
+        run: |
+          set -e
+          mkdir -p layouts
+          # Throwaway template, deleted at the end of this step — not
+          # part of the site's real templates (none exist yet). Ranges
+          # over every page on every language site and fails the build
+          # via errorf if any page has zero translations. Runs once per
+          # configured language (each is a "home" kind render), so a
+          # violation may be logged more than once — harmless, still a
+          # single overall failure either way.
+          cat > layouts/index.html <<'TMPL'
+          {{ range hugo.Sites }}
+          {{ range .Pages }}
+          {{ if eq (len .Translations) 0 }}
+          {{ $path := .Kind }}
+          {{ with .File }}{{ $path = .Path }}{{ end }}
+          {{ errorf "%s (lang=%s, kind=%s) has no translation in another language — every content item must be fully bilingual, see CLAUDE.md" $path .Lang .Kind }}
+          {{ end }}
+          {{ end }}
+          {{ end }}
+          <html></html>
+          TMPL
+          hugo build --gc --cleanDestinationDir
+          rm -rf layouts public resources .hugo_build.lock
