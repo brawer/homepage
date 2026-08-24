@@ -4,12 +4,13 @@ original_title: "入力テキスト文字列の変換"
 original_language: "ja"
 date: 2019-05-15
 publishDate: 2026-08-23
-tags: ["Geo", "NLP", "i18n"]
+tags: ["Geo", "NLP", "i18n", "Google"]
 kind: "patent"
 authors: ["Sascha Brawer", "Martin Jansche", "Richard Sproat", "Hiroshi Takenaka", "Yui Terashima"]
 venue: "Japan Patent Office"
 patent_number: "JP6511221B2"
 patent_status: "granted"
+assignee: "Google"
 abstract: >
   A method for converting strings of geographic names from one script or
   language into another by combining two techniques: translating words

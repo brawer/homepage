@@ -83,6 +83,10 @@ known gaps.
   - A few items also carry an `original_title`/`original_language` pair
     (e.g. the Japanese patent) — when present, show as a small subtitle
     under the main title, e.g. "Original title (ja): …".
+  - Patents may also carry an `assignee` (the company/entity the patent
+    was assigned to) — worth surfacing next to `patent_number` and
+    `patent_status` in that compact metadata block, not buried in the
+    abstract.
 - **Tag pages**: reuse the same gallery/grid component regardless of which
   section(s) the tagged items come from — since Art, Projects, and
   Publications now share one visual treatment, a tag page doesn't need
@@ -133,10 +137,12 @@ see `CLAUDE.md`), `authors` (list), `venue` (may contain inline
 Markdown links — render through `markdownify`, don't output as a raw
 string), `abstract`, `image` (WebP
 teaser, curated per item — no automatic source the way art has). Optional:
-`degree` (thesis only), `patent_number` + `patent_status` (patent only),
-`original_title` + `original_language` (any kind, when applicable), `pdf`
-(single-PDF items only — absent for the lecture-series item, which instead
-has resource links directly in the Markdown body).
+`degree` (thesis only), `patent_number` + `patent_status` + `assignee`
+(patent only — `assignee` is the company/entity the patent was
+assigned to, e.g. "Google"), `original_title` + `original_language`
+(any kind, when applicable), `pdf` (single-PDF items only — absent
+for the lecture-series item, which instead has resource links
+directly in the Markdown body).
 
 **Project bundle** (`content/projects/<slug>/index.<lang>.md`, no
 entries yet): `title`, `date`, `tags`, `image` (WebP teaser), `open_source`
