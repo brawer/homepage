@@ -38,6 +38,7 @@ activity. See CLAUDE.md's Known open items for the full note.
 | `/publications/<slug>/`    | Detail (leaf)       | Title, authors, venue, abstract, tags, download(s) — see note below, one item is structurally different |
 | `/resume/`                 | Single              | One-page résumé/CV                                                      |
 | `/tags/<tag>/`             | Taxonomy list       | Everything (art, publications, projects) carrying that tag, e.g. `/tags/memes/`. Some tag pages carry their own intro text (see below) |
+| `/imprint/`                | Single              | Legal notice (Swiss UWG commercial-identity disclosure) — name, address, UID, VAT-exemption note, no-cookies statement. Linked only from the page footer, not the main nav. Free-form Markdown body, no bespoke layout need — just the site's baseline page typography (headings, links) |
 
 Every content URL above also exists under `/de/...` — the site is fully
 bilingual by policy: any item missing a German (or English) version is a
@@ -163,7 +164,9 @@ fields — this is just the shape.
 **Art bundle** (`content/art/<slug>/index.<lang>.md`): `title`, `date`,
 `publishDate`, `tags`, `medium`, `height_cm`, `width_cm` (two numbers, not
 one string), `image` (WebP resource filename, shared across language
-variants), body = descriptive paragraph.
+variants), body = descriptive paragraph. Optional `teaser` (separate
+WebP, manually curated near-square crop for the grid, when the
+`image` doesn't smart-crop well) — no current item needs one.
 
 **Publications bundle** (`content/publications/<slug>/index.<lang>.md`):
 `title`, `date`, `publishDate`, `tags`, `kind` (`talk` / `paper` / `patent`
@@ -177,7 +180,10 @@ teaser, curated per item — no automatic source the way art has). Optional:
 assigned to, e.g. "Google LLC"), `original_title` + `original_language`
 (any kind, when applicable), `pdf` (single-PDF items only — absent
 for the lecture-series item, which instead has resource links
-directly in the Markdown body).
+directly in the Markdown body), `pdf_preview` (single-PDF items only,
+optional — a WebP raster of one representative PDF page, shown as the
+detail page's hero image instead of `image`; the gallery grid always
+uses `image` regardless).
 
 **Project bundle** (`content/projects/<slug>/index.<lang>.md`, no
 entries yet): `title`, `date`, `tags`, `image` (WebP teaser), `open_source`
@@ -187,7 +193,8 @@ entries yet): `title`, `date`, `tags`, `image` (WebP teaser), `open_source`
 list): `title`, `experience` (list of `{date_range, location,
 organization?, organization_url?, role, highlights[]}` — `organization`
 omitted for entries with no employer), `education` (list of
-`{date_range, institution, institution_url, degree, details}`),
+`{date_range, location, institution, institution_url, degree,
+details}`),
 `skills` (`{programming_languages, operating_systems}`,
 each a prose string), `spoken_languages` (list of strings). `venue`-
 style fields (`highlights`, `skills.*`) may contain inline Markdown
