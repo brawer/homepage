@@ -269,11 +269,11 @@ whether there's a layout to render them with:
   all` cross-checking relies on above, not a hand-rolled
   filename-matching reimplementation (which would have missed the
   symlink bug, same as `git ls-files -s` did).
-- There's no automated resource-reference check yet (front matter
-  `image`/`pdf` fields pointing at files that don't exist in the
-  bundle) — verified manually via a throwaway debug template during
-  the 2026-08-24 session, came back clean, but this isn't wired into
-  CI. Worth adding as a second job/step in the same workflow.
+- **Resource-reference coverage is also enforced in CI**: the same
+  workflow's second step fails if any page's `image`/`pdf`
+  front-matter field doesn't resolve to an actual bundle resource
+  (checked via `Resources.GetMatch`, same ground-truth-over-filesystem
+  reasoning as the translation check).
 
 ## Known open items (as of last content session)
 
