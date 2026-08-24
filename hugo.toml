@@ -13,7 +13,7 @@ uglyURLs = false
 
 [languages]
   [languages.en]
-    languageName = "English"
+    label = "English"
     weight = 1
 
     [languages.en.params]
@@ -43,8 +43,8 @@ uglyURLs = false
       weight = 40
 
   [languages.de]
-    languageCode = "de-CH"
-    languageName = "Deutsch"
+    locale = "de-CH"
+    label = "Deutsch"
     weight = 2
 
     [languages.de.params]
