@@ -386,8 +386,10 @@ as a design decision, just a structural one.
 - The "H × W cm" art dimension string uses U+202F (narrow no-break
   space) around the × and before "cm" — non-breaking *and* narrower
   than a plain space (the correct typographic spacing here, not just
-  a line-break fix). Written as the numeric HTML entity `&#8239;` in
-  template source text, deliberately *outside* any `{{ }}` action —
+  a line-break fix). Written as the numeric HTML entity `&#x202F;`
+  (hex form — matches the U+202F name directly, clearer than the
+  decimal `&#8239;` equivalent) in template source text, deliberately
+  *outside* any `{{ }}` action —
   Go's `html/template` auto-escaper would mangle it (double-escape the
   `&`) if it were inside a string an action returns. If you need this
   elsewhere, copy that pattern, not a `{{ printf "... ..." }}`
