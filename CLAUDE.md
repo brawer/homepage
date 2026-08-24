@@ -481,6 +481,20 @@ as a design decision, just a structural one.
   deferred to `/design` mode rather than blocking further work. Start
   there with real DevTools access (computed styles on `.gallery-grid
   img`), not more guessing from screenshots.
+  **Detail-page images (`picture.html`, e.g. any publication's hero
+  image) are not affected and need no fix** — confirmed 2026-08-24.
+  The bug is specifically about *forcing* an artificial 1:1 ratio via
+  CSS `aspect-ratio` on `<picture>` (a non-replaced element, where
+  that property is unreliable) to get square crops from non-square
+  sources — that's what `picture-thumbnail.html`/`.gallery-grid` do.
+  `picture.html` never does this: it shows images at their natural
+  shape (`.detail-image` is just `max-width:100%; height:auto`), and
+  relies on the `<img>`'s real `width`/`height` HTML attributes (set
+  from the actual resized dimensions) for layout-shift prevention —
+  which is standard, well-supported browser behavior (implicit
+  `aspect-ratio` derived from those attributes) requiring no CSS
+  `aspect-ratio` override at all. Different mechanism, not hit by the
+  same failure mode.
 - `content/resume/` still has no icons/timeline layout — see the
   "Resume bundle front matter" section above.
 - Section list pages (`content/art/_index.*.md`,
