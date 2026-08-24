@@ -6,7 +6,18 @@
 {{ range .Params.experience }}
   {{ $exp := . }}
   <div class="experience-item">
-    <p class="date-range">{{ $exp.date_range }} — {{ $exp.location }}</p>
+    {{/* U+202F (narrow no-break space) around the en dash inside a
+         range like "10/2019 – 9/2021" -- non-breaking and narrower
+         than a plain space, same reasoning as the art page's "H × W
+         cm" (see CLAUDE.md's Templates section). Unlike that case,
+         this has to be the raw character, not the &#x202f; entity:
+         the entity approach only works for static template source
+         text outside any {{ }} action -- replace's *result* is a
+         dynamic string returned from an action, so html/template's
+         auto-escaper would mangle a literal "&#x202f;" into
+         "&amp;#x202f;". The raw character itself isn't escaped
+         (auto-escaping only touches <>&"'), so it survives fine. */}}
+    <p class="date-range">{{ replace $exp.date_range " – " " – " }} {{ i18n "dash_separator" }} {{ $exp.location }}</p>
     <h3>
       {{ if $exp.organization }}
         {{ if $exp.organization_url }}<a href="{{ $exp.organization_url }}">{{ $exp.organization }}</a>{{ else }}{{ $exp.organization }}{{ end }},
@@ -25,9 +36,12 @@
 {{ range .Params.education }}
   {{ $edu := . }}
   <div class="education-item">
-    <p class="date-range">{{ $edu.date_range }}</p>
+    {{/* Same treatment as experience's date-range above, for
+         consistency if a future entry ever has a real range like
+         "2015 – 2019" rather than a single date. */}}
+    <p class="date-range">{{ replace $edu.date_range " – " " – " }} {{ i18n "dash_separator" }} {{ $edu.location }}</p>
     <h3>{{ if $edu.institution_url }}<a href="{{ $edu.institution_url }}">{{ $edu.institution }}</a>{{ else }}{{ $edu.institution }}{{ end }}</h3>
-    <p>{{ $edu.degree }}{{ with $edu.details }} — {{ . }}{{ end }}</p>
+    <p>{{ $edu.degree }}{{ with $edu.details }} {{ i18n "dash_separator" }} {{ . }}{{ end }}</p>
   </div>
 {{ end }}
 

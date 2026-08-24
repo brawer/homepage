@@ -282,8 +282,43 @@ rather than parsing prose.
   independent work, the 2018–2019 sabbatical), `role`, and
   `highlights` (list of strings, may contain inline Markdown links —
   render through `markdownify`, same as `venue`).
-- `education` — list with `date_range`, `institution` +
-  `institution_url`, `degree`, `details`.
+- `education` — list with `date_range`, `location`, `institution` +
+  `institution_url`, `degree`, `details`. `location` added
+  2026-08-24 — originally missing, so the one education entry's
+  location was jammed into the end of `details` as plain prose
+  instead ("Passed with distinction. Saarbrücken, Germany."),
+  rendering in a different position than `experience`'s dedicated
+  `location` field. Split out for consistency: `details` is now just
+  the achievement note, `location` renders in the same place
+  `experience` puts it.
+- **The dash between `date_range` and `location` (and between
+  `degree` and `details`) is `i18n "dash_separator"`, never a
+  hardcoded character** — found and fixed 2026-08-24: it had been a
+  literal em dash baked into the template, which is wrong on the
+  German page (de-CH wants en dash) and was never caught by
+  `scripts/check_typography.py`, since that only scans *content*
+  files, not template chrome. `dash_separator` is em dash (—) in
+  `i18n/en.toml`, en dash (–) in `i18n/de.toml`, both spaced on both
+  sides regardless of language — not the same as the "no surrounding
+  spaces" em-dash rule for English prose in the Typography section,
+  since this is a compact listing separator, not a sentence aside.
+- `date_range` values with a real range (e.g. `"10/2019 – 9/2021"`)
+  get the em/en dash inside them wrapped in U+202F (narrow no-break
+  space) at render time, via `replace $exp.date_range " – " "…"` —
+  same reasoning as the art page's "H × W cm" (see "Templates"
+  below), but the implementation differs: this has to be the *raw*
+  character, not the `&#x202f;` entity, since `replace`'s result is a
+  dynamic string returned from a template action, and `html/template`
+  auto-escapes such content in HTML context — a literal `&#x202f;`
+  in the string would come out double-escaped as visible text
+  (`&amp;#x202f;`), not render as anything. The raw character itself
+  isn't touched by the escaper (`<>&"'` are the only characters it
+  escapes), so it survives fine. If you need this pattern elsewhere,
+  copy that, not the entity trick — and see the note in "Templates"
+  below about `\uXXXX` escapes being unreliable to type through this
+  tool pipeline; used a small Python script to place the exact
+  codepoint reliably, verified by inspecting the actual bytes
+  afterward, not by trusting what looked right when typed.
 - `skills` — object with `programming_languages`, `operating_systems`
   (each a prose string, may contain Markdown links). Used to also have
   a `libraries` field; dropped 2026-08-24 (content and template both

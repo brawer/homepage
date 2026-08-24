@@ -1,3 +1,7 @@
+# siehe i18n/en.toml
+[dash_separator]
+other = "–"
+
 [kind_talk]
 other = "Vortrag"
 [kind_paper]

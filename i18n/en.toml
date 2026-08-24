@@ -1,3 +1,13 @@
+# Chrome-level separator dash for joining two short facts (e.g. a
+# date range and a location) -- de-CH uses en dash, English em dash,
+# both spaced; not the "no surrounding spaces" em-dash rule from
+# CLAUDE.md's Typography section, since that's specifically about
+# prose asides, not this compact listing style. Must not be hardcoded
+# into any template -- see CLAUDE.md's Typography section for why
+# (found a real instance where it was, on the resume page).
+[dash_separator]
+other = "—"
+
 [kind_talk]
 other = "Talk"
 [kind_paper]
