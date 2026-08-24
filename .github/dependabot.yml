@@ -1,0 +1,18 @@
+version: 2
+updates:
+  # The only real dependencies this repo has are the actions pinned in
+  # .github/workflows/*.yml (Hugo version, checkout, etc.) — there's no
+  # package.json/go.mod/requirements.txt to track. Keeping these current
+  # is also what actually fixes "stale Node.js version" CI warnings:
+  # that warning comes from an action itself being built on an old
+  # Node.js runtime (e.g. peaceiris/actions-hugo), not from anything
+  # this repo controls directly — bumping the action is the real fix,
+  # not a workaround.
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "monthly"
+    groups:
+      github-actions:
+        patterns:
+          - "*"
