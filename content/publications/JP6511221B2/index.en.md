@@ -25,4 +25,4 @@ pdf: "JP6511221B2.pdf"
 ---
 Japanese patent covering technology for converting place names and
 similar geographic strings between writing systems — part of the same
-line of work as the [ICU transforms talk](/publications/icu-transforms-talk/).
+line of work as the [ICU transforms talk](/publications/transliteration-with-icu/).
