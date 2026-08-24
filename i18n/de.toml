@@ -44,8 +44,6 @@ other = "Kenntnisse"
 other = "Programmiersprachen"
 [resume_operating_systems]
 other = "Betriebssysteme"
-[resume_libraries]
-other = "Bibliotheken"
 [resume_spoken_languages]
 other = "Sprachen"
 

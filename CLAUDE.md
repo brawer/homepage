@@ -225,8 +225,10 @@ rather than parsing prose.
   render through `markdownify`, same as `venue`).
 - `education` — list with `date_range`, `institution` +
   `institution_url`, `degree`, `details`.
-- `skills` — object with `programming_languages`, `operating_systems`,
-  `libraries` (each a prose string, may contain Markdown links).
+- `skills` — object with `programming_languages`, `operating_systems`
+  (each a prose string, may contain Markdown links). Used to also have
+  a `libraries` field; dropped 2026-08-24 (content and template both
+  updated together — don't resurrect just the template side of it).
 - `spoken_languages` — list of plain strings (e.g. `"English
   (fluent)"`).
 - Job/institution titles are translated per language where they read

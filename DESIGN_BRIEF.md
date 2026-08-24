@@ -179,7 +179,7 @@ list): `title`, `experience` (list of `{date_range, location,
 organization?, organization_url?, role, highlights[]}` — `organization`
 omitted for entries with no employer), `education` (list of
 `{date_range, institution, institution_url, degree, details}`),
-`skills` (`{programming_languages, operating_systems, libraries}`,
+`skills` (`{programming_languages, operating_systems}`,
 each a prose string), `spoken_languages` (list of strings). `venue`-
 style fields (`highlights`, `skills.*`) may contain inline Markdown
 links — render through `markdownify`. See `CLAUDE.md` for full field
