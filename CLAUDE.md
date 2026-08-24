@@ -16,10 +16,16 @@ templates/CSS via `/design` mode.
 - Menu order (see `hugo.toml` weights): Résumé, Projects,
   Publications, Art.
 - Homepage (`content/_index.*.md`) is deliberately just a greeting.
-  Intro sentence, social icons, and section links are template-driven
-  from `Site.Params.intro`, `Site.Params.social`, and
-  `Site.Menus.main` respectively — not duplicated into content. Any
-  homepage template needs to pull from those, not hardcode a list.
+  Intro sentence, location, social icons, and section links are
+  template-driven from `Site.Params.intro`, `Site.Params.location`,
+  `Site.Params.social`, and `Site.Menus.main` respectively — not
+  duplicated into content. Any homepage template needs to pull from
+  those, not hardcode a list. Note `intro`/`location` are per-language
+  (set inside each `[languages.<lang>.params]` block in `hugo.toml`,
+  since they're translated text) while `social` is the shared,
+  language-independent `[params.social]` block (same URLs regardless
+  of language) — different data sources, both rendered near each
+  other on the page (`layouts/partials/social-icons.html`).
 
 ## Bilingual (EN/DE)
 
@@ -385,9 +391,12 @@ as a design decision, just a structural one.
 
 - `layouts/_default/baseof.html` + `head.html`/`nav.html`/
   `language-switcher.html`/`social-icons.html`/`footer.html` partials
-  — the shared page shell. Nav and social icons are template-driven
-  from `Site.Menus.main`/`Site.Params.social`, per the Homepage bullet
-  above. The language switcher hides itself via `.IsTranslated` rather
+  — the shared page shell. Nav, location, and social icons are
+  template-driven from `Site.Menus.main`/`Site.Params.location`/
+  `Site.Params.social`, per the Homepage bullet above (`social-icons.html`
+  despite its name renders all three of these, not just social links
+  — see its own header comment). The language switcher hides itself
+  via `.IsTranslated` rather
   than ever linking to a 404 — belt-and-suspenders alongside the CI
   bilingual-coverage check, not a replacement for it (CI only guards
   `main`; a page can briefly lack a translation in a local working

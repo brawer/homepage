@@ -1,6 +1,15 @@
-{{/* No icon graphics yet (plain text links) — that's a /design-mode
-     concern; this just proves the data wiring from Site.Params.social. */}}
+{{/* No icon graphics yet (plain text links, and a placeholder emoji
+     for location) — that's a /design-mode concern; this just proves
+     the data wiring. Social links come from Site.Params.social
+     (language-independent — same URLs regardless of language).
+     Location comes from Site.Params.location instead, since unlike
+     the social URLs it's per-language text (translated, set inside
+     each [languages.<lang>.params] block in hugo.toml, not the
+     shared [params.social] block) — unrelated data source, just
+     rendered in the same row since it reads naturally alongside
+     these. Not a link, so it's a plain <li>, not <li><a>. */}}
 <ul class="social-icons">
+  {{ with .Site.Params.location }}<li><span aria-hidden="true">🌍</span> {{ . }}</li>{{ end }}
   {{ with .Site.Params.social.github }}<li><a href="{{ . }}">GitHub</a></li>{{ end }}
   {{ with .Site.Params.social.linkedin }}<li><a href="{{ . }}">LinkedIn</a></li>{{ end }}
   {{ with .Site.Params.social.email }}<li><a href="mailto:{{ . }}">{{ . }}</a></li>{{ end }}
