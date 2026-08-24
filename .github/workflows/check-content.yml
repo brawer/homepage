@@ -1,9 +1,11 @@
-name: Check bilingual content
+name: Check content
 
 # Content-structure checks that don't need real templates to run —
 # Hugo parses front matter and wires up bundles/taxonomies regardless
 # of whether there's a layout to render them with, so this catches
-# real content bugs long before any /design work exists. Checks:
+# real content bugs long before any /design work exists. Renamed from
+# check-bilingual-content.yml since it now covers more than bilingual
+# coverage. Checks:
 #   1. No file under content/ is a symlink, ever. On 2026-08-24 we
 #      found that a symlinked content/.../index.de.md is silently
 #      invisible to Hugo (never becomes a page at all, no warning, no
@@ -19,6 +21,18 @@ name: Check bilingual content
 #      actual bundle resource — catches typos/renamed files that
 #      would otherwise only surface once templates exist and try to
 #      render a broken link.
+#   4. de-CH typography in German content: no em dash (—), no
+#      German-German low-high quotes („/‚) anywhere, and no straight
+#      double quotes (") in the Markdown body specifically (front
+#      matter legitimately uses "..." as YAML string delimiters, so
+#      that part is intentionally not scanned for straight quotes).
+#      This exact bug class — em dashes and low-high quotes slipping
+#      into content — recurred multiple times before it was finally
+#      retrofitted; see CLAUDE.md's Typography section.
+#   5. Every LFS-tracked *.webp/*.pdf is real content, not an
+#      unresolved pointer file — CLAUDE.md's Git LFS section warns
+#      this fails silently otherwise ("the build won't error, it'll
+#      just produce a broken site").
 
 on:
   push:
@@ -74,6 +88,34 @@ jobs:
           TMPL
           hugo build --gc --cleanDestinationDir
           rm -rf layouts public resources .hugo_build.lock
+
+      - name: Check de-CH typography in German content
+        run: |
+          fail=0
+          for f in $(find content -name '*.de.md'); do
+            if grep -q '[—„‚]' "$f"; then
+              echo "::error file=$f::Found an em dash (—) or a German-German low-high quote („/‚) — de-CH uses en dash (–, with surrounding spaces) and «guillemets»/‹single guillemets› instead. See CLAUDE.md's Typography section."
+              grep -n '[—„‚]' "$f" | sed 's/^/    /'
+              fail=1
+            fi
+            body="$(awk 'BEGIN{n=0} /^---$/{n++; next} n>=2{print}' "$f")"
+            if printf '%s' "$body" | grep -q '"'; then
+              echo "::error file=$f::Found a straight double quote (\") in the Markdown body — de-CH uses «guillemets» instead. (Front matter's \"...\" YAML delimiters are not flagged.)"
+              fail=1
+            fi
+          done
+          exit $fail
+
+      - name: Check LFS files resolved to real content
+        run: |
+          fail=0
+          for f in $(git ls-files '*.webp' '*.pdf'); do
+            if head -c 60 "$f" | grep -q '^version https://git-lfs.github.com/spec/v1'; then
+              echo "::error file=$f::This LFS-tracked file is still an unresolved pointer file, not real content — check that Git LFS is installed and the checkout step used lfs: true (see CLAUDE.md's Git LFS section)."
+              fail=1
+            fi
+          done
+          exit $fail
 
       - name: Verify image/pdf front-matter references resolve
         run: |
