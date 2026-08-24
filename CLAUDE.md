@@ -188,10 +188,6 @@ verified against source for patents), `venue`, `abstract`.
   Hugo auto-generates a bare list page without them — but worth
   adding for section-level intro copy, same pattern as the tag pages.
 - `content/projects/` has zero entries.
-- `programming-techniques-in-cl` bundle: the Markdown body already
-  links to all ~32 lecture PDFs + 6 listing files, but only 1 lecture
-  PDF is actually present on disk — the rest need to be added as the
-  linked filenames already specify.
 - Missing German translation for `content/publications/JP6511221B2/`
   — see Bilingual section above for why this now matters
   (fully-bilingual is policy, not a nice-to-have).
