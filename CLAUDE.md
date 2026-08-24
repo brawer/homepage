@@ -56,9 +56,11 @@ templates/CSS via `/design` mode.
   has real `index.en.md` and `index.de.md` files, cross-checked
   against `hugo list all`'s page inventory (see "Verifying content
   structure" below) to confirm Hugo actually registers both as pages,
-  not just that both exist on disk. Worth adding a CI check that
-  fails when a bundle has one language file but not the other, or
-  when either is a symlink.
+  not just that both exist on disk. Enforced automatically by
+  `.github/workflows/check-bilingual-content.yml` on every push/PR —
+  fails if any page has zero translations (via Hugo's own
+  `.Translations`, not a filename-matching reimplementation) or if
+  any file under `content/` is a symlink.
 
 ## Typography (applies to content, not just templates)
 
@@ -258,12 +260,20 @@ whether there's a layout to render them with:
   path just fine, `hugo list all` didn't list it at all).
 - `hugo build` always writes `/public/` and `/resources/` and creates
   `.hugo_build.lock` — all three are gitignored, don't add them.
+- **Bilingual coverage is enforced in CI**, not just manually: see
+  `.github/workflows/check-bilingual-content.yml`, added 2026-08-24.
+  It rejects any symlink under `content/`, then builds the site with
+  a throwaway template that ranges over every page on every language
+  site and fails via `errorf` if any page has zero translations —
+  using Hugo's own `.Translations`, the same mechanism `hugo list
+  all` cross-checking relies on above, not a hand-rolled
+  filename-matching reimplementation (which would have missed the
+  symlink bug, same as `git ls-files -s` did).
 - There's no automated resource-reference check yet (front matter
   `image`/`pdf` fields pointing at files that don't exist in the
   bundle) — verified manually via a throwaway debug template during
   the 2026-08-24 session, came back clean, but this isn't wired into
-  any repeatable check. Worth turning into a real CI step alongside
-  the bilingual-coverage check mentioned above.
+  CI. Worth adding as a second job/step in the same workflow.
 
 ## Known open items (as of last content session)
 
