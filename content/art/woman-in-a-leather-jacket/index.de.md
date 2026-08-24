@@ -2,7 +2,7 @@
 title: "Frau in der Lederjacke"
 date: 2019-09-13
 publishDate: 2026-08-24
-tags: ["Öl", "Menschen"]
+tags: ["Menschen", "Öl"]
 medium: "Öl auf Leinwand"
 height_cm: 50
 width_cm: 80

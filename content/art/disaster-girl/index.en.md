@@ -2,7 +2,7 @@
 title: "Disaster Girl"
 date: 2024-05-21
 publishDate: 2026-08-23
-tags: ["Memes", "Oil"]
+tags: ["Memes", "People", "Oil"]
 medium: "Oil on canvas"
 height_cm: 40
 width_cm: 40

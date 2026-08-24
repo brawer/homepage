@@ -2,7 +2,7 @@
 title: "Woman in a Leather Jacket"
 date: 2019-09-13
 publishDate: 2026-08-24
-tags: ["Oil", "People"]
+tags: ["People", "Oil"]
 medium: "Oil on canvas"
 height_cm: 50
 width_cm: 80
