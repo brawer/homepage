@@ -67,8 +67,10 @@ jobs:
         run: |
           set -e
           mkdir -p layouts
-          # Throwaway template, deleted at the end of this step — not
-          # part of the site's real templates (none exist yet). Ranges
+          # Throwaway layouts/index.html, deleted at the end of this
+          # step — real templates (layouts/partials/*.html) must
+          # survive for later steps, so only that one file is removed,
+          # never the whole layouts/ dir. Ranges
           # over every page on every language site and fails the build
           # via errorf if any page has zero translations. Runs once per
           # configured language (each is a "home" kind render), so a
@@ -87,7 +89,8 @@ jobs:
           <html></html>
           TMPL
           hugo build --gc --cleanDestinationDir
-          rm -rf layouts public resources .hugo_build.lock
+          rm -f layouts/index.html
+          rm -rf public resources .hugo_build.lock
 
       - name: Check de-CH typography in German content
         run: |
@@ -147,4 +150,5 @@ jobs:
           <html></html>
           TMPL
           hugo build --gc --cleanDestinationDir
-          rm -rf layouts public resources .hugo_build.lock
+          rm -f layouts/index.html
+          rm -rf public resources .hugo_build.lock

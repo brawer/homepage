@@ -132,7 +132,12 @@ known gaps.
   so navigation, header, footer, and type scale should feel unified.
 - Images are served by Hugo's image pipeline (responsive WebP/AVIF,
   multiple widths) — templates should use `<picture>`/srcset output, not
-  a single fixed `<img>`.
+  a single fixed `<img>`. This part is already built, ahead of the rest
+  of `/design` mode: `layouts/partials/picture.html` (full/uncropped,
+  for detail pages) and `layouts/partials/picture-thumbnail.html`
+  (square-cropped, for gallery-grid thumbnails) — see `CLAUDE.md`'s
+  Images section for params and rationale. Use these rather than
+  hand-rolling `<picture>` markup in new templates.
 
 ## Content model reference (for template variables)
 See `CLAUDE.md` at the repo root for the full rationale behind these
