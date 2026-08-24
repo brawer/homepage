@@ -1,0 +1,16 @@
+{{/*
+  Degrades gracefully per DESIGN_BRIEF: hides itself (rather than
+  linking to a 404) whenever the current page has no translation at
+  all. Once the site is fully bilingual everywhere this always shows,
+  but content gaps won't produce broken links while they exist.
+*/}}
+{{ if .IsTranslated }}
+<p class="language-switcher">
+  {{ i18n "language_switcher_label" }}
+  {{ range .AllTranslations }}
+    {{ if eq .Lang $.Lang }}<strong>{{ .Language.Label }}</strong>
+    {{- else }} <a href="{{ .RelPermalink }}">{{ .Language.Label }}</a>
+    {{- end }}
+  {{ end }}
+</p>
+{{ end }}

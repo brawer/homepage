@@ -1,0 +1,71 @@
+# siehe i18n/en.toml
+[dash_separator]
+other = "–"
+
+[kind_talk]
+other = "Vortrag"
+[kind_paper]
+other = "Aufsatz"
+[kind_patent]
+other = "Patent"
+[kind_book]
+other = "Buch"
+[kind_lecture]
+other = "Vorlesungsreihe"
+
+[download_pdf]
+other = "PDF herunterladen"
+
+[original_title_label]
+other = "Originaltitel ({{.Language}}):"
+
+# language_name_<BCP-47 code>: siehe i18n/en.toml -- immer paarweise
+# in beiden Dateien ergänzen, wenn ein neuer original_language-Wert
+# hinzukommt.
+[language_name_de]
+other = "Deutsch"
+[language_name_en]
+other = "Englisch"
+[language_name_ja]
+other = "Japanisch"
+
+[tags_label]
+other = "Tags:"
+
+[assignee_label]
+other = "Zugewiesen an:"
+
+[patent_number_label]
+other = "Patentnummer:"
+
+[patent_status_granted]
+other = "Erteilt"
+[patent_status_pending]
+other = "Angemeldet"
+[patent_status_filed]
+other = "Eingereicht"
+
+[open_source_label]
+other = "Quelloffen"
+
+[resume_experience]
+other = "Werdegang"
+[resume_education]
+other = "Ausbildung"
+[resume_skills]
+other = "Kenntnisse"
+[resume_programming_languages]
+other = "Programmiersprachen"
+[resume_operating_systems]
+other = "Betriebssysteme"
+[resume_spoken_languages]
+other = "Sprachen"
+
+[gallery_empty]
+other = "Hier gibt es noch nichts zu sehen – schau bald wieder vorbei."
+
+[language_switcher_label]
+other = "Sprache:"
+
+[footer_copyright]
+other = "© {{.Year}} Sascha Brawer"

@@ -1,0 +1,22 @@
+{{/* content/projects/ has zero entries yet -- this matches the
+     documented schema (CLAUDE.md/DESIGN_BRIEF) so it's ready once
+     entries exist, but is untested against real content. */}}
+{{ define "main" }}
+<article>
+  {{ with .Params.image }}
+    {{ with $.Resources.GetMatch . }}
+      <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
+    {{ end }}
+  {{ end }}
+  <h1>{{ .Title }}</h1>
+  {{ if .Params.open_source }}<p><span class="kind-badge">{{ i18n "open_source_label" }}</span></p>{{ end }}
+  {{ with .Params.link }}<p><a href="{{ . }}">{{ . }}</a></p>{{ end }}
+  {{ .Content }}
+  {{ with .GetTerms "tags" }}
+    <p class="tags">
+      {{ i18n "tags_label" }}
+      {{ range . }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+    </p>
+  {{ end }}
+</article>
+{{ end }}

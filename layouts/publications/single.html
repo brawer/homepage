@@ -1,0 +1,79 @@
+{{ define "main" }}
+<article>
+  {{/* On the detail page, prefer a page-1 preview of the actual PDF
+       over the curated teaser (which exists to look good cropped in
+       the gallery grid, not to represent the document itself) — see
+       CLAUDE.md's Publications bundle front matter section. Falls
+       back to the teaser for items with no pdf_preview (e.g. the
+       lecture-series item, which has no single PDF to preview).
+       Later: an inline PDF embed/toggle could go here too, as an
+       alternative or addition to the preview — keep that as its own
+       block near this one and the "Download PDF" link below, rather
+       than folding it into this image logic. */}}
+  {{ $heroImage := "" }}
+  {{ if .Params.pdf_preview }}
+    {{ $heroImage = .Resources.GetMatch .Params.pdf_preview }}
+  {{ else if .Params.image }}
+    {{ $heroImage = .Resources.GetMatch .Params.image }}
+  {{ end }}
+  {{ with $heroImage }}
+    <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
+  {{ end }}
+  <h1>{{ .Title }}</h1>
+  {{/* Language name in the label is localized to the SITE's current
+       language (e.g. "Japanisch" on the German page, "Japanese" on
+       the English page) via a language_name_<code> i18n key — not
+       the raw BCP-47 code. Separately, lang="{{ original_language }}"
+       on the <span> tags that actual text's own language for
+       assistive tech/browsers, independent of the label. Add a new
+       language_name_<code> pair to i18n/en.toml + de.toml whenever a
+       new original_language value shows up — see CLAUDE.md. */}}
+  {{ with .Params.original_title }}
+    {{ $langName := i18n (printf "language_name_%s" $.Params.original_language) }}
+    <p class="original-title">{{ i18n "original_title_label" (dict "Language" $langName) }} <span lang="{{ $.Params.original_language }}">{{ . }}</span></p>
+  {{ end }}
+  <p class="byline">
+    <span class="kind-badge">{{ i18n (printf "kind_%s" .Params.kind) }}</span>
+    {{ with .Params.authors }}· {{ delimit . ", " }}{{ end }}
+    {{/* venue may contain inline Markdown links (e.g. KOGIS/swisstopo) —
+         must go through markdownify, not be output as a raw string. */}}
+    {{ with .Params.venue }}· {{ . | markdownify }}{{ end }}
+    · {{ .Date.Format "2006" }}
+  </p>
+
+  {{/* Type-specific optional fields. */}}
+  {{ if or .Params.degree .Params.patent_number .Params.assignee }}
+  <dl class="fields">
+    {{ with .Params.degree }}<dt>{{ . }}</dt><dd></dd>{{ end }}
+    {{ with .Params.patent_number }}
+      <dt>{{ i18n "patent_number_label" }}</dt>
+      <dd>{{ . }}{{ with $.Params.patent_status }} ({{ i18n (printf "patent_status_%s" .) }}){{ end }}</dd>
+    {{ end }}
+    {{ with .Params.assignee }}<dt>{{ i18n "assignee_label" }}</dt><dd>{{ . }}</dd>{{ end }}
+  </dl>
+  {{ end }}
+
+  {{ with .Params.abstract }}<p>{{ . | markdownify }}</p>{{ end }}
+
+  {{/* Standard items: a short body paragraph. Lecture-series items
+       (kind == "lecture"): the body IS the content — grouped
+       semester lists and download links, already valid Markdown, no
+       special template branch needed structurally. Making that read
+       as an intentional table/accordion rather than a plain list is
+       a /design-mode CSS concern, not a templating one. */}}
+  {{ .Content }}
+
+  {{ with .Params.pdf }}
+    {{ with $.Resources.GetMatch . }}
+      <p><a href="{{ .RelPermalink }}">{{ i18n "download_pdf" }}</a></p>
+    {{ end }}
+  {{ end }}
+
+  {{ with .GetTerms "tags" }}
+    <p class="tags">
+      {{ i18n "tags_label" }}
+      {{ range . }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+    </p>
+  {{ end }}
+</article>
+{{ end }}

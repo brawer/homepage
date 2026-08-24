@@ -1,0 +1,15 @@
+{{ define "main" }}
+{{/* Body is deliberately just the greeting ("# Hello, I'm Sascha") —
+     everything else here is template-driven from site config, not
+     content, per CLAUDE.md. */}}
+{{ .Content }}
+<p class="intro">{{ .Site.Params.intro }}</p>
+{{ partial "social-icons.html" . }}
+<nav class="section-links">
+  <ul>
+    {{ range .Site.Menus.main }}
+      <li><a href="{{ .URL }}">{{ .Name }}</a></li>
+    {{ end }}
+  </ul>
+</nav>
+{{ end }}

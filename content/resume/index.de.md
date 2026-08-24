@@ -172,10 +172,11 @@ experience:
       - "Implementierte Earleys Chart-Parsing-Algorithmus mit *O*(*n*³) in Modula-2."
 education:
   - date_range: "1/1998"
+    location: "Saarbrücken, Deutschland"
     institution: "Universität des Saarlandes"
     institution_url: "https://www.uni-saarland.de/en/"
     degree: "Diplom (~Master) in Computerlinguistik, Nebenfach Informatik"
-    details: "Mit Auszeichnung bestanden. Saarbrücken, Deutschland."
+    details: "Mit Auszeichnung bestanden."
 skills:
   programming_languages: >-
     Umfangreiche Erfahrung mit Rust, C++, C, Java und Python. Kleinere

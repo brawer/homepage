@@ -24,6 +24,7 @@ abstract: >
   Empfehlungen für die Entwicklung und das Testen eigener
   ICU-Transformationen.
 image: "teaser.webp"
+pdf_preview: "pdf-preview.webp"
 pdf: "icu-transforms-talk.pdf"
 ---
 Dies war ein Vortrag, kein publiziertes Paper – Folien und eine

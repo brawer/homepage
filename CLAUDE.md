@@ -16,10 +16,16 @@ templates/CSS via `/design` mode.
 - Menu order (see `hugo.toml` weights): Résumé, Projects,
   Publications, Art.
 - Homepage (`content/_index.*.md`) is deliberately just a greeting.
-  Intro sentence, social icons, and section links are template-driven
-  from `Site.Params.intro`, `Site.Params.social`, and
-  `Site.Menus.main` respectively — not duplicated into content. Any
-  homepage template needs to pull from those, not hardcode a list.
+  Intro sentence, location, social icons, and section links are
+  template-driven from `Site.Params.intro`, `Site.Params.location`,
+  `Site.Params.social`, and `Site.Menus.main` respectively — not
+  duplicated into content. Any homepage template needs to pull from
+  those, not hardcode a list. Note `intro`/`location` are per-language
+  (set inside each `[languages.<lang>.params]` block in `hugo.toml`,
+  since they're translated text) while `social` is the shared,
+  language-independent `[params.social]` block (same URLs regardless
+  of language) — different data sources, both rendered near each
+  other on the page (`layouts/partials/social-icons.html`).
 
 ## Bilingual (EN/DE)
 
@@ -75,6 +81,14 @@ templates/CSS via `/design` mode.
 - Write these characters directly in Markdown source — don't rely on
   Goldmark's typographer extension to produce them automatically; its
   substitution table isn't per-language and won't produce guillemets.
+  **This is enforced, not just advised**: `hugo.toml` explicitly sets
+  `[markup.goldmark.extensions.typographer] disable = true`. It was
+  briefly *not* disabled (Hugo's default), and while building the
+  first real templates (2026-08-24) that turned out to have silently
+  auto-converted several straight apostrophes in English content to
+  curly ones at render time — the page looked correct, but the source
+  was wrong and nothing said so. Content must be correct at the
+  source; the build must not paper over it.
 - `hugo.toml`'s `[languages.de]` block sets `locale = "de-CH"` (not
   plain `de`) specifically to flag this convention, even though the
   language *key* (and therefore file suffixes/`de` URL prefix) stayed
@@ -83,11 +97,19 @@ templates/CSS via `/design` mode.
   config string. (This field used to be named `languageCode`; renamed
   to `locale` when fixing Hugo's deprecation warning for it — same
   value, same purpose.)
-- Fully retrofitted as of 2026-08-24: no remaining German-German
-  „low-high" quotes or stray em dashes anywhere in `content/**/*.de.md`
-  (verified by grepping for `„` and `—` across all German content —
-  zero matches). If you see either again, it's new content that
-  skipped review, not a known pre-existing gap.
+- Fully retrofitted as of 2026-08-24, verified by
+  `scripts/check_typography.py` (also wired into CI, see "Verifying
+  content structure" below) — a real YAML-aware scan of every
+  language's front matter *and* body, not a Markdown-body-only grep.
+  That distinction mattered in practice: the grep-based version of
+  this check (used until this session) only ever looked at German
+  content and only at the Markdown body, so it missed straight
+  apostrophes in **English** content (masked by the typographer
+  extension, see above) and a straight quote inside a **front-matter**
+  field (`resume`'s `experience[].highlights[]`, and a `"database"` in
+  `programming-techniques-in-cl`'s body that had been fixed in German
+  but never in English) — all now fixed. If you see a violation again,
+  it's new content that skipped review, not a known pre-existing gap.
 - See `DESIGN_BRIEF.md` for the template-side implications (don't
   hardcode straight quotes/plain hyphens in UI chrome strings).
 
@@ -132,6 +154,35 @@ string — art convention is height × width, so `height_cm` is always
 the physical top-to-bottom measurement regardless of orientation),
 `image` (WebP filename, shared across language variants).
 
+- `teaser` (optional, WebP filename) — added 2026-08-24. Grid views
+  (list/tag pages) always show a square crop of the thumbnail (see
+  DESIGN_BRIEF), auto-cropped from `image` via Hugo's smart anchor.
+  That's a good enough default for most pieces, but not guaranteed
+  for every aspect ratio/composition — `teaser` lets a piece use a
+  separate, manually-curated near-square image for the grid instead,
+  without changing what the detail page shows full-size. No current
+  art piece needs one (all three existing pieces are already square
+  paintings), but future landscape/portrait pieces might. Same
+  pattern as publications' `image`-as-teaser vs. `pdf_preview`-on-detail
+  split below — gallery-grid.html prefers `teaser` over `image` for
+  any content type that sets it, not just art.
+- **Deliberately not adding a `kind` field to art**, discussed
+  2026-08-24 ahead of Sascha adding non-oil pieces (sketches,
+  watercolors). Instead, `medium` (already required, already free
+  text like `"Oil on canvas"`) does double duty as the art equivalent
+  of publications' `kind` badge in the gallery grid — implemented the
+  same day, see `gallery-grid.html`. Unlike publications, medium
+  doesn't drive different required fields or template branches per
+  type, so a whole new controlled-vocabulary field would have existed
+  only to feed a badge that `medium` can feed directly. The existing
+  `Oil`/`Öl` tag is unaffected/unchanged — it answers a different
+  question (cross-cutting browse via `/tags/oil/`) than the per-item
+  badge does, same relationship publications already have between
+  their `kind` badge and topical tags like `Geo`/`NLP`. If a medium
+  ever needs a field oils don't (e.g. sketches wanting a "sketchbook
+  page #"), *that's* the actual signal for a real `kind` split — not
+  this.
+
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
@@ -161,15 +212,54 @@ verified against source for patents), `venue`, `abstract`.
 - `original_title` + `original_language` (BCP-47 tag) — for when the
   source document's real title differs from the page's own working
   `title` (e.g. the Japanese patent's actual title vs. its English
-  working title). This is unrelated to the EN/DE bundle mechanism —
-  both language files of the same item carry the same
-  `original_title`, since it's a fact about the source document, not
-  about site language.
+  working title, or the spatial-data book's German original vs. its
+  English working title). In practice only ONE language file of the
+  pair carries it — whichever file's own `title` differs from the
+  real source title (e.g. `modellieren-raumbezogener-daten`'s EN file
+  has it, pointing at the German original; the DE file doesn't need
+  it, since DE's own title already *is* the real title). (An earlier
+  version of this note said both files always carry it — that was
+  never actually true of any real item; corrected 2026-08-24.)
+  Rendered as `Original title ({{Language}}): {{title}}` — the
+  `{{Language}}` name shown is localized to the *site's* current
+  language via an i18n key `language_name_<code>` (e.g.
+  `language_name_ja` → "Japanese"/"Japanisch"), not the raw BCP-47
+  code and not the named language's own name for itself. Add a new
+  `language_name_<code>` pair to **both** `i18n/en.toml` and
+  `i18n/de.toml` whenever a new `original_language` value shows up in
+  content, or that page will show a literal missing-translation
+  string instead of a name. Separately, the actual title text itself
+  is wrapped in `<span lang="{{original_language}}">` — correct
+  per-span language tagging for assistive tech/browsers, independent
+  of which name is shown in the label.
 - Single-PDF items use a `pdf` field. Multi-resource items (e.g. the
   `programming-techniques-in-cl` lecture series with dozens of PDFs)
   have no `pdf` field — links go directly in the Markdown body as
   relative links to bundle resources, which Hugo resolves
   automatically; no custom front-matter schema needed for that case.
+- `pdf_preview` (optional, single-PDF items only) — filename of a
+  WebP raster of one page of the PDF, e.g. `"pdf-preview.webp"`.
+  Added 2026-08-24: the detail page shows this instead of the curated
+  `image` teaser, which exists to look good cropped in the gallery
+  grid, not to represent the document itself (see "Templates" below
+  for the exact fallback behavior). Generated manually, once, same
+  workflow as the existing `cwebp` conversion step: `pdftoppm -f N -l
+  N -r 200 -png the.pdf pageN && cwebp -q 90 -m 6 -metadata icc
+  pageN-N.png -o pdf-preview.webp` (macOS also has `qlmanage -t -s
+  2000 -o . the.pdf` built in for page 1 specifically, no install
+  needed, as a fallback if `pdftoppm`/`poppler` isn't installed).
+  **Which page (`N`) is an editorial call, not always page 1** — pick
+  whichever page best represents the document. Default assumption is
+  page 1 (the title page) unless told otherwise; `modellieren-
+  raumbezogener-daten` deliberately uses page 7 instead (Sascha: the
+  book's own chapter-by-chapter overview reads better than its title
+  page). If asked to change one, regenerate with the same two
+  commands at the requested page number — don't just assume page 1.
+  Checked into git like any other bundle resource — not regenerated
+  at build time, and there's no Hugo-native way to rasterize a PDF
+  page even if it were (Hugo's image pipeline only processes
+  already-raster formats). Same filename in both language front-matter
+  files, like `image`/`pdf`.
 
 ## Resume bundle front matter
 
@@ -192,10 +282,47 @@ rather than parsing prose.
   independent work, the 2018–2019 sabbatical), `role`, and
   `highlights` (list of strings, may contain inline Markdown links —
   render through `markdownify`, same as `venue`).
-- `education` — list with `date_range`, `institution` +
-  `institution_url`, `degree`, `details`.
-- `skills` — object with `programming_languages`, `operating_systems`,
-  `libraries` (each a prose string, may contain Markdown links).
+- `education` — list with `date_range`, `location`, `institution` +
+  `institution_url`, `degree`, `details`. `location` added
+  2026-08-24 — originally missing, so the one education entry's
+  location was jammed into the end of `details` as plain prose
+  instead ("Passed with distinction. Saarbrücken, Germany."),
+  rendering in a different position than `experience`'s dedicated
+  `location` field. Split out for consistency: `details` is now just
+  the achievement note, `location` renders in the same place
+  `experience` puts it.
+- **The dash between `date_range` and `location` (and between
+  `degree` and `details`) is `i18n "dash_separator"`, never a
+  hardcoded character** — found and fixed 2026-08-24: it had been a
+  literal em dash baked into the template, which is wrong on the
+  German page (de-CH wants en dash) and was never caught by
+  `scripts/check_typography.py`, since that only scans *content*
+  files, not template chrome. `dash_separator` is em dash (—) in
+  `i18n/en.toml`, en dash (–) in `i18n/de.toml`, both spaced on both
+  sides regardless of language — not the same as the "no surrounding
+  spaces" em-dash rule for English prose in the Typography section,
+  since this is a compact listing separator, not a sentence aside.
+- `date_range` values with a real range (e.g. `"10/2019 – 9/2021"`)
+  get the em/en dash inside them wrapped in U+202F (narrow no-break
+  space) at render time, via `replace $exp.date_range " – " "…"` —
+  same reasoning as the art page's "H × W cm" (see "Templates"
+  below), but the implementation differs: this has to be the *raw*
+  character, not the `&#x202f;` entity, since `replace`'s result is a
+  dynamic string returned from a template action, and `html/template`
+  auto-escapes such content in HTML context — a literal `&#x202f;`
+  in the string would come out double-escaped as visible text
+  (`&amp;#x202f;`), not render as anything. The raw character itself
+  isn't touched by the escaper (`<>&"'` are the only characters it
+  escapes), so it survives fine. If you need this pattern elsewhere,
+  copy that, not the entity trick — and see the note in "Templates"
+  below about `\uXXXX` escapes being unreliable to type through this
+  tool pipeline; used a small Python script to place the exact
+  codepoint reliably, verified by inspecting the actual bytes
+  afterward, not by trusting what looked right when typed.
+- `skills` — object with `programming_languages`, `operating_systems`
+  (each a prose string, may contain Markdown links). Used to also have
+  a `libraries` field; dropped 2026-08-24 (content and template both
+  updated together — don't resurrect just the template side of it).
 - `spoken_languages` — list of plain strings (e.g. `"English
   (fluent)"`).
 - Job/institution titles are translated per language where they read
@@ -294,20 +421,20 @@ whether there's a layout to render them with:
   front-matter field doesn't resolve to an actual bundle resource
   (checked via `Resources.GetMatch`, same ground-truth-over-filesystem
   reasoning as the translation check).
-- **de-CH typography and LFS integrity are also enforced in CI**,
-  added 2026-08-24: a plain grep step fails on any em dash (—) or
-  German-German low-high quote („/‚) anywhere in `content/**/*.de.md`,
-  or a straight double quote (`"`) in the Markdown body specifically
-  (front matter's `"..."` YAML delimiters are deliberately not
-  scanned — see the workflow file for why that split is needed). A
+- **Typography and LFS integrity are also enforced in CI**, added
+  2026-08-24: `scripts/check_typography.py` (a real YAML-aware
+  front-matter + body scan, both languages — see the Typography
+  section above for why this replaced an earlier grep-only,
+  German-only, body-only version that missed real violations) runs as
+  a CI step via `pip install pyyaml && python3
+  scripts/check_typography.py`; run it locally the same way. A
   separate step checks every LFS-tracked `*.webp`/`*.pdf` isn't an
-  unresolved pointer file. When testing grep-based checks locally on
-  macOS: plain `grep` here is fine (bracket character classes like
-  `[—„‚]` are POSIX, no `-P`/`-E` needed) — but note this environment
-  aliases the `grep` command to `ugrep`, which is more permissive than
-  either BSD grep (macOS default) or GNU grep (Ubuntu, what CI
-  actually runs); if you need to verify true portability, test with
-  `/usr/bin/grep` explicitly, not just an interactive shell.
+  unresolved pointer file. When testing *shell/grep*-based CI checks
+  locally on macOS specifically: note this environment aliases the
+  `grep` command to `ugrep`, which is more permissive than either BSD
+  grep (macOS default) or GNU grep (Ubuntu, what CI actually runs);
+  test with `/usr/bin/grep` explicitly if you need to verify true
+  portability of a grep-based check.
 - **Still not covered by CI** (deliberately, filed as follow-up
   issues rather than built now): internal Markdown link resolution
   (hand-written per-language links like `/tags/memes/` vs.
@@ -317,25 +444,151 @@ whether there's a layout to render them with:
   anywhere; currently caught by review, which won't scale once
   `content/projects/` has entries and the content set grows).
 
+## Templates (bare-bones, pre-/design)
+
+A first functional template pass exists as of 2026-08-24 — deliberately
+minimal/near-zero CSS (`static/css/main.css`), built to prove the
+content/data model actually renders correctly end-to-end (including
+the specific things most likely to have hidden problems:
+`markdownify` fields, the lecture-series body-only content, one
+shared grid across three content types) *before* either adding a lot
+more content or committing to real visual design. Real visual design
+is still entirely `/design` mode's job — nothing here should be taken
+as a design decision, just a structural one.
+
+- `layouts/_default/baseof.html` + `head.html`/`nav.html`/
+  `language-switcher.html`/`social-icons.html`/`footer.html` partials
+  — the shared page shell. Nav, location, and social icons are
+  template-driven from `Site.Menus.main`/`Site.Params.location`/
+  `Site.Params.social`, per the Homepage bullet above (`social-icons.html`
+  despite its name renders all three of these, not just social links
+  — see its own header comment). The language switcher hides itself
+  via `.IsTranslated` rather
+  than ever linking to a 404 — belt-and-suspenders alongside the CI
+  bilingual-coverage check, not a replacement for it (CI only guards
+  `main`; a page can briefly lack a translation in a local working
+  tree while it's being authored, and the template shouldn't assume
+  otherwise).
+- `layouts/partials/gallery-grid.html` — the one shared grid component
+  for Art/Publications/Projects list pages *and* tag pages, per
+  DESIGN_BRIEF. Used by `layouts/_default/list.html` and
+  `layouts/tags/term.html`, which are otherwise nearly identical
+  (list pages differ from tag pages only in where `.Pages` comes
+  from — Hugo handles that automatically).
+  **The term.html file MUST live at `layouts/tags/term.html`, not
+  `layouts/_default/term.html`** — found and fixed 2026-08-24. Every
+  tag page (kind `term`) was silently rendering with
+  `_default/taxonomy.html`'s content (the bare "term (count)" list
+  meant only for `/tags/` itself) instead of the actual gallery grid,
+  even though `.Kind` correctly reported `"term"` and a
+  `_default/term.html` file existed. Confirmed empirically (not just
+  from docs, which describe newer Hugo versions supposedly *not*
+  cross-matching `taxonomy.html` for `term` pages — contradicted by
+  what this Hugo v0.165.0 build actually does): `taxonomy.html` won
+  regardless of whether `_default/term.html` existed at all, for
+  every term — both ones with a backing `_index.md` (Memes) and
+  purely auto-generated ones (Geo). Moving the file to the
+  section-specific path `layouts/tags/term.html` fixed it
+  immediately; `_default/taxonomy.html` still correctly serves `/tags/`
+  itself unchanged. If you ever add a second taxonomy, verify its term
+  pages the same way (`hugo build` + inspect actual rendered content,
+  not just that the build didn't warn) rather than trusting
+  `_default/term.html` to be reachable.
+- Per-section detail templates: `layouts/art/single.html`,
+  `layouts/publications/single.html`, `layouts/resume/single.html`,
+  `layouts/projects/single.html` (untested against real content —
+  `content/projects/` is still empty — but matches the documented
+  schema). The publications template does **not** special-case
+  `kind == "lecture"` structurally: `programming-techniques-in-cl`'s
+  body is already valid Markdown (headings, lists, a definition list)
+  with no `pdf` field, so plain `.Content` renders it correctly as-is.
+  Making it *look* like a grouped table/accordion rather than a plain
+  list remains a CSS/`/design`-mode concern, per DESIGN_BRIEF — it was
+  never actually a templating problem, just looked like one before
+  anyone had built and looked at it.
+- Publications detail page's hero image: `pdf_preview` if present, else
+  falls back to the `image` teaser (added 2026-08-24, so the
+  lecture-series item — no `pdf_preview`, no single PDF to preview —
+  keeps showing its teaser unchanged). The gallery grid always uses
+  `image` regardless — the two are deliberately independent fields,
+  not a "detail page mode" switch on one field, so they can vary
+  independently. Kept as its own isolated block in the template (not
+  folded into general image-handling logic) specifically so an inline
+  PDF embed/viewer can be added later as a sibling to it, near the
+  "Download PDF" link, without restructuring this.
+- `i18n/en.toml` + `i18n/de.toml` — every piece of UI chrome text
+  (kind badges, "Download PDF", resume section headings, etc.) is a
+  key here, translated for both languages, per the fully-bilingual
+  policy applying to chrome as much as content.
+- Verified concretely, not just "the build didn't error": inspected
+  actual rendered HTML output for the home page, an art detail page,
+  a standard publication, the patent (kind-specific fields), the
+  lecture-series item (body-only rendering), the resume (nested
+  `experience`/`education`/`skills`, `markdownify` on `highlights`),
+  a tag page, and the language switcher on a translated page.
+- The "H × W cm" art dimension string uses U+202F (narrow no-break
+  space) around the × and before "cm" — non-breaking *and* narrower
+  than a plain space (the correct typographic spacing here, not just
+  a line-break fix). Written as the numeric HTML entity `&#x202F;`
+  (hex form — matches the U+202F name directly, clearer than the
+  decimal `&#8239;` equivalent) in template source text, deliberately
+  *outside* any `{{ }}` action —
+  Go's `html/template` auto-escaper would mangle it (double-escape the
+  `&`) if it were inside a string an action returns. If you need this
+  elsewhere, copy that pattern, not a `{{ printf "... ..." }}`
+  approach — writing `\uXXXX` inside a Go template action's string
+  literal is fragile in an AI-assisted editing workflow specifically:
+  it reads as a JSON/text unicode escape to tooling upstream of the
+  file write, not as literal source text, and silently resolves to
+  the raw (nearly invisible) character instead of staying as legible
+  escape text. Verified this exact failure mode while building this.
+
 ## Known open items (as of last content session)
 
-- No Hugo *page* layout templates exist yet (home/list/detail HTML) —
-  that's the immediate next step, via `/design` mode. A `hugo build`
-  right now won't produce readable HTML regardless of content
-  completeness. Two reusable image partials do already exist, see
-  "Images" above — that's deliberately ahead of the rest of the
-  template work since it was worth derisking early (Hugo's AVIF
-  support, srcset behavior) rather than discovering a problem there
-  after `/design` mode has built a lot on top of it.
-- `content/resume/` is ported and now includes the cradle.bio (2025)
-  stint, but still has no icons/timeline layout — see the "Resume
-  bundle front matter" section above.
+- `/design` mode: real visual design (color, type scale, spacing,
+  the lecture-series list treatment, resume icons/timeline, deciding
+  actual grid aspect ratio/column counts beyond the current bare
+  hard-coded 3-column square grid) — everything in the "Templates"
+  section above is structural/functional only.
+- **Gallery grid thumbnails don't render square in Safari/Chrome**,
+  found 2026-08-24. Confirmed by pixel-measuring a real screenshot:
+  613×799px (ratio 0.77), not 613×613 — real, substantial, not a
+  rounding thing. The `display: contents` fix in
+  `static/css/main.css` (see git history) did *not* resolve it, and
+  further remote debugging wasn't productive without eyes on the
+  actual DevTools computed styles. Deliberately **not** chased further
+  now — the parts that mattered for this session's derisking goal are
+  confirmed fine (image files are genuinely square at the file level;
+  `<picture>`/`<img>`/`srcset` markup is standard and correct; grid
+  columns compute to equal widths). This is purely a CSS box-sizing
+  question, not evidence of a structural/data problem, so it's
+  deferred to `/design` mode rather than blocking further work. Start
+  there with real DevTools access (computed styles on `.gallery-grid
+  img`), not more guessing from screenshots.
+  **Detail-page images (`picture.html`, e.g. any publication's hero
+  image) are not affected and need no fix** — confirmed 2026-08-24.
+  The bug is specifically about *forcing* an artificial 1:1 ratio via
+  CSS `aspect-ratio` on `<picture>` (a non-replaced element, where
+  that property is unreliable) to get square crops from non-square
+  sources — that's what `picture-thumbnail.html`/`.gallery-grid` do.
+  `picture.html` never does this: it shows images at their natural
+  shape (`.detail-image` is just `max-width:100%; height:auto`), and
+  relies on the `<img>`'s real `width`/`height` HTML attributes (set
+  from the actual resized dimensions) for layout-shift prevention —
+  which is standard, well-supported browser behavior (implicit
+  `aspect-ratio` derived from those attributes) requiring no CSS
+  `aspect-ratio` override at all. Different mechanism, not hit by the
+  same failure mode.
+- `content/resume/` still has no icons/timeline layout — see the
+  "Resume bundle front matter" section above.
 - Section list pages (`content/art/_index.*.md`,
   `content/publications/_index.*.md`,
   `content/projects/_index.*.md`) don't exist yet. Optional —
   Hugo auto-generates a bare list page without them — but worth
   adding for section-level intro copy, same pattern as the tag pages.
-- `content/projects/` has zero entries.
-- Missing German translation for `content/publications/JP6511221B2/`
-  — see Bilingual section above for why this now matters
-  (fully-bilingual is policy, not a nice-to-have).
+  (List-page `<h1>` titles are already correctly translated without
+  these, by borrowing the label from `hugo.toml`'s nav menu — see
+  `layouts/_default/list.html` — so that's not a reason to add them;
+  section-level intro copy is.)
+- `content/projects/` has zero entries — `layouts/projects/single.html`
+  exists but is unverified against real content.

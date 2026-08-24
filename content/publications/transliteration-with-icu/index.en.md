@@ -20,6 +20,7 @@ abstract: >
   and de facto standards and guidelines, and give recommendations for
   developing and testing custom ICU transforms.
 image: "teaser.webp"
+pdf_preview: "pdf-preview.webp"
 pdf: "icu-transforms-talk.pdf"
 ---
 This was a talk rather than a published paper — slides and a recording

@@ -8,6 +8,23 @@ bilingual (English/German). Content already exists in the repo as Markdown +
 images/PDFs; this brief is for designing the CSS/templates only — the content
 model is fixed.
 
+**Status as of 2026-08-24**: a bare-bones, near-zero-CSS template pass
+already exists (`layouts/`, `static/css/main.css`) — home, list/detail
+pages for each section, tag pages, resume, the shared gallery grid,
+the language switcher, responsive `<picture>` images. It proves the
+data model renders correctly but makes no real visual-design
+decisions; that's still entirely this brief's job. See CLAUDE.md's
+"Templates" section for exactly what exists and what was verified.
+
+**Known rough edge to pick up here**: gallery grid thumbnails don't
+actually render square in Safari/Chrome, despite the underlying image
+files genuinely being square (confirmed at the file level) and a
+`display: contents` fix attempt in `main.css` (see git history)
+already tried. Pixel-measured from a real screenshot: 613×799px, not
+613×613. Not chased further this session — needs real DevTools access
+on the actual computed styles, which is exactly a `/design`-mode
+activity. See CLAUDE.md's Known open items for the full note.
+
 ## Site map & page types
 
 | URL pattern              | Page type          | Purpose                                                                 |
@@ -171,7 +188,7 @@ list): `title`, `experience` (list of `{date_range, location,
 organization?, organization_url?, role, highlights[]}` — `organization`
 omitted for entries with no employer), `education` (list of
 `{date_range, institution, institution_url, degree, details}`),
-`skills` (`{programming_languages, operating_systems, libraries}`,
+`skills` (`{programming_languages, operating_systems}`,
 each a prose string), `spoken_languages` (list of strings). `venue`-
 style fields (`highlights`, `skills.*`) may contain inline Markdown
 links — render through `markdownify`. See `CLAUDE.md` for full field

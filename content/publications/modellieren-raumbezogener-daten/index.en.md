@@ -18,6 +18,7 @@ abstract: >
   software and data transfer. A closing chapter summarizes the key
   points for authorities and management.
 image: "teaser.webp"
+pdf_preview: "pdf-preview.webp"
 pdf: "Modellieren_raumbezogener_Daten.pdf"
 ---
 Co-authored with Joseph Dorfschmid, commissioned by KOGIS/swisstopo. The

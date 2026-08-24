@@ -1,0 +1,9 @@
+{{/* The bare /tags/ index — list of every tag term used on the site. */}}
+{{ define "main" }}
+<h1>{{ .Title }}</h1>
+<ul>
+  {{ range .Pages }}
+    <li><a href="{{ .RelPermalink }}">{{ .Title }}</a> ({{ len .Pages }})</li>
+  {{ end }}
+</ul>
+{{ end }}

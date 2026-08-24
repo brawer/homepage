@@ -1,0 +1,29 @@
+{{ define "main" }}
+<article>
+  {{ with .Resources.GetMatch .Params.image }}
+    <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
+  {{ end }}
+  <h1>{{ .Title }}</h1>
+  {{/* height_cm/width_cm are two numeric fields, not one preformatted
+       string -- joined here as "H x W cm" per CLAUDE.md/DESIGN_BRIEF.
+       &#x202F; is U+202F NARROW NO-BREAK SPACE, around the
+       multiplication sign and before "cm": non-breaking per the
+       Unicode line-breaking spec (UAX #14, class GL) *and* visibly
+       narrower than a plain space -- correct typographic spacing
+       here, not just a line-break fix. Written as a numeric HTML
+       entity, in template source text outside any {{ }} action (Go's
+       html/template auto-escaper would mangle it if it were inside
+       an action's returned string), so it stays as plain, legible
+       ASCII in the file rather than a near-invisible raw character. */}}
+  <p class="caption">
+    {{ .Params.medium }} &middot; {{ .Params.height_cm }}&#x202F;&times;&#x202F;{{ .Params.width_cm }}&#x202F;cm &middot; {{ .Date.Format "2006" }}
+  </p>
+  {{ .Content }}
+  {{ with .GetTerms "tags" }}
+    <p class="tags">
+      {{ i18n "tags_label" }}
+      {{ range . }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+    </p>
+  {{ end }}
+</article>
+{{ end }}

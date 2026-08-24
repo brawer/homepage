@@ -17,6 +17,7 @@ uglyURLs = false
     weight = 1
 
     [languages.en.params]
+      location = "Bern, Switzerland"
       intro = """\
         I’ve been curious about how things work for as long as I can remember, \
 	and that curiosity shows up everywhere — in the open-source code I write, \
@@ -48,6 +49,7 @@ uglyURLs = false
     weight = 2
 
     [languages.de.params]
+      location = "Bern, Schweiz"
       intro = """\
         Solange ich zurückdenken kann, bin ich neugierig darauf, wie \
         Dinge funktionieren – und diese Neugier zeigt sich überall: im \
@@ -98,6 +100,16 @@ uglyURLs = false
   [markup.goldmark]
     [markup.goldmark.renderer]
       unsafe = false
+    # Disabled deliberately (2026-08-24): this extension auto-converts
+    # straight quotes/apostrophes to curly ones, which silently masked
+    # three straight apostrophes in English content that had skipped
+    # review (CLAUDE.md's typography policy already said not to rely
+    # on this, for a different reason -- it can't produce guillemets --
+    # but discovered this session it was also hiding real violations
+    # rather than catching them). With it off, a missed straight quote
+    # now renders visibly wrong instead of silently looking fine.
+    [markup.goldmark.extensions.typographer]
+      disable = true
 
 [minify]
   disableXML = true

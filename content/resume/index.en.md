@@ -16,7 +16,7 @@ experience:
         From March to May 2025, filled in on short notice at
         [cradle.bio](https://cradle.bio/), a startup founded by former
         Google colleagues, after their only infrastructure person
-        went on leave and the two backups lined up to cover weren't
+        went on leave and the two backups lined up to cover weren’t
         available for months either — was up and running within two
         days, kept the systems running, brought machine costs down,
         and wrote scripts to automate parts of their lab workflows.
@@ -166,10 +166,11 @@ experience:
       - "Implemented Earley’s *O*(*n*³) chart parsing algorithm in Modula-2."
 education:
   - date_range: "1/1998"
+    location: "Saarbrücken, Germany"
     institution: "Saarland University"
     institution_url: "https://www.uni-saarland.de/en/"
     degree: "Diploma (~Master) in Computational Linguistics, Minor: Computer Science"
-    details: "Passed with distinction. Saarbrücken, Germany."
+    details: "Passed with distinction."
 skills:
   programming_languages: >-
     Extensive experience in Rust, C++, C, Java, and Python. Completed

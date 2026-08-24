@@ -1,0 +1,79 @@
+# Chrome-level separator dash for joining two short facts (e.g. a
+# date range and a location) -- de-CH uses en dash, English em dash,
+# both spaced; not the "no surrounding spaces" em-dash rule from
+# CLAUDE.md's Typography section, since that's specifically about
+# prose asides, not this compact listing style. Must not be hardcoded
+# into any template -- see CLAUDE.md's Typography section for why
+# (found a real instance where it was, on the resume page).
+[dash_separator]
+other = "—"
+
+[kind_talk]
+other = "Talk"
+[kind_paper]
+other = "Paper"
+[kind_patent]
+other = "Patent"
+[kind_book]
+other = "Book"
+[kind_lecture]
+other = "Lecture Series"
+
+[download_pdf]
+other = "Download PDF"
+
+[original_title_label]
+other = "Original title ({{.Language}}):"
+
+# language_name_<BCP-47 code>: add a pair here and in i18n/de.toml
+# whenever a new original_language value appears in content. Used to
+# localize the language name shown in original_title_label, per the
+# SITE's current language -- not the code itself, and not the named
+# language's own name for itself.
+[language_name_de]
+other = "German"
+[language_name_en]
+other = "English"
+[language_name_ja]
+other = "Japanese"
+
+[tags_label]
+other = "Tags:"
+
+[assignee_label]
+other = "Assigned to:"
+
+[patent_number_label]
+other = "Patent number:"
+
+[patent_status_granted]
+other = "Granted"
+[patent_status_pending]
+other = "Pending"
+[patent_status_filed]
+other = "Filed"
+
+[open_source_label]
+other = "Open Source"
+
+[resume_experience]
+other = "Experience"
+[resume_education]
+other = "Education"
+[resume_skills]
+other = "Skills"
+[resume_programming_languages]
+other = "Programming Languages"
+[resume_operating_systems]
+other = "Operating Systems"
+[resume_spoken_languages]
+other = "Languages"
+
+[gallery_empty]
+other = "Nothing here yet — check back soon."
+
+[language_switcher_label]
+other = "Language:"
+
+[footer_copyright]
+other = "© {{.Year}} Sascha Brawer"
