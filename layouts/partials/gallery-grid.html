@@ -9,6 +9,19 @@
 
   Params (dict):
     pages (required) — a Pages collection to render as a grid.
+
+  Thumbnail source: prefers the optional `teaser` field over `image`
+  if present. Every current teaser/image is already square or close
+  to it, so most items never need `teaser` — it exists for when the
+  smart-crop autocrop of a wide/tall `image` doesn't land well (found
+  one real case: modellieren-raumbezogener-daten's original 1690x794
+  teaser cropped to 400x400 lost readable text at both edges; fixed
+  there by replacing the source teaser image itself with a manually
+  recentered square crop, so no `teaser` override was actually needed
+  for that case — but the field exists for cases where the detail
+  page and the grid genuinely want different source images, e.g. an
+  art piece whose full/uncropped `image` doesn't have a good
+  square-ish region to autocrop at all).
 */}}
 {{ $pages := .pages }}
 {{ if eq (len $pages) 0 }}
@@ -18,7 +31,11 @@
   {{ range $pages }}
     {{ $page := . }}
     {{ $img := "" }}
-    {{ if $page.Params.image }}{{ $img = $page.Resources.GetMatch $page.Params.image }}{{ end }}
+    {{ if $page.Params.teaser }}
+      {{ $img = $page.Resources.GetMatch $page.Params.teaser }}
+    {{ else if $page.Params.image }}
+      {{ $img = $page.Resources.GetMatch $page.Params.image }}
+    {{ end }}
     <a class="gallery-item" href="{{ $page.RelPermalink }}">
       {{ with $img }}{{ partial "picture-thumbnail.html" (dict "image" . "alt" $page.Title) }}{{ end }}
       {{ with $page.Params.kind }}<span class="kind-badge">{{ i18n (printf "kind_%s" .) }}</span>{{ end }}

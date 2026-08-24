@@ -148,6 +148,19 @@ string — art convention is height × width, so `height_cm` is always
 the physical top-to-bottom measurement regardless of orientation),
 `image` (WebP filename, shared across language variants).
 
+- `teaser` (optional, WebP filename) — added 2026-08-24. Grid views
+  (list/tag pages) always show a square crop of the thumbnail (see
+  DESIGN_BRIEF), auto-cropped from `image` via Hugo's smart anchor.
+  That's a good enough default for most pieces, but not guaranteed
+  for every aspect ratio/composition — `teaser` lets a piece use a
+  separate, manually-curated near-square image for the grid instead,
+  without changing what the detail page shows full-size. No current
+  art piece needs one (all three existing pieces are already square
+  paintings), but future landscape/portrait pieces might. Same
+  pattern as publications' `image`-as-teaser vs. `pdf_preview`-on-detail
+  split below — gallery-grid.html prefers `teaser` over `image` for
+  any content type that sets it, not just art.
+
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
@@ -375,9 +388,28 @@ as a design decision, just a structural one.
 - `layouts/partials/gallery-grid.html` — the one shared grid component
   for Art/Publications/Projects list pages *and* tag pages, per
   DESIGN_BRIEF. Used by `layouts/_default/list.html` and
-  `layouts/_default/term.html`, which are otherwise nearly identical
+  `layouts/tags/term.html`, which are otherwise nearly identical
   (list pages differ from tag pages only in where `.Pages` comes
   from — Hugo handles that automatically).
+  **The term.html file MUST live at `layouts/tags/term.html`, not
+  `layouts/_default/term.html`** — found and fixed 2026-08-24. Every
+  tag page (kind `term`) was silently rendering with
+  `_default/taxonomy.html`'s content (the bare "term (count)" list
+  meant only for `/tags/` itself) instead of the actual gallery grid,
+  even though `.Kind` correctly reported `"term"` and a
+  `_default/term.html` file existed. Confirmed empirically (not just
+  from docs, which describe newer Hugo versions supposedly *not*
+  cross-matching `taxonomy.html` for `term` pages — contradicted by
+  what this Hugo v0.165.0 build actually does): `taxonomy.html` won
+  regardless of whether `_default/term.html` existed at all, for
+  every term — both ones with a backing `_index.md` (Memes) and
+  purely auto-generated ones (Geo). Moving the file to the
+  section-specific path `layouts/tags/term.html` fixed it
+  immediately; `_default/taxonomy.html` still correctly serves `/tags/`
+  itself unchanged. If you ever add a second taxonomy, verify its term
+  pages the same way (`hugo build` + inspect actual rendered content,
+  not just that the build didn't warn) rather than trusting
+  `_default/term.html` to be reachable.
 - Per-section detail templates: `layouts/art/single.html`,
   `layouts/publications/single.html`, `layouts/resume/single.html`,
   `layouts/projects/single.html` (untested against real content —
