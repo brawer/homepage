@@ -20,12 +20,12 @@ other = "Original title ({{.Language}}):"
 # localize the language name shown in original_title_label, per the
 # SITE's current language -- not the code itself, and not the named
 # language's own name for itself.
-[language_name_ja]
-other = "Japanese"
 [language_name_de]
 other = "German"
 [language_name_en]
 other = "English"
+[language_name_ja]
+other = "Japanese"
 
 [tags_label]
 other = "Tags:"
