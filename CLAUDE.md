@@ -57,7 +57,7 @@ templates/CSS via `/design` mode.
   against `hugo list all`'s page inventory (see "Verifying content
   structure" below) to confirm Hugo actually registers both as pages,
   not just that both exist on disk. Enforced automatically by
-  `.github/workflows/check-bilingual-content.yml` on every push/PR —
+  `.github/workflows/check-content.yml` on every push/PR —
   fails if any page has zero translations (via Hugo's own
   `.Translations`, not a filename-matching reimplementation) or if
   any file under `content/` is a symlink.
@@ -261,7 +261,7 @@ whether there's a layout to render them with:
 - `hugo build` always writes `/public/` and `/resources/` and creates
   `.hugo_build.lock` — all three are gitignored, don't add them.
 - **Bilingual coverage is enforced in CI**, not just manually: see
-  `.github/workflows/check-bilingual-content.yml`, added 2026-08-24.
+  `.github/workflows/check-content.yml`, added 2026-08-24.
   It rejects any symlink under `content/`, then builds the site with
   a throwaway template that ranges over every page on every language
   site and fails via `errorf` if any page has zero translations —
@@ -274,6 +274,28 @@ whether there's a layout to render them with:
   front-matter field doesn't resolve to an actual bundle resource
   (checked via `Resources.GetMatch`, same ground-truth-over-filesystem
   reasoning as the translation check).
+- **de-CH typography and LFS integrity are also enforced in CI**,
+  added 2026-08-24: a plain grep step fails on any em dash (—) or
+  German-German low-high quote („/‚) anywhere in `content/**/*.de.md`,
+  or a straight double quote (`"`) in the Markdown body specifically
+  (front matter's `"..."` YAML delimiters are deliberately not
+  scanned — see the workflow file for why that split is needed). A
+  separate step checks every LFS-tracked `*.webp`/`*.pdf` isn't an
+  unresolved pointer file. When testing grep-based checks locally on
+  macOS: plain `grep` here is fine (bracket character classes like
+  `[—„‚]` are POSIX, no `-P`/`-E` needed) — but note this environment
+  aliases the `grep` command to `ugrep`, which is more permissive than
+  either BSD grep (macOS default) or GNU grep (Ubuntu, what CI
+  actually runs); if you need to verify true portability, test with
+  `/usr/bin/grep` explicitly, not just an interactive shell.
+- **Still not covered by CI** (deliberately, filed as follow-up
+  issues rather than built now): internal Markdown link resolution
+  (hand-written per-language links like `/tags/memes/` vs.
+  `/de/tags/memes/` aren't validated against real page URLs — Hugo
+  doesn't check plain Markdown links itself), and front-matter schema
+  validation (required fields per `kind`/section aren't enforced
+  anywhere; currently caught by review, which won't scale once
+  `content/projects/` has entries and the content set grows).
 
 ## Known open items (as of last content session)
 
