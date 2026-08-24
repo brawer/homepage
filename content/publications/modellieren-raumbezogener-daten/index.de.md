@@ -17,6 +17,7 @@ abstract: >
   und Datentransfer. Ein abschliessendes Kapitel fasst die wichtigsten
   Punkte für Behörden und Management zusammen.
 image: "teaser.webp"
+pdf_preview: "pdf-preview.webp"
 pdf: "Modellieren_raumbezogener_Daten.pdf"
 ---
 Das gemeinsam mit Joseph Dorfschmid verfasste Lehrbuch richtet sich an

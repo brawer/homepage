@@ -186,6 +186,21 @@ verified against source for patents), `venue`, `abstract`.
   have no `pdf` field — links go directly in the Markdown body as
   relative links to bundle resources, which Hugo resolves
   automatically; no custom front-matter schema needed for that case.
+- `pdf_preview` (optional, single-PDF items only) — filename of a
+  WebP raster of the PDF's first page, e.g. `"pdf-preview.webp"`.
+  Added 2026-08-24: the detail page shows this instead of the curated
+  `image` teaser, which exists to look good cropped in the gallery
+  grid, not to represent the document itself (see "Templates" below
+  for the exact fallback behavior). Generated manually, once, same
+  workflow as the existing `cwebp` conversion step: `pdftoppm -f 1 -l
+  1 -r 200 -png the.pdf page1 && cwebp -q 90 -m 6 -metadata icc
+  page1-1.png -o pdf-preview.webp` (macOS also has `qlmanage -t -s
+  2000 -o . the.pdf` built in, no install needed, as a fallback if
+  `pdftoppm`/`poppler` isn't installed). Checked into git like any
+  other bundle resource — not regenerated at build time, and there's
+  no Hugo-native way to rasterize a PDF page even if it were (Hugo's
+  image pipeline only processes already-raster formats). Same
+  filename in both language front-matter files, like `image`/`pdf`.
 
 ## Resume bundle front matter
 
@@ -373,6 +388,16 @@ as a design decision, just a structural one.
   list remains a CSS/`/design`-mode concern, per DESIGN_BRIEF — it was
   never actually a templating problem, just looked like one before
   anyone had built and looked at it.
+- Publications detail page's hero image: `pdf_preview` if present, else
+  falls back to the `image` teaser (added 2026-08-24, so the
+  lecture-series item — no `pdf_preview`, no single PDF to preview —
+  keeps showing its teaser unchanged). The gallery grid always uses
+  `image` regardless — the two are deliberately independent fields,
+  not a "detail page mode" switch on one field, so they can vary
+  independently. Kept as its own isolated block in the template (not
+  folded into general image-handling logic) specifically so an inline
+  PDF embed/viewer can be added later as a sibling to it, near the
+  "Download PDF" link, without restructuring this.
 - `i18n/en.toml` + `i18n/de.toml` — every piece of UI chrome text
   (kind badges, "Download PDF", resume section headings, etc.) is a
   key here, translated for both languages, per the fully-bilingual

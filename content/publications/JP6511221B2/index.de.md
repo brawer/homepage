@@ -23,6 +23,7 @@ abstract: >
   wie solche Namen üblicherweise von Personen wiedergegeben werden, die
   die Zielsprache fliessend beherrschen.
 image: "teaser.webp"
+pdf_preview: "pdf-preview.webp"
 pdf: "JP6511221B2.pdf"
 ---
 Japanisches Patent für eine Technologie zur Umwandlung von Ortsnamen und

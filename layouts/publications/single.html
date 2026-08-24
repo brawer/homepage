@@ -1,9 +1,23 @@
 {{ define "main" }}
 <article>
-  {{ with .Params.image }}
-    {{ with $.Resources.GetMatch . }}
-      <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
-    {{ end }}
+  {{/* On the detail page, prefer a page-1 preview of the actual PDF
+       over the curated teaser (which exists to look good cropped in
+       the gallery grid, not to represent the document itself) — see
+       CLAUDE.md's Publications bundle front matter section. Falls
+       back to the teaser for items with no pdf_preview (e.g. the
+       lecture-series item, which has no single PDF to preview).
+       Later: an inline PDF embed/toggle could go here too, as an
+       alternative or addition to the preview — keep that as its own
+       block near this one and the "Download PDF" link below, rather
+       than folding it into this image logic. */}}
+  {{ $heroImage := "" }}
+  {{ if .Params.pdf_preview }}
+    {{ $heroImage = .Resources.GetMatch .Params.pdf_preview }}
+  {{ else if .Params.image }}
+    {{ $heroImage = .Resources.GetMatch .Params.image }}
+  {{ end }}
+  {{ with $heroImage }}
+    <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
   {{ end }}
   <h1>{{ .Title }}</h1>
   {{ with .Params.original_title }}

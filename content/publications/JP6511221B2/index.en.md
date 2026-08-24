@@ -22,6 +22,7 @@ abstract: >
   names are conventionally rendered by fluent speakers of the target
   language.
 image: "teaser.webp"
+pdf_preview: "pdf-preview.webp"
 pdf: "JP6511221B2.pdf"
 ---
 Japanese patent covering technology for converting place names and
