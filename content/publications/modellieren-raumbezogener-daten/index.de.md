@@ -5,7 +5,7 @@ publishDate: 2026-08-23
 tags: ["Geo"]
 kind: "book"
 authors: ["Joseph Dorfschmid", "Sascha Brawer"]
-venue: "KOGIS/COSIG, Swisstopo"
+venue: "[KOGIS](https://www.swisstopo.admin.ch/de/koordination-geo-information-und-services-kogis), [swisstopo](https://www.swisstopo.admin.ch/de)"
 abstract: >
   Eine allgemeinverständliche Einführung in die Modellierung
   raumbezogener Daten mit UML und INTERLIS, anhand der erfundenen
@@ -19,9 +19,7 @@ abstract: >
 image: "teaser.webp"
 pdf: "Modellieren_raumbezogener_Daten.pdf"
 ---
-Gemeinsam mit Joseph Dorfschmid verfasst, im Auftrag von
-KOGIS/swisstopo.  Das gemeinsam mit Joseph Dorfschmit verfasse
-Lehrbuch richtet sich an Neulinge ebenso wie an Fachleute und wechselt
-bewusst zwischen der erzählten Geschichte von Ilistal und den
-theoretischen Grundlagen, je nach Vorwissen und Interesse der
-Leserschaft.
+Das gemeinsam mit Joseph Dorfschmid verfasste Lehrbuch richtet sich an
+Neulinge ebenso wie an Fachleute und wechselt bewusst zwischen der
+erzählten Geschichte von Ilistal und den theoretischen Grundlagen, je
+nach Vorwissen und Interesse der Leserschaft.

@@ -129,7 +129,9 @@ variants), body = descriptive paragraph.
 **Publications bundle** (`content/publications/<slug>/index.<lang>.md`):
 `title`, `date`, `publishDate`, `tags`, `kind` (`talk` / `paper` / `patent`
 / `book` / `lecture` — lowercase, needs an i18n-translated display label,
-see `CLAUDE.md`), `authors` (list), `venue`, `abstract`, `image` (WebP
+see `CLAUDE.md`), `authors` (list), `venue` (may contain inline
+Markdown links — render through `markdownify`, don't output as a raw
+string), `abstract`, `image` (WebP
 teaser, curated per item — no automatic source the way art has). Optional:
 `degree` (thesis only), `patent_number` + `patent_status` (patent only),
 `original_title` + `original_language` (any kind, when applicable), `pdf`
