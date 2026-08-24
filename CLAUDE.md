@@ -130,7 +130,7 @@ templates/CSS via `/design` mode.
   that are already `.Translations` of each other, with no
   `content/tags/google/` files needed.
 - Some tags are translated (`Animals`/`Tiere`, `Oil`/`Öl`,
-  `Open Source`/`Quelloffen`) — each pair lives at
+  `Open Source`/`Quelloffen`, `People`/`Menschen`) — each pair lives at
   `content/tags/<term>/_index.<lang>.md` in *different* folders, and
   each page MUST carry a matching `translationKey` (e.g.
   `tag-animals`) so Hugo knows they're the same concept — unlike the
