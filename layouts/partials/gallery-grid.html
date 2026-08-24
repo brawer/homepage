@@ -4,8 +4,13 @@
   content sections now share one gallery-style grid... a tag page
   doesn't need per-section styling logic even when it mixes items
   from different sections." Renders whatever mix of pages it's given
-  uniformly — a kind badge is the only thing that varies (publications
-  only).
+  uniformly — a small badge is the only thing that varies: publications
+  show their translated `kind` (Talk/Paper/...), art shows `medium`
+  verbatim (already per-language free text like "Oil on canvas", not
+  a controlled vocabulary, so no i18n lookup for it — see CLAUDE.md's
+  Art bundle front matter section for why this isn't a `kind` field).
+  Neither is shown for pages with neither field (e.g. projects, for
+  now).
 
   Params (dict):
     pages (required) — a Pages collection to render as a grid.
@@ -38,7 +43,11 @@
     {{ end }}
     <a class="gallery-item" href="{{ $page.RelPermalink }}">
       {{ with $img }}{{ partial "picture-thumbnail.html" (dict "image" . "alt" $page.Title) }}{{ end }}
-      {{ with $page.Params.kind }}<span class="kind-badge">{{ i18n (printf "kind_%s" .) }}</span>{{ end }}
+      {{ if $page.Params.kind }}
+        <span class="kind-badge">{{ i18n (printf "kind_%s" $page.Params.kind) }}</span>
+      {{ else if $page.Params.medium }}
+        <span class="kind-badge">{{ $page.Params.medium }}</span>
+      {{ end }}
       <h3>{{ $page.Title }}</h3>
     </a>
   {{ end }}

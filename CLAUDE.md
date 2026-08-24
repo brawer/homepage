@@ -166,6 +166,22 @@ the physical top-to-bottom measurement regardless of orientation),
   pattern as publications' `image`-as-teaser vs. `pdf_preview`-on-detail
   split below — gallery-grid.html prefers `teaser` over `image` for
   any content type that sets it, not just art.
+- **Deliberately not adding a `kind` field to art**, discussed
+  2026-08-24 ahead of Sascha adding non-oil pieces (sketches,
+  watercolors). Instead, `medium` (already required, already free
+  text like `"Oil on canvas"`) does double duty as the art equivalent
+  of publications' `kind` badge in the gallery grid — implemented the
+  same day, see `gallery-grid.html`. Unlike publications, medium
+  doesn't drive different required fields or template branches per
+  type, so a whole new controlled-vocabulary field would have existed
+  only to feed a badge that `medium` can feed directly. The existing
+  `Oil`/`Öl` tag is unaffected/unchanged — it answers a different
+  question (cross-cutting browse via `/tags/oil/`) than the per-item
+  badge does, same relationship publications already have between
+  their `kind` badge and topical tags like `Geo`/`NLP`. If a medium
+  ever needs a field oils don't (e.g. sketches wanting a "sketchbook
+  page #"), *that's* the actual signal for a real `kind` split — not
+  this.
 
 ## Publications bundle front matter
 
