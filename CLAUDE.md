@@ -27,32 +27,38 @@ templates/CSS via `/design` mode.
 - Per-item content: `index.en.md` / `index.de.md` in the same page
   bundle, sharing bundle resources (images/PDFs) automatically.
 - **Policy: fully bilingual, no exceptions.** Every content item needs
-  both `index.en.md` and `index.de.md` (or a symlink between them if
-  the text is genuinely identical in both languages — see below).
-  Missing a translation is a content gap to fix, not an accepted
-  asymmetry. This reverses an earlier decision in this project — if
-  you see older notes or content saying "German-only is fine, it just
-  won't appear on the English site," that policy no longer applies.
-- **Identical-content items** (same text works in both languages) use
-  a symlink — `ln -s index.en.md index.de.md` — rather than a
-  duplicate file. Requires `core.symlinks true` in git config; verify
-  with `git ls-files -s` (mode `120000` = correctly a symlink, not
-  `100644`).
+  both `index.en.md` and `index.de.md`, as real files — see below for
+  why a symlink between them doesn't work. Missing a translation is a
+  content gap to fix, not an accepted asymmetry. This reverses an
+  earlier decision in this project — if you see older notes or
+  content saying "German-only is fine, it just won't appear on the
+  English site," that policy no longer applies.
+- **Do not use a symlink for identical-content items, even though an
+  earlier version of this doc recommended exactly that.** Verified on
+  2026-08-24 (Hugo v0.165.0, both via the real
+  `transliteration-with-icu` bundle and an isolated repro): a
+  `content/.../index.de.md` that's a symlink to `index.en.md` is
+  silently invisible to Hugo — it does not become a `de` page at all
+  (confirmed with `hugo list all`; a real duplicate file with the
+  same content, by contrast, correctly produces two pages). No error,
+  no warning, nothing in the build log — `git ls-files -s` showing
+  mode `120000` only proves *git* sees it as a symlink, it says
+  nothing about whether *Hugo* renders it. If identical text is ever
+  wanted in both languages again, write a real second file with that
+  text — never a symlink. `transliteration-with-icu/index.de.md` was
+  converted from a symlink to a real (translated) file for this
+  reason.
 - Internal Markdown links are hand-written per language:
   `/tags/memes/` on English pages, `/de/tags/memes/` on German pages.
   Hugo does not auto-localize plain Markdown links — easy to get
   wrong when copy-pasting between language files.
-- **Known gaps to fix** (as of last content session — check before
-  assuming this list is current): `content/publications/JP6511221B2/`
-  (the Japanese geographic-name-transliteration patent) has only
-  `index.en.md` and needs a German version — this is the only
-  remaining gap. `transliteration-with-icu/index.de.md` is now a
-  symlink to the English file (same talk, same text in both
-  languages), and the homepage (`content/_index.de.md`) now exists.
-  Worth adding a build-time or CI check that fails when a bundle has
-  one language file but not the other (excluding intentional symlink
-  pairs, which will show up fine since the symlink itself satisfies
-  the check).
+- **No known bilingual gaps** as of 2026-08-24 — every content bundle
+  has real `index.en.md` and `index.de.md` files, cross-checked
+  against `hugo list all`'s page inventory (see "Verifying content
+  structure" below) to confirm Hugo actually registers both as pages,
+  not just that both exist on disk. Worth adding a CI check that
+  fails when a bundle has one language file but not the other, or
+  when either is a symlink.
 
 ## Typography (applies to content, not just templates)
 
@@ -67,25 +73,19 @@ templates/CSS via `/design` mode.
 - Write these characters directly in Markdown source — don't rely on
   Goldmark's typographer extension to produce them automatically; its
   substitution table isn't per-language and won't produce guillemets.
-- `hugo.toml`'s `[languages.de]` block sets `languageCode = "de-CH"`
-  (not plain `de`) specifically to flag this convention, even though
-  the language *key* (and therefore file suffixes/`de` URL prefix)
-  stayed `de` — renaming the key would have forced renaming every
-  German content file in the repo, which wasn't worth it just to
-  change one config string.
-- **Not yet retrofitted**: content written before this policy was
-  decided still has German-German „low-high" quotes — e.g.
-  `content/publications/programming-techniques-in-cl/index.de.md` has
-  „Datenbank"-Anfragen, needs to become «Datenbank»-Anfragen. Do a
-  full grep for „ and " across `content/**/index.de.md` before
-  considering content complete. Separately, several `index.de.md`
-  files still use plain em dashes (—) instead of the required en dash
-  with surrounding spaces — at least `art/anti-joke-chicken`,
-  `art/golden-retriever`, `tags/memes`, and
-  `publications/programming-techniques-in-cl` need this fixed; grep
-  for — across `content/**/index.de.md` and `content/**/_index.de.md`
-  too (the symlinked `transliteration-with-icu/index.de.md` is exempt
-  since its text is the English original, not German prose).
+- `hugo.toml`'s `[languages.de]` block sets `locale = "de-CH"` (not
+  plain `de`) specifically to flag this convention, even though the
+  language *key* (and therefore file suffixes/`de` URL prefix) stayed
+  `de` — renaming the key would have forced renaming every German
+  content file in the repo, which wasn't worth it just to change one
+  config string. (This field used to be named `languageCode`; renamed
+  to `locale` when fixing Hugo's deprecation warning for it — same
+  value, same purpose.)
+- Fully retrofitted as of 2026-08-24: no remaining German-German
+  „low-high" quotes or stray em dashes anywhere in `content/**/*.de.md`
+  (verified by grepping for `„` and `—` across all German content —
+  zero matches). If you see either again, it's new content that
+  skipped review, not a known pre-existing gap.
 - See `DESIGN_BRIEF.md` for the template-side implications (don't
   hardcode straight quotes/plain hyphens in UI chrome strings).
 
@@ -225,6 +225,34 @@ rather than parsing prose.
   PDFs/images silently come through as broken LFS pointer files
   instead of actual content — easy to miss since the build won't
   error, it'll just produce a broken site.
+
+## Verifying content structure
+
+No templates exist yet, so `hugo build` can't render pages, but it's
+still the right tool to sanity-check content/config — it parses every
+front matter file and wires up taxonomies/menus/bundles regardless of
+whether there's a layout to render them with:
+
+- `hugo build` (or `hugo config`) — fails loudly on YAML syntax errors
+  or bad `hugo.toml`. A clean exit with only "found no layout file"
+  warnings means content/config are structurally sound.
+- `hugo list all` — the authoritative page inventory (path, kind,
+  permalink; no built-in translation-count column, but the `path`
+  column tells you which files Hugo actually turned into pages). Use
+  this, not `git ls-files`, to confirm bilingual coverage: cross-check
+  that every `index.de.md`/`_index.de.md` path git knows about also
+  shows up as a `path` here — a file present in git but missing from
+  this list didn't become a page (that's exactly how the symlink
+  pitfall above was caught: `git ls-files -s` showed the `.de.md`
+  path just fine, `hugo list all` didn't list it at all).
+- `hugo build` always writes `/public/` and `/resources/` and creates
+  `.hugo_build.lock` — all three are gitignored, don't add them.
+- There's no automated resource-reference check yet (front matter
+  `image`/`pdf` fields pointing at files that don't exist in the
+  bundle) — verified manually via a throwaway debug template during
+  the 2026-08-24 session, came back clean, but this isn't wired into
+  any repeatable check. Worth turning into a real CI step alongside
+  the bilingual-coverage check mentioned above.
 
 ## Known open items (as of last content session)
 

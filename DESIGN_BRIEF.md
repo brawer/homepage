@@ -123,7 +123,7 @@ known gaps.
   Markdown content — don't let a straight quote or plain hyphen slip into
   UI chrome text (buttons, labels) while content correctly uses the
   typographic versions. The site's German language block is configured
-  with `languageCode = "de-CH"` (not plain `de`) specifically to signal
+  with `locale = "de-CH"` (not plain `de`) specifically to signal
   this — worth keeping in mind if any tooling/spellcheck/hyphenation
   behavior is locale-aware, since de-CH also conventionally drops ß in
   favor of ss.
@@ -177,5 +177,5 @@ rationale.
   unrelated to visual design.
 - Content writing — all copy will be filled in directly in the Markdown
   files.
-- Bilingual content-authoring workflow (symlinks, translationKey, tag
-  translation policy) — see `CLAUDE.md`, not relevant to CSS/layout work.
+- Bilingual content-authoring workflow (translationKey, tag translation
+  policy) — see `CLAUDE.md`, not relevant to CSS/layout work.
