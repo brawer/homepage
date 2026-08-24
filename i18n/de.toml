@@ -15,6 +15,16 @@ other = "PDF herunterladen"
 [original_title_label]
 other = "Originaltitel ({{.Language}}):"
 
+# language_name_<BCP-47 code>: siehe i18n/en.toml -- immer paarweise
+# in beiden Dateien ergänzen, wenn ein neuer original_language-Wert
+# hinzukommt.
+[language_name_ja]
+other = "Japanisch"
+[language_name_de]
+other = "Deutsch"
+[language_name_en]
+other = "Englisch"
+
 [tags_label]
 other = "Tags:"
 

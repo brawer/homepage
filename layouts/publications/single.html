@@ -20,8 +20,17 @@
     <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
   {{ end }}
   <h1>{{ .Title }}</h1>
+  {{/* Language name in the label is localized to the SITE's current
+       language (e.g. "Japanisch" on the German page, "Japanese" on
+       the English page) via a language_name_<code> i18n key — not
+       the raw BCP-47 code. Separately, lang="{{ original_language }}"
+       on the <span> tags that actual text's own language for
+       assistive tech/browsers, independent of the label. Add a new
+       language_name_<code> pair to i18n/en.toml + de.toml whenever a
+       new original_language value shows up — see CLAUDE.md. */}}
   {{ with .Params.original_title }}
-    <p class="original-title">{{ i18n "original_title_label" (dict "Language" $.Params.original_language) }} {{ . }}</p>
+    {{ $langName := i18n (printf "language_name_%s" $.Params.original_language) }}
+    <p class="original-title">{{ i18n "original_title_label" (dict "Language" $langName) }} <span lang="{{ $.Params.original_language }}">{{ . }}</span></p>
   {{ end }}
   <p class="byline">
     <span class="kind-badge">{{ i18n (printf "kind_%s" .Params.kind) }}</span>

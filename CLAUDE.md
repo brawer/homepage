@@ -196,10 +196,26 @@ verified against source for patents), `venue`, `abstract`.
 - `original_title` + `original_language` (BCP-47 tag) — for when the
   source document's real title differs from the page's own working
   `title` (e.g. the Japanese patent's actual title vs. its English
-  working title). This is unrelated to the EN/DE bundle mechanism —
-  both language files of the same item carry the same
-  `original_title`, since it's a fact about the source document, not
-  about site language.
+  working title, or the spatial-data book's German original vs. its
+  English working title). In practice only ONE language file of the
+  pair carries it — whichever file's own `title` differs from the
+  real source title (e.g. `modellieren-raumbezogener-daten`'s EN file
+  has it, pointing at the German original; the DE file doesn't need
+  it, since DE's own title already *is* the real title). (An earlier
+  version of this note said both files always carry it — that was
+  never actually true of any real item; corrected 2026-08-24.)
+  Rendered as `Original title ({{Language}}): {{title}}` — the
+  `{{Language}}` name shown is localized to the *site's* current
+  language via an i18n key `language_name_<code>` (e.g.
+  `language_name_ja` → "Japanese"/"Japanisch"), not the raw BCP-47
+  code and not the named language's own name for itself. Add a new
+  `language_name_<code>` pair to **both** `i18n/en.toml` and
+  `i18n/de.toml` whenever a new `original_language` value shows up in
+  content, or that page will show a literal missing-translation
+  string instead of a name. Separately, the actual title text itself
+  is wrapped in `<span lang="{{original_language}}">` — correct
+  per-span language tagging for assistive tech/browsers, independent
+  of which name is shown in the label.
 - Single-PDF items use a `pdf` field. Multi-resource items (e.g. the
   `programming-techniques-in-cl` lecture series with dozens of PDFs)
   have no `pdf` field — links go directly in the Markdown body as
