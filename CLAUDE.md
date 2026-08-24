@@ -186,7 +186,11 @@ rather than parsing prose.
 - `spoken_languages` — list of plain strings (e.g. `"English
   (fluent)"`).
 - Job/institution titles are translated per language where they read
-  naturally in German (e.g. "External Lecturer" → "Externer Dozent"),
+  naturally in German (e.g. the University of Zürich entry's role is
+  "External Lecturer" in English but just "Lehrauftrag" in German —
+  the noun for the position itself, which also appears in that
+  entry's highlight text, rather than a literal "external lecturer"
+  title translation),
   but industry-standard leveled titles are kept in English in both
   languages (e.g. "Senior Staff Software Engineer (L7, ...)",
   "Director of Engineering") since translating those would obscure
@@ -195,14 +199,14 @@ rather than parsing prose.
   birth date. The old `brawer.ch/cv/` had both; dropped when porting
   here — don't re-add without asking first, this was an explicit call
   by Sascha, not an oversight.
-- **Not yet added**: a short stint helping out at cradle.bio
-  (March–May 2025, a startup founded by former Google colleagues) —
-  deliberately deferred to a follow-up. When adding it, phrase it as
-  helping out friends in an emergency (their only SRE went on leave,
-  the backup was on paternity leave, the next backup couldn't start
-  for 3 months) rather than as a formal SRE role — Sascha was
-  explicit he doesn't want to be pictured as "an SRE" here, even
-  though the work (kept systems running, optimized machine cost,
+- The cradle.bio (2025) stint is folded into a `highlights` bullet on
+  the "Since 10/2021 – Independent" entry rather than its own
+  `experience` entry, since it's a specific engagement within that
+  ongoing independent period, not a separate role with its own dates
+  — avoids a confusing overlapping date range next to an open-ended
+  "since" entry. Phrased as helping out friends in an emergency, not
+  as a formal role — deliberately never says "SRE", even though the
+  underlying work (kept systems running, optimized machine cost,
   wrote lab-automation scripts) was exactly that.
 
 ## Images
@@ -227,9 +231,9 @@ rather than parsing prose.
 - No Hugo layout templates exist yet at all — that's the immediate
   next step, via `/design` mode. A `hugo build` right now won't
   produce readable HTML regardless of content completeness.
-- `content/resume/` is ported but missing the cradle.bio (2025) stint
-  and has no icons/timeline layout yet — see the "Resume bundle front
-  matter" section above for both.
+- `content/resume/` is ported and now includes the cradle.bio (2025)
+  stint, but still has no icons/timeline layout — see the "Resume
+  bundle front matter" section above.
 - Section list pages (`content/art/_index.*.md`,
   `content/publications/_index.*.md`,
   `content/projects/_index.*.md`) don't exist yet. Optional —
