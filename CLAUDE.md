@@ -200,20 +200,28 @@ verified against source for patents), `venue`, `abstract`.
   relative links to bundle resources, which Hugo resolves
   automatically; no custom front-matter schema needed for that case.
 - `pdf_preview` (optional, single-PDF items only) — filename of a
-  WebP raster of the PDF's first page, e.g. `"pdf-preview.webp"`.
+  WebP raster of one page of the PDF, e.g. `"pdf-preview.webp"`.
   Added 2026-08-24: the detail page shows this instead of the curated
   `image` teaser, which exists to look good cropped in the gallery
   grid, not to represent the document itself (see "Templates" below
   for the exact fallback behavior). Generated manually, once, same
-  workflow as the existing `cwebp` conversion step: `pdftoppm -f 1 -l
-  1 -r 200 -png the.pdf page1 && cwebp -q 90 -m 6 -metadata icc
-  page1-1.png -o pdf-preview.webp` (macOS also has `qlmanage -t -s
-  2000 -o . the.pdf` built in, no install needed, as a fallback if
-  `pdftoppm`/`poppler` isn't installed). Checked into git like any
-  other bundle resource — not regenerated at build time, and there's
-  no Hugo-native way to rasterize a PDF page even if it were (Hugo's
-  image pipeline only processes already-raster formats). Same
-  filename in both language front-matter files, like `image`/`pdf`.
+  workflow as the existing `cwebp` conversion step: `pdftoppm -f N -l
+  N -r 200 -png the.pdf pageN && cwebp -q 90 -m 6 -metadata icc
+  pageN-N.png -o pdf-preview.webp` (macOS also has `qlmanage -t -s
+  2000 -o . the.pdf` built in for page 1 specifically, no install
+  needed, as a fallback if `pdftoppm`/`poppler` isn't installed).
+  **Which page (`N`) is an editorial call, not always page 1** — pick
+  whichever page best represents the document. Default assumption is
+  page 1 (the title page) unless told otherwise; `modellieren-
+  raumbezogener-daten` deliberately uses page 7 instead (Sascha: the
+  book's own chapter-by-chapter overview reads better than its title
+  page). If asked to change one, regenerate with the same two
+  commands at the requested page number — don't just assume page 1.
+  Checked into git like any other bundle resource — not regenerated
+  at build time, and there's no Hugo-native way to rasterize a PDF
+  page even if it were (Hugo's image pipeline only processes
+  already-raster formats). Same filename in both language front-matter
+  files, like `image`/`pdf`.
 
 ## Resume bundle front matter
 
