@@ -230,6 +230,26 @@ rather than parsing prose.
 - Publication teaser images are manually curated per item (title
   slide, diagram, or a plain typographic card) — there's no
   automatic source the way there is for art.
+- **Responsive `<picture>` rendering is already built**, verified
+  2026-08-24 (this Hugo build genuinely encodes AVIF, not just WebP —
+  confirmed by inspecting output file magic bytes, not just trusting
+  the build not to error): `layouts/partials/picture.html` for
+  full/uncropped images (detail pages) and
+  `layouts/partials/picture-thumbnail.html` for square-cropped
+  gallery-grid thumbnails (list/tag pages). Both emit AVIF + WebP
+  srcset plus a WebP `<img>` fallback; call with
+  `{{ partial "picture.html" (dict "image" $resource "alt" "…") }}` —
+  see each file's own header comment for the full param list. The
+  thumbnail partial's default widths (400/800/1200) are sized so the
+  smallest tier is roughly 1/3 of a present-day phone's screen width,
+  for a 3-column mobile grid ("similar to a photos app," Sascha's
+  framing) — 800/1200 cover 2x/3x device pixel ratios on that same
+  grid cell. Crop anchor is `hugo.toml`'s `[imaging] anchor = "smart"`
+  (Hugo's smartcrop) — verified it picks a sensible crop on both a
+  portrait art image and a wide publication teaser without any
+  per-image override, but that's not guaranteed for every future
+  image; revisit with an explicit anchor param if a particular crop
+  looks wrong once there's an actual page to view it on.
 
 ## Git LFS
 
@@ -299,9 +319,14 @@ whether there's a layout to render them with:
 
 ## Known open items (as of last content session)
 
-- No Hugo layout templates exist yet at all — that's the immediate
-  next step, via `/design` mode. A `hugo build` right now won't
-  produce readable HTML regardless of content completeness.
+- No Hugo *page* layout templates exist yet (home/list/detail HTML) —
+  that's the immediate next step, via `/design` mode. A `hugo build`
+  right now won't produce readable HTML regardless of content
+  completeness. Two reusable image partials do already exist, see
+  "Images" above — that's deliberately ahead of the rest of the
+  template work since it was worth derisking early (Hugo's AVIF
+  support, srcset behavior) rather than discovering a problem there
+  after `/design` mode has built a lot on top of it.
 - `content/resume/` is ported and now includes the cradle.bio (2025)
   stint, but still has no icons/timeline layout — see the "Resume
   bundle front matter" section above.

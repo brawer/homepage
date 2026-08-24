@@ -1,0 +1,49 @@
+{{/*
+  Renders a responsive <picture> for a Page Resource image: AVIF and
+  WebP sources at several widths (srcset), with a WebP <img> fallback.
+  Preserves the source aspect ratio — no cropping. A cropped/teaser
+  variant (for the gallery grid) belongs to /design mode once an
+  aspect ratio is actually chosen; this partial is the shared base
+  both that and full-size detail-page images build on.
+
+  Params (pass as a dict):
+    image    (required) Page Resource, e.g. .Resources.GetMatch "foo.webp"
+    alt      (required) alt text
+    widths   (optional) slice of target widths in px, ascending;
+                         default (slice 480 960 1440 1920). Widths
+                         larger than the source image are skipped, so
+                         images are never upscaled.
+    sizes    (optional) <img>/<source> sizes attribute; default "100vw"
+    class    (optional) CSS class(es) for the <img>
+    loading  (optional) "lazy" (default) or "eager"
+*/}}
+{{ $image := .image }}
+{{ $widths := .widths | default (slice 480 960 1440 1920) }}
+{{ $sizes := .sizes | default "100vw" }}
+
+{{ $avifSet := slice }}
+{{ $webpSet := slice }}
+{{ range $w := $widths }}
+  {{ if le $w $image.Width }}
+    {{ $avif := $image.Resize (printf "%dx avif" $w) }}
+    {{ $webp := $image.Resize (printf "%dx webp" $w) }}
+    {{ $avifSet = $avifSet | append (printf "%s %dw" $avif.RelPermalink $w) }}
+    {{ $webpSet = $webpSet | append (printf "%s %dw" $webp.RelPermalink $w) }}
+  {{ end }}
+{{ end }}
+{{/* Source is smaller than every requested width: still emit one size. */}}
+{{ if eq (len $webpSet) 0 }}
+  {{ $avif := $image.Resize (printf "%dx avif" $image.Width) }}
+  {{ $webp := $image.Resize (printf "%dx webp" $image.Width) }}
+  {{ $avifSet = slice (printf "%s %dw" $avif.RelPermalink $image.Width) }}
+  {{ $webpSet = slice (printf "%s %dw" $webp.RelPermalink $image.Width) }}
+{{ end }}
+
+{{ $fallbackWidth := index $widths (sub (len $widths) 1) }}
+{{ $fallback := $image.Resize (printf "%dx webp" (cond (gt $fallbackWidth $image.Width) $image.Width $fallbackWidth)) }}
+
+<picture>
+  <source type="image/avif" srcset="{{ delimit $avifSet ", " }}" sizes="{{ $sizes }}">
+  <source type="image/webp" srcset="{{ delimit $webpSet ", " }}" sizes="{{ $sizes }}">
+  <img src="{{ $fallback.RelPermalink }}" width="{{ $fallback.Width }}" height="{{ $fallback.Height }}" alt="{{ .alt }}"{{ with .class }} class="{{ . }}"{{ end }} loading="{{ .loading | default "lazy" }}">
+</picture>
