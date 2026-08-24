@@ -12,6 +12,15 @@ experience:
       - >-
         Baute [OSMViews](https://osmviews.toolforge.org/), das
         geografische Orte anhand von OpenStreetMap-Tile-Logs einstuft.
+      - >-
+        Sprang von März bis Mai 2025 kurzfristig bei
+        [cradle.bio](https://cradle.bio/) ein, dem Start-up
+        ehemaliger Google-Kollegen, nachdem die einzige
+        Infrastruktur-Fachperson ausfiel und auch deren beiden
+        Vertretungen über Monate nicht verfügbar waren – war
+        innerhalb von zwei Tagen startklar, hielt die Systeme am
+        Laufen, senkte die Rechnerkosten und schrieb Skripte zur
+        Automatisierung von Laborabläufen.
   - date_range: "10/2019 – 9/2021"
     location: "Zürich, Schweiz"
     organization: "Niantic Labs"
