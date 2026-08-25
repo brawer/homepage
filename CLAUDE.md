@@ -212,6 +212,27 @@ verified against source for patents), `venue`, `abstract`.
   its own link). Templates must render `venue` through `markdownify`
   rather than outputting it as a raw string, or these links won't
   render.
+- **Markdownify footgun, found and fixed 2026-08-25**:
+  `transliteration-with-icu`'s German `venue`, `"34. Internationalization
+  & Unicode Conference (2010)"`, silently rendered as an HTML `<ol
+  start="34">` instead of plain text — `markdownify` parses a string
+  starting with `<number>. ` as the start of a Markdown ordered list,
+  block-level, with no visual warning at build time (byline just grew
+  an odd line break around it). The English `venue` (`"34th
+  Internationalization..."`) didn't trigger this, since `th` breaks
+  the ordered-list pattern — the bug is specific to German ordinal
+  style (`34.`, not `34th`). Fixed by escaping the period:
+  `venue: '34\. Internationalization & Unicode Conference (2010)'` —
+  note the **single-quoted** YAML string, not double-quoted: YAML's
+  double-quote form treats `\.` as an invalid escape sequence and
+  fails to parse, while single-quoted YAML strings pass the backslash
+  through literally, letting Markdown's own escaping handle it. Any
+  `markdownify`-rendered field (`venue`, `abstract`, résumé
+  `highlights`, art/publications teaser-adjacent prose) that happens
+  to start with a numeral immediately followed by `. ` needs the same
+  escape — checked all current content for this pattern (none other
+  found) but it's worth rechecking whenever new content is added to a
+  markdownified field.
 
 - Type-specific optional fields: `degree` (thesis), `patent_number` +
   `patent_status` + `assignee` (patent — `assignee` is the entity the
