@@ -1,6 +1,4 @@
-{{/* content/projects/ has zero entries yet -- this matches the
-     documented schema (CLAUDE.md/DESIGN_BRIEF) so it's ready once
-     entries exist, but is untested against real content. */}}
+{{/* See CLAUDE.md's Projects bundle front matter section. */}}
 {{ define "main" }}
 <article>
   {{ with .Params.image }}
@@ -9,9 +7,45 @@
     {{ end }}
   {{ end }}
   <h1>{{ .Title }}</h1>
-  {{ if .Params.open_source }}<p><span class="kind-badge">{{ i18n "open_source_label" }}</span></p>{{ end }}
-  {{ with .Params.link }}<p><a href="{{ . }}">{{ . }}</a></p>{{ end }}
+
+  {{/* role/date_range/status form a byline, same shape as
+       publications' kind/authors/venue/date byline. date_range is a
+       free-form display string (same reasoning as the resume's
+       date_range: nothing here needs to compute on the date, only
+       display it) -- but status is a separate controlled-vocab field,
+       not derived from date_range, since it answers a different
+       question: whether SASCHA is still actively involved, not
+       whether the date range reads as open-ended. The dash inside
+       date_range gets the same narrow-no-break-space treatment as the
+       resume's date_range -- see CLAUDE.md for why this must be the
+       raw replacement string, not an HTML entity. Badge segments are
+       joined with a literal middle dot, same as art's caption and
+       publications' byline (`·`, not the resume's dash_separator --
+       that one is specific to the resume's date_range+location join). */}}
+  <p class="byline">
+    {{ with .Params.role }}<span class="kind-badge">{{ i18n (printf "role_%s" .) }}</span>{{ end }}
+    {{ with .Params.date_range }} · {{ replace . " – " " – " }}{{ end }}
+    {{ with .Params.status }} · {{ i18n (printf "project_status_%s" .) }}{{ end }}
+  </p>
+
+  {{ with .Params.summary }}<p>{{ . | markdownify }}</p>{{ end }}
+
   {{ .Content }}
+
+  {{ with .Params.github_url }}<p><a href="{{ . }}">{{ i18n "view_on_github" }}</a></p>{{ end }}
+
+  {{ with .Params.related_publications }}
+    <p>{{ i18n "related_label" }}</p>
+    <ul class="related-publications">
+      {{ $curPage := $ }}
+      {{ range . }}
+        {{ with $curPage.Site.GetPage (printf "/publications/%s" .) }}
+          <li><a href="{{ .RelPermalink }}">{{ i18n (printf "kind_%s" .Params.kind) }}: {{ .Title }}</a></li>
+        {{ end }}
+      {{ end }}
+    </ul>
+  {{ end }}
+
   {{ with .GetTerms "tags" }}
     <p class="tags">
       {{ i18n "tags_label" }}

@@ -56,6 +56,33 @@ other = "Filed"
 [open_source_label]
 other = "Open Source"
 
+# role_<value>: badge shown on project cards/detail pages, same pattern
+# as kind_<value> for publications -- see CLAUDE.md's Projects bundle
+# front matter section. Describes Sascha's own involvement in the
+# project (did he create it, maintain it, or contribute a few things),
+# not a property of the project's repo.
+[role_creator]
+other = "Creator"
+[role_maintainer]
+other = "Maintainer"
+[role_contributor]
+other = "Contributor"
+
+# project_status_<value>: whether SASCHA is still actively involved in
+# the project right now -- independent of role, and independent of
+# whether the project/repo itself is still alive or maintained by
+# anyone else. See CLAUDE.md.
+[project_status_active]
+other = "Actively involved"
+[project_status_inactive]
+other = "No longer involved"
+
+[view_on_github]
+other = "View on GitHub"
+
+[related_label]
+other = "See also:"
+
 [resume_experience]
 other = "Experience"
 [resume_education]

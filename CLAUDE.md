@@ -273,6 +273,105 @@ verified against source for patents), `venue`, `abstract`.
   already-raster formats). Same filename in both language front-matter
   files, like `image`/`pdf`.
 
+## Projects bundle front matter
+
+`content/projects/<slug>/index.<lang>.md`. First real entry added
+2026-08-25 (`text-rendering-tests`); before that this section only
+described the intended schema. Replaces an earlier placeholder shape
+(`open_source` bool + single `link` field, still visible in old
+`DESIGN_BRIEF.md` history) that predated any real requirements —
+don't resurrect it.
+
+- `title`, `date` (start of Sascha's involvement — also drives default
+  chronological sort on `/projects/`, same role `date` plays for
+  art/publications), `publishDate` (same convention as elsewhere: the
+  day the page was added to the site, not the project's real-world
+  date), `tags`, `image` (WebP teaser, optional — see below), `teaser`
+  (optional override, same escape hatch as art/publications).
+- `date_range` — free-form display string, e.g. `"2019 – 2023"` or
+  `"Since 2022"`. Same reasoning and typography as the résumé's
+  `date_range`: nothing here needs to *compute* on the date, only
+  display it, so it's a human-written string, not derived from `date`
+  + an end date. Uses the identical raw-character narrow-no-break-space
+  dash treatment as the résumé (`layouts/projects/single.html` does
+  its own `replace` call, same pattern, same reason the replacement
+  must be the raw `–`/U+202F characters and not an HTML entity — see
+  the résumé section above and the "Templates" section's `\uXXXX`
+  warning). Content files write a plain literal ` – ` (en dash, spaced
+  on both sides) in both languages, same as the résumé — this is the
+  compact-listing-style dash, not the language-dependent em/en-dash
+  prose rule from "Typography" above.
+- `status` — one of `"active"`, `"inactive"`. **This describes whether
+  SASCHA is still actively involved in the project right now** — not
+  whether the project/repo itself is alive, maintained, or archived
+  upstream. Deliberately a separate field from `date_range` rather
+  than derived from it (e.g. from whether `date_range` reads as
+  open-ended): they answer genuinely different questions, and parsing
+  one out of the other would be fragile. Rendered as a translated
+  badge/byline text via `project_status_<value>` i18n keys, joined
+  onto the rest of the byline (role/date_range/status) with a literal
+  middle dot (·) — fixed 2026-08-25 from an initial `dash_separator`
+  guess, on Sascha's nitpick: the byline should match the separator
+  art's caption and publications' byline already use, not the
+  résumé's em/en dash_separator (which is specific to that page's
+  date_range+location join).
+  **"Active" is about ongoing responsibility/involvement, not recent
+  commit frequency** — clarified 2026-08-25 on `text-rendering-tests`:
+  Sascha is still nominally the maintainer and still considers himself
+  involved even though he "hasn't done much recently." Use `active`
+  for "I'm still the person responsible for/involved in this, even at
+  low intensity"; reserve `inactive` for projects Sascha has genuinely
+  stepped away from (no longer the point of contact, regardless of
+  role).
+- `role` — one of `"creator"`, `"maintainer"`, `"contributor"` —
+  lowercase internal value like publications' `kind`, translated for
+  display via `role_<value>` i18n keys. This is the project-section
+  equivalent of publications' `kind` badge / art's `medium`-as-badge
+  in the gallery grid (`gallery-grid.html`) — same "one small badge,
+  whichever field the page happens to have" pattern. **Single value,
+  not a list**, even though a project can genuinely be more than one
+  (e.g. `text-rendering-tests`: Sascha both created and still
+  maintains it) — a list would break the one-badge-per-item pattern
+  every other section already uses. When more than one applies, use
+  this precedence: `creator` > `maintainer` > `contributor` — flipped
+  2026-08-25 from an initial "maintainer wins" guess, on Sascha's call:
+  `creator` is the stronger, more distinctive signal of impact on a
+  portfolio site (originating something beats upkeeping it), so it
+  should win the one available badge slot over `maintainer` when both
+  are true. Ongoing-maintainer status, if relevant, can still show up
+  in the prose/body (as it does on `text-rendering-tests`) or in
+  `status`/`date_range`, which already cover "is Sascha still
+  involved."
+- `summary` — one or two plain-text sentences (may contain inline
+  Markdown, rendered via `markdownify`), the short blurb shown on the
+  detail page. Plays the role publications' `abstract` plays. Keep it
+  short by design — longer text belongs in the Markdown body, which is
+  optional and can be a sentence or two, not a full write-up.
+- `github_url` (optional, single string) — the canonical repo link, a
+  dedicated field like the résumé's `organization_url`/
+  `institution_url`, not a generic `links` list, since GitHub is the
+  one link type nearly every entry has and there's no current need for
+  more than one repo link per project. Omit (don't empty-string) for
+  proprietary/private projects with no public repo.
+- `related_publications` (optional list of strings) — slugs of
+  `content/publications/<slug>` bundles this project has an associated
+  talk/paper/patent for (most projects have none; only a few do). The
+  template resolves each via `site.GetPage`, rendering that item's own
+  already-translated `kind` + title + link — deliberately not
+  duplicating title/kind data here, and it covers both "talk" and
+  "paper" cases through one field since `kind` already distinguishes
+  them on the publications side.
+- Tag order: subject-matter tags first, then any language/technology
+  tag (e.g. `Rust`, `C++`), then `Open Source`/`Quelloffen` last if the
+  repo is actually public — extends the same "generic descriptor
+  trails" convention already used for `Oil` on art (see "Tags" above).
+  Only tag `Open Source` when the repo genuinely is public.
+- No `image` yet on `text-rendering-tests` — teaser images for
+  projects are meant to be manually curated per item, same as
+  publications' teasers (no automatic source), and none has been made
+  yet; left as a `<!-- TODO -->` comment in the body instead of a
+  fabricated placeholder image.
+
 ## Resume bundle front matter
 
 `content/resume/index.<lang>.md` (a page bundle, like art/publications,
@@ -556,9 +655,12 @@ as a design decision, just a structural one.
   `_default/term.html` to be reachable.
 - Per-section detail templates: `layouts/art/single.html`,
   `layouts/publications/single.html`, `layouts/resume/single.html`,
-  `layouts/projects/single.html` (untested against real content —
-  `content/projects/` is still empty — but matches the documented
-  schema). The publications template does **not** special-case
+  `layouts/projects/single.html` (rewritten 2026-08-25 for the real
+  schema — `role`/`date_range`/`status` byline, `summary`,
+  `github_url`, `related_publications` — see "Projects bundle front
+  matter" above; verified against the first real entry,
+  `text-rendering-tests`). The publications template does **not**
+  special-case
   `kind == "lecture"` structurally: `programming-techniques-in-cl`'s
   body is already valid Markdown (headings, lists, a definition list)
   with no `pdf` field, so plain `.Content` renders it correctly as-is.
@@ -650,5 +752,11 @@ as a design decision, just a structural one.
   these, by borrowing the label from `hugo.toml`'s nav menu — see
   `layouts/_default/list.html` — so that's not a reason to add them;
   section-level intro copy is.)
-- `content/projects/` has zero entries — `layouts/projects/single.html`
-  exists but is unverified against real content.
+- `content/projects/` has one entry (`text-rendering-tests`, added
+  2026-08-25) with a `<!-- TODO -->` placeholder for its teaser image
+  — still needs a real curated image before it's fully done — and
+  Sascha's `role`/`date_range`/`status` guesses on it (filled in from
+  public GitHub commit history, not from Sascha directly) still need
+  his review. Otherwise still needs its real remaining entries: at
+  least `osm-diffs` and `rust-s2` were discussed as upcoming additions
+  — same schema, see "Projects bundle front matter" above.

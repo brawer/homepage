@@ -185,9 +185,17 @@ optional — a WebP raster of one representative PDF page, shown as the
 detail page's hero image instead of `image`; the gallery grid always
 uses `image` regardless).
 
-**Project bundle** (`content/projects/<slug>/index.<lang>.md`, no
-entries yet): `title`, `date`, `tags`, `image` (WebP teaser), `open_source`
-(bool), optional repo/demo `link`, body = description.
+**Project bundle** (`content/projects/<slug>/index.<lang>.md`, one
+entry as of 2026-08-25): `title`, `date`, `publishDate`, `tags`,
+`image` (WebP teaser, optional), `date_range` (display string, e.g.
+"2019 – 2023" or "Since 2022"), `status` (`active`/`inactive` —
+whether Sascha is still involved, not whether the repo itself is
+alive), `role` (`creator`/`maintainer`/`contributor`, badge like
+publications' `kind`), `summary` (short blurb), `github_url`
+(optional), `related_publications` (optional list of publication
+slugs — most projects have none), body = optional short elaboration.
+See CLAUDE.md's "Projects bundle front matter" section for the full
+rationale.
 
 **Resume bundle** (`content/resume/index.<lang>.md`, single page, not a
 list): `title`, `experience` (list of `{date_range, location,
