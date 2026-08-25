@@ -407,11 +407,55 @@ body.drawer-open {
   border-radius: .25rem;
 }
 
-/* Shared gallery grid — used by section list pages and tag pages. */
+/* Shared gallery grid — used by section list pages and tag pages.
+   minmax(0, 1fr), not bare 1fr -- found and fixed 2026-08-25. Bare
+   `1fr` is really `minmax(auto, 1fr)`: each column's floor is its own
+   content's min-content size (a tile's title text, if it has a long
+   unbreakable word, or a replaced element's intrinsic size), so
+   columns with different content could end up genuinely different
+   widths even though every teaser image is already correctly
+   pre-cropped to an identical square -- reported as "grid cells don't
+   all get the same size" on /tags/unicode/ (text-rendering-tests vs.
+   transliteration-with-icu's much longer title). minmax(0, 1fr)
+   removes that content-based floor entirely, forcing all three
+   columns to always be exactly equal -- the textbook fix for this
+   exact "1fr tracks not staying equal" Grid gotcha. */
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1.2rem;
+}
+
+/* Responsive column count, added 2026-08-25 alongside the equal-width
+   fix above -- the grid was previously a hard-coded 3 columns at
+   every viewport width (fine for mobile portrait, the original
+   target -- picture-thumbnail.html's default widths are explicitly
+   sized for that -- but cramped-vs-sparse everywhere else). Uses
+   auto-fill/minmax per NAVIGATION_DESIGN_SPEC.md §9, at the same
+   768px breakpoint already used elsewhere (header.html's nav-bar/
+   drawer-trigger split) rather than inventing a new one:
+     - Landscape phone (roughly 568-767px, spec's own range) -> ~4-5
+       columns instead of 3 ("bump... rather than keeping the portrait
+       column count and getting oversized tiles").
+     - Tablet/desktop (>=768px) -> ~4-6 columns, per spec's explicit
+       "via auto-fill/minmax" wording.
+   auto-fill naturally grows the column count with available width
+   instead of jumping at fixed counts, so tiles stay reasonably sized
+   across the whole range rather than just at specific breakpoints.
+   The exact minmax() floors below are a first approximation (chosen
+   to land in-range against this site's 60rem body max-width, not
+   measured against a real device) -- exact tile size/rhythm is a
+   /design-mode decision like the rest of this file's spacing. */
+@media (orientation: landscape) and (max-width: 767px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
+  }
+}
+
+@media (min-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+  }
 }
 
 /* Square teaser crop for the grid. An earlier attempt put
@@ -460,6 +504,11 @@ body.drawer-open {
 .gallery-item h3 {
   font-size: .95rem;
   margin: .4rem 0 0;
+  /* With the column floor removed above, a long unbreakable word
+     (rare, but e.g. a long title) would otherwise overflow the tile
+     instead of the old (buggy) behavior of widening the whole
+     column -- break it instead, keeping the grid uniform. */
+  overflow-wrap: break-word;
 }
 
 /* Detail pages */

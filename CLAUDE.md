@@ -926,6 +926,20 @@ the two files above.
   obvious ahead of real content review -- not a `/design`-mode
   decision, and the exact crop/positioning may change once that
   pass happens.
+  **Follow-on bug, found and fixed 2026-08-25 (same day, separate
+  session)**: individual thumbnails were correctly square, but grid
+  CELLS weren't all the same size as each other -- most visible on a
+  mixed tag page with very different title lengths (e.g.
+  `/tags/unicode/`'s `text-rendering-tests` vs. `transliteration-with-
+  icu`). Classic CSS Grid gotcha: bare `1fr` in `grid-template-columns`
+  is actually `minmax(auto, 1fr)`, so each column's floor is its own
+  content's min-content size (a tile's title text, if it has a long
+  unbreakable word) -- NOT the aspect-ratio-cropped image, which was
+  already correct. Fixed by using `minmax(0, 1fr)` instead, which
+  removes that content-based floor and forces all three columns to
+  always be exactly equal, plus `overflow-wrap: break-word` on
+  `.gallery-item h3` as a safety net now that a pathologically long
+  title can no longer widen its column.
   Original 2026-08-24 finding, kept for reference: confirmed by
   pixel-measuring a real screenshot at the time: 613×799px (ratio
   0.77), not 613×613 -- real, substantial, not a rounding thing. The
