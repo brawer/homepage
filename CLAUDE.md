@@ -308,13 +308,40 @@ don't resurrect it.
   than derived from it (e.g. from whether `date_range` reads as
   open-ended): they answer genuinely different questions, and parsing
   one out of the other would be fragile. Rendered as a translated
-  badge/byline text via `project_status_<value>` i18n keys.
+  badge/byline text via `project_status_<value>` i18n keys, joined
+  onto the rest of the byline (role/date_range/status) with a literal
+  middle dot (·) — fixed 2026-08-25 from an initial `dash_separator`
+  guess, on Sascha's nitpick: the byline should match the separator
+  art's caption and publications' byline already use, not the
+  résumé's em/en dash_separator (which is specific to that page's
+  date_range+location join).
+  **"Active" is about ongoing responsibility/involvement, not recent
+  commit frequency** — clarified 2026-08-25 on `text-rendering-tests`:
+  Sascha is still nominally the maintainer and still considers himself
+  involved even though he "hasn't done much recently." Use `active`
+  for "I'm still the person responsible for/involved in this, even at
+  low intensity"; reserve `inactive` for projects Sascha has genuinely
+  stepped away from (no longer the point of contact, regardless of
+  role).
 - `role` — one of `"creator"`, `"maintainer"`, `"contributor"` —
   lowercase internal value like publications' `kind`, translated for
   display via `role_<value>` i18n keys. This is the project-section
   equivalent of publications' `kind` badge / art's `medium`-as-badge
   in the gallery grid (`gallery-grid.html`) — same "one small badge,
-  whichever field the page happens to have" pattern.
+  whichever field the page happens to have" pattern. **Single value,
+  not a list**, even though a project can genuinely be more than one
+  (e.g. `text-rendering-tests`: Sascha both created and still
+  maintains it) — a list would break the one-badge-per-item pattern
+  every other section already uses. When more than one applies, use
+  this precedence: `creator` > `maintainer` > `contributor` — flipped
+  2026-08-25 from an initial "maintainer wins" guess, on Sascha's call:
+  `creator` is the stronger, more distinctive signal of impact on a
+  portfolio site (originating something beats upkeeping it), so it
+  should win the one available badge slot over `maintainer` when both
+  are true. Ongoing-maintainer status, if relevant, can still show up
+  in the prose/body (as it does on `text-rendering-tests`) or in
+  `status`/`date_range`, which already cover "is Sascha still
+  involved."
 - `summary` — one or two plain-text sentences (may contain inline
   Markdown, rendered via `markdownify`), the short blurb shown on the
   detail page. Plays the role publications' `abstract` plays. Keep it

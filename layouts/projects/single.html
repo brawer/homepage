@@ -18,11 +18,14 @@
        whether the date range reads as open-ended. The dash inside
        date_range gets the same narrow-no-break-space treatment as the
        resume's date_range -- see CLAUDE.md for why this must be the
-       raw replacement string, not an HTML entity. */}}
+       raw replacement string, not an HTML entity. Badge segments are
+       joined with a literal middle dot, same as art's caption and
+       publications' byline (`·`, not the resume's dash_separator --
+       that one is specific to the resume's date_range+location join). */}}
   <p class="byline">
     {{ with .Params.role }}<span class="kind-badge">{{ i18n (printf "role_%s" .) }}</span>{{ end }}
-    {{ with .Params.date_range }} {{ i18n "dash_separator" }} {{ replace . " – " " – " }}{{ end }}
-    {{ with .Params.status }} {{ i18n "dash_separator" }} {{ i18n (printf "project_status_%s" .) }}{{ end }}
+    {{ with .Params.date_range }} · {{ replace . " – " " – " }}{{ end }}
+    {{ with .Params.status }} · {{ i18n (printf "project_status_%s" .) }}{{ end }}
   </p>
 
   {{ with .Params.summary }}<p>{{ . | markdownify }}</p>{{ end }}
