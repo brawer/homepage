@@ -4,6 +4,17 @@ title = "Sascha Brawer"
 defaultContentLanguage = "en"
 defaultContentLanguageInSubdir = false   # English at /, German at /de/
 
+# Menu entries below use `pageRef` (a content path Hugo resolves to the
+# actual per-language page), not a literal `url` string. Found and fixed
+# 2026-08-25: with `url`, the exact same literal string ("/art/" etc.)
+# was set in both the English and German menu blocks, so every German
+# menu link pointed at the un-prefixed English URL ("/art/" instead of
+# "/de/art/") -- Hugo does NOT localize a literal `url` for you. `pageRef`
+# resolves within the current language's page tree and also exposes the
+# resolved page as the menu entry's `.Page`, which templates use instead
+# of parsing `.URL` strings for the section slug -- see
+# layouts/partials/primary-nav-links.html, grid-header.html, index.html.
+
 # Pretty URLs like /art/golden-retriever/ instead of /art/golden-retriever.html
 uglyURLs = false
 
@@ -28,19 +39,19 @@ uglyURLs = false
 
     [[languages.en.menu.main]]
       name = "Resume"
-      url = "/resume/"
+      pageRef = "/resume"
       weight = 10
     [[languages.en.menu.main]]
       name = "Projects"
-      url = "/projects/"
+      pageRef = "/projects"
       weight = 20
     [[languages.en.menu.main]]
       name = "Publications"
-      url = "/publications/"
+      pageRef = "/publications"
       weight = 30
     [[languages.en.menu.main]]
       name = "Art"
-      url = "/art/"
+      pageRef = "/art"
       weight = 40
 
   [languages.de]
@@ -61,19 +72,19 @@ uglyURLs = false
 
     [[languages.de.menu.main]]
       name = "Lebenslauf"
-      url = "/resume/"
+      pageRef = "/resume"
       weight = 10
     [[languages.de.menu.main]]
       name = "Projekte"
-      url = "/projects/"
+      pageRef = "/projects"
       weight = 20
     [[languages.de.menu.main]]
       name = "Publikationen"
-      url = "/publications/"
+      pageRef = "/publications"
       weight = 30
     [[languages.de.menu.main]]
       name = "Kunst"
-      url = "/art/"
+      pageRef = "/art"
       weight = 40
 
 # Language-independent params, inherited by both languages above
