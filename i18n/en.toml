@@ -71,11 +71,21 @@ other = "Contributor"
 # project_status_<value>: whether SASCHA is still actively involved in
 # the project right now -- independent of role, and independent of
 # whether the project/repo itself is still alive or maintained by
-# anyone else. See CLAUDE.md.
+# anyone else. See CLAUDE.md. Kept as its own separate byline segment,
+# deliberately NOT fused into the date phrase (e.g. not "Active since
+# 2016") -- an initial fused version overstated current engagement on
+# projects Sascha is still nominally involved in but not "super-active"
+# on, per his own correction.
 [project_status_active]
 other = "Actively involved"
 [project_status_inactive]
 other = "No longer involved"
+
+# Leading word of the computed date phrase for an open-ended project
+# (no end_date), e.g. "Since 2016" -- see CLAUDE.md's Projects bundle
+# front matter section.
+[project_since_label]
+other = "Since"
 
 [view_on_github]
 other = "View on GitHub"

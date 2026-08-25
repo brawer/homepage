@@ -288,33 +288,45 @@ don't resurrect it.
   day the page was added to the site, not the project's real-world
   date), `tags`, `image` (WebP teaser, optional — see below), `teaser`
   (optional override, same escape hatch as art/publications).
-- `date_range` — free-form display string, e.g. `"2019 – 2023"` or
-  `"Since 2022"`. Same reasoning and typography as the résumé's
-  `date_range`: nothing here needs to *compute* on the date, only
-  display it, so it's a human-written string, not derived from `date`
-  + an end date. Uses the identical raw-character narrow-no-break-space
-  dash treatment as the résumé (`layouts/projects/single.html` does
-  its own `replace` call, same pattern, same reason the replacement
-  must be the raw `–`/U+202F characters and not an HTML entity — see
-  the résumé section above and the "Templates" section's `\uXXXX`
-  warning). Content files write a plain literal ` – ` (en dash, spaced
-  on both sides) in both languages, same as the résumé — this is the
-  compact-listing-style dash, not the language-dependent em/en-dash
-  prose rule from "Typography" above.
+- `end_date` — optional integer year, e.g. `2021`. Omitted (not
+  empty-stringed) for ongoing projects. Combined with `.Date` (the
+  existing required `date` field, reused as the start year rather
+  than adding a redundant `start_date`) to COMPUTE the byline's date
+  phrase: `"Since {year}"` when absent, `"{start}–{end}"` when present
+  — changed 2026-08-25 from an earlier free-form `date_range` string,
+  on Sascha's call: generating it from structured fields is less
+  fragile than hand-writing the string per entry. The résumé's
+  `date_range` deliberately stays free-form, unlike this — that page's
+  entries have genuinely heterogeneous precision/phrasing (some just
+  a month/year, some `"Since 10/2021"`, one a single date) that a
+  `start`+`end` pair can't cleanly cover, whereas every project entry
+  needs only a plain year on each end. The closed-range case's
+  narrow-no-break-space-wrapped dash uses the HTML-entity-outside-
+  any-action pattern (`&#x202F;&ndash;&#x202F;`), same as art's "H × W
+  cm" (see "Templates" below) — not the résumé's raw-character
+  `replace()` trick, since there's no pre-formatted string to
+  `replace()` here; the year values come straight from `.Date` and
+  `.Params.end_date`.
 - `status` — one of `"active"`, `"inactive"`. **This describes whether
   SASCHA is still actively involved in the project right now** — not
   whether the project/repo itself is alive, maintained, or archived
-  upstream. Deliberately a separate field from `date_range` rather
-  than derived from it (e.g. from whether `date_range` reads as
-  open-ended): they answer genuinely different questions, and parsing
-  one out of the other would be fragile. Rendered as a translated
-  badge/byline text via `project_status_<value>` i18n keys, joined
-  onto the rest of the byline (role/date_range/status) with a literal
-  middle dot (·) — fixed 2026-08-25 from an initial `dash_separator`
-  guess, on Sascha's nitpick: the byline should match the separator
-  art's caption and publications' byline already use, not the
-  résumé's em/en dash_separator (which is specific to that page's
-  date_range+location join).
+  upstream. Deliberately a separate field from `end_date` rather
+  than derived from it (e.g. from whether `end_date` is present):
+  they answer genuinely different questions, and parsing one out of
+  the other would be fragile. Rendered as its own separate byline
+  segment via `project_status_<value>` i18n keys, joined onto the
+  rest of the byline (role/date/status) with a literal middle dot
+  (·) — fixed 2026-08-25 from an initial `dash_separator` guess, on
+  Sascha's nitpick: the byline should match the separator art's
+  caption and publications' byline already use, not the résumé's
+  em/en dash_separator (which is specific to that page's
+  date_range+location join). **Deliberately NOT fused into the date
+  phrase either** (e.g. not "Active since 2016") — tried that on
+  2026-08-25 and reverted same-day on Sascha's correction: it
+  overstated current engagement on projects he's still nominally
+  involved in but not "super-active" on, so `status` needs to stay
+  readable on its own rather than getting folded into an adjective
+  in front of the year.
   **"Active" is about ongoing responsibility/involvement, not recent
   commit frequency** — clarified 2026-08-25 on `text-rendering-tests`:
   Sascha is still nominally the maintainer and still considers himself
@@ -340,7 +352,7 @@ don't resurrect it.
   should win the one available badge slot over `maintainer` when both
   are true. Ongoing-maintainer status, if relevant, can still show up
   in the prose/body (as it does on `text-rendering-tests`) or in
-  `status`/`date_range`, which already cover "is Sascha still
+  `status`/`end_date`, which already cover "is Sascha still
   involved."
 - `summary` — one or two plain-text sentences (may contain inline
   Markdown, rendered via `markdownify`), the short blurb shown on the
@@ -656,7 +668,7 @@ as a design decision, just a structural one.
 - Per-section detail templates: `layouts/art/single.html`,
   `layouts/publications/single.html`, `layouts/resume/single.html`,
   `layouts/projects/single.html` (rewritten 2026-08-25 for the real
-  schema — `role`/`date_range`/`status` byline, `summary`,
+  schema — `role`/computed-date/`status` byline, `summary`,
   `github_url`, `related_publications` — see "Projects bundle front
   matter" above; verified against the first real entry,
   `text-rendering-tests`). The publications template does **not**
@@ -769,10 +781,9 @@ as a design decision, just a structural one.
   `layouts/_default/list.html` — so that's not a reason to add them;
   section-level intro copy is.)
 - `content/projects/` has one entry (`text-rendering-tests`, added
-  2026-08-25) with a `<!-- TODO -->` placeholder for its teaser image
-  — still needs a real curated image before it's fully done — and
-  Sascha's `role`/`date_range`/`status` guesses on it (filled in from
-  public GitHub commit history, not from Sascha directly) still need
-  his review. Otherwise still needs its real remaining entries: at
+  2026-08-25) — fully reviewed and edited by Sascha (role, status,
+  body prose, teaser image all real/final; the schema itself picked
+  up a couple of corrections along the way, see "Projects bundle
+  front matter" above). Still needs its real remaining entries: at
   least `osm-diffs` and `rust-s2` were discussed as upcoming additions
   — same schema, see "Projects bundle front matter" above.

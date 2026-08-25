@@ -27,23 +27,38 @@
   {{ end }}
   <h1>{{ .Title }}</h1>
 
-  {{/* role/date_range/status form a byline, same shape as
-       publications' kind/authors/venue/date byline. date_range is a
-       free-form display string (same reasoning as the resume's
-       date_range: nothing here needs to compute on the date, only
-       display it) -- but status is a separate controlled-vocab field,
-       not derived from date_range, since it answers a different
-       question: whether SASCHA is still actively involved, not
-       whether the date range reads as open-ended. The dash inside
-       date_range gets the same narrow-no-break-space treatment as the
-       resume's date_range -- see CLAUDE.md for why this must be the
-       raw replacement string, not an HTML entity. Badge segments are
-       joined with a literal middle dot, same as art's caption and
-       publications' byline (`·`, not the resume's dash_separator --
-       that one is specific to the resume's date_range+location join). */}}
+  {{/* role/date-range/status form a byline, same shape as
+       publications' kind/authors/venue/date byline. The date range is
+       COMPUTED from .Date (start, already a required field, reused
+       rather than adding a redundant start_date) and the optional
+       end_date -- changed 2026-08-25 from an earlier free-form
+       date_range string, on Sascha's call: generating it from
+       structured fields is less fragile than hand-writing the string
+       per entry (unlike the resume's date_range, which stays
+       free-form -- that page's entries have genuinely heterogeneous
+       precision/phrasing that nothing here needs). status stays its
+       OWN separate segment rather than being fused into the date
+       phrase (e.g. not "Active since 2016") -- an initial fused
+       version overstated current engagement on projects Sascha is
+       still nominally involved in but not "super-active" on, per his
+       own correction; see i18n project_status_<value>. The narrow-
+       no-break-space-wrapped dash in the closed-range case uses the
+       same HTML-entity-outside-any-action pattern as art's "H x W cm"
+       (see CLAUDE.md's Templates section for why: html/template's
+       auto-escaper would mangle it if it were inside an action's
+       returned string) -- not the resume's raw-character replace()
+       trick, since there's no pre-formatted string to replace() here.
+       Segments are joined with a literal middle dot, same as art's
+       caption and publications' byline (not the resume's
+       dash_separator -- that one is specific to the resume's
+       date_range+location join). */}}
   <p class="byline">
     {{ with .Params.role }}<span class="kind-badge">{{ i18n (printf "role_%s" .) }}</span>{{ end }}
-    {{ with .Params.date_range }} · {{ replace . " – " " – " }}{{ end }}
+    {{ if .Params.end_date }}
+      · {{ .Date.Format "2006" }}&#x202F;&ndash;&#x202F;{{ .Params.end_date }}
+    {{ else }}
+      · {{ i18n "project_since_label" }} {{ .Date.Format "2006" }}
+    {{ end }}
     {{ with .Params.status }} · {{ i18n (printf "project_status_%s" .) }}{{ end }}
   </p>
 

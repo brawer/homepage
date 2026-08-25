@@ -3,7 +3,6 @@ title: "Testen der Text-Darstellung"
 image: "text-rendering-tests.webp"
 date: 2016-08-31
 publishDate: 2026-08-25
-date_range: "Seit 2016"
 status: "active"
 role: "creator"
 tags: ["Typografie", "Google", "Unicode", "Python", "C++", "Quelloffen"]
