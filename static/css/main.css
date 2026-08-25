@@ -258,22 +258,37 @@ body.drawer-open {
   font-weight: bold;
 }
 
-/* Hero image container — fixed-height, image at native aspect ratio
-   inside it (see picture.html's own <img>, unchanged). Matte color is
-   a two-bucket rule, not per-image, per NAVIGATION_DESIGN_SPEC.md §7's
-   table. */
+/* Hero image container — a genuinely FIXED-height box (not min-height:
+   a flex-centered min-height, tried first, left the box's real height
+   undetermined whenever the hero-zoom button inside it was taken out
+   of flow by position:absolute, so the <img>'s own max-height/
+   height:auto sizing had nothing reliable to size against and could
+   render distorted -- found and fixed 2026-08-25, reported as
+   "pillarbox filled on both dimensions, stretching the image").
+   Image sits inside at its native aspect ratio via object-fit: contain
+   on the <img> itself (see below), not by relying on the browser's
+   implicit width/height-attribute aspect-ratio computation -- matches
+   NAVIGATION_DESIGN_SPEC.md §7 exactly ("image sits inside at its
+   native aspect ratio (object-fit: contain), centered"). Matte color
+   is a two-bucket rule, not per-image, per the same section's table. */
 .hero {
   position: relative;
-  min-height: 16rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  height: 24rem;
   overflow: hidden;
   margin-bottom: 1rem;
 }
 
+.hero .detail-image,
+.hero .detail-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 .hero .detail-image img {
-  max-height: 24rem;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
 }
 
 /* Fixed dark neutral regardless of system theme — DELIBERATE exception
@@ -294,14 +309,10 @@ body.drawer-open {
 .hero-zoom {
   position: absolute;
   inset: 0;
-  width: 100%;
   background: none;
   border: 0;
   padding: 0;
   cursor: zoom-in;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
 
 .zoom-icon {
