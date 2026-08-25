@@ -8,16 +8,38 @@
        lecture-series item, which has no single PDF to preview).
        Later: an inline PDF embed/toggle could go here too, as an
        alternative or addition to the preview — keep that as its own
-       block near this one and the "Download PDF" link below, rather
-       than folding it into this image logic. */}}
+       block near this one and the "Download PDF" link, rather than
+       folding it into this image logic.
+
+       heroImage and pdf are wrapped in one .hero container, same
+       structural change and same reason as projects' hero/hero-cta
+       (see CLAUDE.md's Templates section): so a later /design pass
+       can show "Download PDF" as a button overlaid on the hero image
+       with CSS alone, without another template edit. Wrapping
+       triggers on having *either* field, not just heroImage, so an
+       item with a pdf but no image/pdf_preview would still get its
+       download link rendered (as a plain, non-overlaid link) instead
+       of losing it silently — mirrors the projects/github_url edge
+       case, even though every current publication has an image. */}}
   {{ $heroImage := "" }}
   {{ if .Params.pdf_preview }}
     {{ $heroImage = .Resources.GetMatch .Params.pdf_preview }}
   {{ else if .Params.image }}
     {{ $heroImage = .Resources.GetMatch .Params.image }}
   {{ end }}
-  {{ with $heroImage }}
-    <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
+  {{ $pdfResource := "" }}
+  {{ with .Params.pdf }}
+    {{ $pdfResource = $.Resources.GetMatch . }}
+  {{ end }}
+  {{ if or $heroImage $pdfResource }}
+    <div class="hero">
+      {{ with $heroImage }}
+        <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
+      {{ end }}
+      {{ with $pdfResource }}
+        <a class="hero-cta" href="{{ .RelPermalink }}">{{ i18n "download_pdf" }}</a>
+      {{ end }}
+    </div>
   {{ end }}
   <h1>{{ .Title }}</h1>
   {{/* Language name in the label is localized to the SITE's current
@@ -62,12 +84,6 @@
        as an intentional table/accordion rather than a plain list is
        a /design-mode CSS concern, not a templating one. */}}
   {{ .Content }}
-
-  {{ with .Params.pdf }}
-    {{ with $.Resources.GetMatch . }}
-      <p><a href="{{ .RelPermalink }}">{{ i18n "download_pdf" }}</a></p>
-    {{ end }}
-  {{ end }}
 
   {{ with .GetTerms "tags" }}
     <p class="tags">
