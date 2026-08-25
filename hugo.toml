@@ -36,7 +36,14 @@ uglyURLs = false
 
 [languages]
   [languages.en]
-    label = "English"
+    # Short form ("EN"/"DE"), not "English"/"Deutsch" -- data-to-ink
+    # ratio call, 2026-08-25 (Sascha). Only consumed by the language
+    # switcher (layouts/partials/utility-nav.html, the one shared
+    # partial for the header/footer/drawer instances) -- NOT the same
+    # thing as the i18n language_name_<code> keys used for "Original
+    # title (Japanese):" on publications like jp6511221b2, which stay
+    # full words on purpose; don't conflate the two mechanisms.
+    label = "EN"
     weight = 1
 
     [languages.en.params]
@@ -72,7 +79,7 @@ uglyURLs = false
 
   [languages.de]
     locale = "de-CH"
-    label = "Deutsch"
+    label = "DE"
     weight = 2
 
     [languages.de.params]
