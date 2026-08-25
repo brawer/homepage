@@ -7,7 +7,7 @@ publishDate: 2026-08-23
 tags: ["Geo", "NLP", "Google", "Unicode", "Quelloffen"]
 kind: "talk"
 authors: ["Sascha Brawer", "Martin Jansche", "Hiroshi Takenaka", "Yui Terashima"]
-venue: "34. Internationalization & Unicode Conference (2010)"
+venue: '34\. Internationalization & Unicode Conference (2010)'
 abstract: >
   Wir schildern unsere Erfahrungen mit einer tiefgreifenden Lokalisierung
   von Google Maps, bei der Millionen geografischer Namen unterschiedlichster
