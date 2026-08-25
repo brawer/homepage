@@ -28,6 +28,16 @@
   page and the grid genuinely want different source images, e.g. an
   art piece whose full/uncropped `image` doesn't have a good
   square-ish region to autocrop at all).
+
+  Badge: NAVIGATION_DESIGN_SPEC.md §4 — "only where they carry
+  information the thumbnail can't." Discriminated by Hugo's built-in
+  .Section (art/publications/projects), not by which optional param
+  happens to be set. Publications/patents get a generic "PDF" glyph,
+  projects get a generic "</>" glyph, art gets none (the image is
+  already unambiguous) — none of these are the translated kind/role
+  text shown elsewhere (detail-page bylines still show those,
+  unchanged). This supersedes the 2026-08-24 "medium/role double as
+  the grid badge" decisions FOR THE GRID ONLY — see CLAUDE.md.
 */}}
 {{ $pages := .pages }}
 {{ if eq (len $pages) 0 }}
@@ -44,12 +54,10 @@
     {{ end }}
     <a class="gallery-item" href="{{ $page.RelPermalink }}">
       {{ with $img }}{{ partial "picture-thumbnail.html" (dict "image" . "alt" $page.Title) }}{{ end }}
-      {{ if $page.Params.kind }}
-        <span class="kind-badge">{{ i18n (printf "kind_%s" $page.Params.kind) }}</span>
-      {{ else if $page.Params.medium }}
-        <span class="kind-badge">{{ $page.Params.medium }}</span>
-      {{ else if $page.Params.role }}
-        <span class="kind-badge">{{ i18n (printf "role_%s" $page.Params.role) }}</span>
+      {{ if eq $page.Section "publications" }}
+        <span class="badge badge-pdf" aria-hidden="true">PDF</span>
+      {{ else if eq $page.Section "projects" }}
+        <span class="badge badge-code" aria-hidden="true">&lt;/&gt;</span>
       {{ end }}
       <h3>{{ $page.Title }}</h3>
     </a>

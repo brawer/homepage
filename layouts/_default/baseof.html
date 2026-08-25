@@ -4,13 +4,15 @@
 {{ partial "head.html" . }}
 </head>
 <body>
+<a class="skip-link" href="#main">{{ i18n "skip_to_content" }}</a>
 <header>
-  {{ partial "nav.html" . }}
-  {{ partial "language-switcher.html" . }}
+  {{ partial "header.html" . }}
 </header>
-<main>
+{{ partial "drawer.html" . }}
+<main id="main">
 {{ block "main" . }}{{ end }}
 </main>
 {{ partial "footer.html" . }}
+<script src="/js/nav.js" defer></script>
 </body>
 </html>

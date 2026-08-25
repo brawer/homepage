@@ -1,0 +1,37 @@
+{{/*
+  Merged language switcher + imprint link — NAVIGATION_DESIGN_SPEC.md's
+  "utility nav" tier (§1): "language switcher, imprint... deliberately
+  quiet." Replaces the old, separate language-switcher.html (rendered
+  unconditionally in the header) and the imprint-only line that used to
+  live directly in footer.html.
+
+  Call sites: footer.html (every page, showImprint=true — this alone
+  satisfies the entry page's own quiet footer row, no separate instance
+  needed in index.html), header.html (desktop widths only,
+  showImprint=false — imprint stays footer-only by convention even at
+  desktop, per spec's tablet/desktop recap), drawer.html
+  (showImprint=true, per spec §3's drawer inventory).
+
+  Params (dict):
+    page        (required) the current Page.
+    showImprint (optional bool, default true).
+*/}}
+{{ $page := .page }}
+<p class="utility-nav">
+  {{ if $page.IsTranslated }}
+    {{ range $page.AllTranslations }}
+      {{ if eq .Lang $page.Lang }}<strong>{{ .Language.Label }}</strong>
+      {{- else }} <a href="{{ .RelPermalink }}">{{ .Language.Label }}</a>
+      {{- end }}
+    {{ end }}
+  {{ else }}
+    {{/* Graceful degradation, same intent as the old
+         language-switcher.html: never link to a missing translation.
+         Unlike that partial, this one doesn't hide entirely, since the
+         imprint half below can still legitimately render. */}}
+    <strong>{{ $page.Language.Label }}</strong>
+  {{ end }}
+  {{ if ne .showImprint false }}
+    {{ with site.GetPage "/imprint" }} · <a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+  {{ end }}
+</p>

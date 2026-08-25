@@ -1,12 +1,10 @@
 <footer>
-  <p>
-    {{ i18n "footer_copyright" (dict "Year" now.Year) }}
-    {{/* site.GetPage resolves within the CURRENT page's own language
-         site, so this correctly links to the German Impressum from a
-         German page and the English Imprint from an English page —
-         no manual /de/ prefixing needed. .Title is already the
-         localized page title ("Imprint"/"Impressum"), so no separate
-         i18n key needed for the link label either. */}}
-    {{ with site.GetPage "/imprint" }}· <a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
-  </p>
+  <p>{{ i18n "footer_copyright" (dict "Year" now.Year) }}</p>
+  {{/* Every page (including the entry page, via baseof.html's
+       unconditional footer call) gets the quiet "EN · DE · Imprint"
+       row here — NAVIGATION_DESIGN_SPEC.md §2's entry-page footer row
+       and §9's "imprint can stay footer-only by convention" are both
+       satisfied by this one call; no separate instance needed on
+       layouts/index.html. */}}
+  {{ partial "utility-nav.html" (dict "page" . "showImprint" true) }}
 </footer>

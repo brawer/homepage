@@ -1,0 +1,21 @@
+{{/*
+  Page header shell — NAVIGATION_DESIGN_SPEC.md §1/§9's "tablet/desktop"
+  recap. Renders THREE things unconditionally, every time, on every
+  page; CSS alone (static/css/main.css) decides which are visible at
+  which viewport width, so no template here needs to know the
+  viewport:
+    - .nav-bar: the plain horizontal link list (desktop/tablet only)
+    - .utility-nav.header-desktop: language switcher, no imprint
+      (desktop/tablet only — imprint stays footer-only by convention)
+    - .drawer-trigger: the ≡ button that opens drawer.html (mobile only)
+*/}}
+<div class="site-header-inner">
+  <a href="{{ "/" | relLangURL }}" class="site-logo" aria-label="{{ i18n "home_label" }}">🌼</a>
+  <nav class="nav-bar" aria-label="{{ i18n "menu_label" }}">
+    {{ partial "primary-nav-links.html" (dict "page" . "includeHome" false) }}
+  </nav>
+  <div class="header-desktop">{{ partial "utility-nav.html" (dict "page" . "showImprint" false) }}</div>
+  <button type="button" class="drawer-trigger" data-drawer-open
+          aria-haspopup="dialog" aria-controls="nav-drawer"
+          aria-label="{{ i18n "menu_open" }}">☰</button>
+</div>

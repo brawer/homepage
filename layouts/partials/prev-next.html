@@ -1,0 +1,14 @@
+{{/*
+  Shared Prev/Next row for detail pages — NAVIGATION_DESIGN_SPEC.md §6,
+  "bottom of page." Uses Hugo's built-in .PrevInSection/.NextInSection,
+  scoped to the page's own section and ordered by the section's default
+  sort (date descending — no `weight` is set anywhere in current
+  content). Called identically from art/publications/projects
+  single.html.
+*/}}
+{{ if or .PrevInSection .NextInSection }}
+<nav class="prev-next" aria-label="{{ i18n "prev_next_label" }}">
+  {{ with .PrevInSection }}<a class="prev" href="{{ .RelPermalink }}">‹ {{ i18n "prev_label" }}</a>{{ end }}
+  {{ with .NextInSection }}<a class="next" href="{{ .RelPermalink }}">{{ i18n "next_label" }} ›</a>{{ end }}
+</nav>
+{{ end }}

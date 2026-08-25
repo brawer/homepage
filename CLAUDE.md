@@ -194,6 +194,16 @@ the physical top-to-bottom measurement regardless of orientation),
   ever needs a field oils don't (e.g. sketches wanting a "sketchbook
   page #"), *that's* the actual signal for a real `kind` split — not
   this.
+- **Superseded 2026-08-25, grid only**: `medium` no longer feeds a
+  gallery-grid badge. NAVIGATION_DESIGN_SPEC.md §4 wants grid badges
+  used "only where they carry information the thumbnail can't" — art's
+  image is already unambiguous, so art tiles now show no badge at all.
+  `medium` itself is untouched and still required, still shown on the
+  art detail page's caption line (`layouts/art/single.html`) exactly as
+  before — only `gallery-grid.html`'s badge branch changed. Publications
+  and Projects tiles similarly dropped their `kind`/`role`-text badges
+  in favor of a generic format glyph ("PDF" / `</>`) — see "Templates"
+  below.
 
 ## Publications bundle front matter
 
@@ -358,10 +368,12 @@ don't resurrect it.
   role).
 - `role` — one of `"creator"`, `"maintainer"`, `"contributor"` —
   lowercase internal value like publications' `kind`, translated for
-  display via `role_<value>` i18n keys. This is the project-section
-  equivalent of publications' `kind` badge / art's `medium`-as-badge
-  in the gallery grid (`gallery-grid.html`) — same "one small badge,
-  whichever field the page happens to have" pattern. **Single value,
+  display on the project's own detail-page byline via `role_<value>`
+  i18n keys (unchanged). It no longer feeds a gallery-grid badge as of
+  2026-08-25 — see "Superseded 2026-08-25, grid only" under "Art
+  bundle front matter" above; the grid now shows a generic `</>` glyph
+  for every project tile regardless of `role`, per
+  NAVIGATION_DESIGN_SPEC.md §4. **Single value,
   not a list**, even though a project can genuinely be more than one
   (e.g. `text-rendering-tests`: Sascha both created and still
   maintains it) — a list would break the one-badge-per-item pattern
@@ -648,19 +660,22 @@ more content or committing to real visual design. Real visual design
 is still entirely `/design` mode's job — nothing here should be taken
 as a design decision, just a structural one.
 
-- `layouts/_default/baseof.html` + `head.html`/`nav.html`/
-  `language-switcher.html`/`social-icons.html`/`footer.html` partials
-  — the shared page shell. Nav, location, and social icons are
-  template-driven from `Site.Menus.main`/`Site.Params.location`/
-  `Site.Params.social`, per the Homepage bullet above (`social-icons.html`
-  despite its name renders all three of these, not just social links
-  — see its own header comment). The language switcher hides itself
-  via `.IsTranslated` rather
-  than ever linking to a 404 — belt-and-suspenders alongside the CI
-  bilingual-coverage check, not a replacement for it (CI only guards
-  `main`; a page can briefly lack a translation in a local working
-  tree while it's being authored, and the template shouldn't assume
-  otherwise).
+- `layouts/_default/baseof.html` + `head.html`/`header.html`/
+  `social-icons.html`/`footer.html` partials — the shared page shell.
+  Location and social icons are template-driven from
+  `Site.Params.location`/`Site.Params.social`, per the Homepage bullet
+  above (`social-icons.html` despite its name renders both of these,
+  not just social links — see its own header comment). The language
+  half of `utility-nav.html` (see "Navigation, 2026-08-25" below)
+  degrades gracefully via `.IsTranslated` rather than ever linking to a
+  404 — belt-and-suspenders alongside the CI bilingual-coverage check,
+  not a replacement for it (CI only guards `main`; a page can briefly
+  lack a translation in a local working tree while it's being authored,
+  and the template shouldn't assume otherwise). **`nav.html` and
+  `language-switcher.html` were deleted 2026-08-25**, superseded by
+  `header.html`/`drawer.html`/`primary-nav-links.html`/
+  `utility-nav.html` — don't resurrect them, don't re-add either name
+  as a new partial without checking this note first.
 - `layouts/partials/gallery-grid.html` — the one shared grid component
   for Art/Publications/Projects list pages *and* tag pages, per
   DESIGN_BRIEF. Used by `layouts/_default/list.html` and
@@ -753,6 +768,125 @@ as a design decision, just a structural one.
   file write, not as literal source text, and silently resolves to
   the raw (nearly invisible) character instead of staying as legible
   escape text. Verified this exact failure mode while building this.
+
+### Navigation, 2026-08-25
+
+Sascha designed the site's navigation architecture separately (with
+web Claude) and merged it to `main` as `NAVIGATION_DESIGN_SPEC.md` +
+`WIREFRAME.html`. This subsection records the structural/behavioral
+implementation of that spec — still pre-`/design`: real colors, icon
+artwork, spacing, and animation stay deferred, per the spec doc and
+the two files above.
+
+- **First JavaScript in the repo**: `static/js/nav.js`, plain, no
+  build step. Wires up the drawer, the fullscreen viewer, and the
+  tag-page back arrow — all built on native `<dialog>`
+  (`showModal()`/`close()`), which gives ESC-to-close, a native
+  `::backdrop`, and native focus-trap + focus-restore-on-close for
+  free. Don't hand-roll any of that.
+- `layouts/partials/drawer.html` — the mobile nav drawer (Home + 4
+  sections + language + imprint), rendered once in `baseof.html`.
+  Opened by the `☰` trigger in `layouts/partials/header.html`
+  (present on every page). `layouts/partials/primary-nav-links.html`
+  is the one place `range site.Menus.main` lives, shared by the
+  drawer and `header.html`'s desktop nav-bar. **The mobile-vs-desktop
+  split is CSS-only** (`static/css/main.css`, ~768px breakpoint) —
+  the nav-bar, the desktop utility-nav, and the drawer trigger all
+  render unconditionally on every page; no template needs to know the
+  viewport.
+- `layouts/partials/utility-nav.html` — merged language switcher +
+  imprint link, replacing the old separate `language-switcher.html`
+  (deleted) and the imprint-only line that used to live directly in
+  `footer.html`. `footer.html`'s call (`showImprint=true`, every page)
+  is what actually gives the entry page its quiet "EN · DE · Imprint"
+  row per spec §2 — `layouts/index.html` needs no separate instance.
+  `header.html`'s desktop-only call passes `showImprint=false`
+  (imprint stays footer-only by convention even at desktop widths).
+- `layouts/partials/grid-header.html` + `chip-row.html` — the shared
+  two-line grid header (title/back-arrow + item-count subtitle) and
+  tag-chip row used by both `list.html` and `tags/term.html`, per spec
+  §4/§5. Item-count is a flat `i18n "item_count_flat"` on section
+  pages, a breakdown (`item_count_projects`/`_publications`/
+  `_artworks`, each zero-omitted) on tag pages, bucketed by Hugo's
+  built-in `.Section` — **not** the same thing as publications'
+  unrelated `Params.kind`, same name, different concept. Tag
+  co-occurrence and a section's own tag set are both deduped by
+  `.RelPermalink` in an explicit `$seen` slice, checked with `in` —
+  **Hugo's `union` was tried first and does NOT reliably dedupe two
+  `Pages` collections returned from separate `.GetTerms` calls**
+  (confirmed: produced visible duplicate chips in a real build). If
+  you need to merge `Pages` collections elsewhere, dedupe by
+  `.RelPermalink` explicitly rather than reaching for `union` again.
+  `chip-row.html` is also reused by each detail `single.html`'s own
+  tag row (moved from the bottom of the page to right after `<h1>`,
+  per spec §6's fixed order).
+- `layouts/partials/prev-next.html` — shared Prev/Next row on all
+  three detail templates, using Hugo's built-in
+  `.PrevInSection`/`.NextInSection` (section-scoped, date-descending —
+  no `weight` set anywhere in current content, no config needed).
+- **Grid-tile badges changed** (`gallery-grid.html`): publications get
+  a generic "PDF" glyph, projects a generic `</>` glyph, art none — see
+  "Superseded 2026-08-25, grid only" under "Art bundle front matter"
+  above for what this replaced and why the underlying fields are
+  unaffected. Both use new `.badge`/`.badge-pdf`/`.badge-code` classes,
+  deliberately **not** `.kind-badge` (that class still means a
+  translated text pill on detail-page bylines — unchanged). The entry
+  page (`layouts/index.html`) reuses these exact same classes for its
+  Projects/Publications tiles, per spec §2's "same glyph... for
+  consistency."
+- **Art detail page got a `.hero` wrapper for the first time**
+  (`layouts/art/single.html`) — only publications/projects had one
+  before this. New behavior: the whole hero is one tappable `<button>`
+  (not a separate overlay), no CTA button, a small ⤢ icon, opens the
+  new fullscreen viewer (a second `<dialog>` on the same page,
+  reusing `.PrevInSection`/`.NextInSection` for its own prev/next via
+  a real page load with a `?view=full` query param that `nav.js`
+  auto-reopens — not in-dialog image swapping, to avoid a second data
+  source for the same adjacency `prev-next.html` already computes).
+  The viewer is **art-only** — publications/projects heroes stay
+  non-interactive except their existing CTA button.
+- **Hero matte is a two-bucket CSS class, not per-image**: `.hero
+  hero-matte-dark` (art — fixed `#2c2c2a`, deliberately does NOT
+  follow system theme, gallery-framing convention) vs. `.hero
+  hero-matte-light` (publications AND projects — `background: Canvas`,
+  follows theme automatically with zero custom properties). Projects
+  was an open question in the spec itself; Sascha resolved it as the
+  light/document bucket, same as publications, not art's dark bucket.
+- **Accessibility was treated as part of this structural pass, not
+  deferred to `/design`** (Sascha's explicit ask): a skip link (first
+  focusable element in `<body>`, jumps to `<main id="main">`), explicit
+  `aria-label`s on every icon-only control (drawer trigger/close, back
+  arrow, zoom, viewer close/prev/next), `aria-modal="true"` + a labeled
+  `aria-label` on both `<dialog>`s (redundant with native `<dialog>`
+  semantics in current browsers, kept for older AT/browser
+  compatibility), `autofocus` on the viewer's close button, decorative
+  images/badges marked `aria-hidden`/`alt=""` where an adjacent text
+  label already carries the accessible name, and a CSS guardrail
+  (comment in `main.css`) not to suppress the default `:focus-visible`
+  outline on any new interactive element until `/design` mode
+  deliberately restyles (not removes) it.
+- **What's still explicitly deferred to `/design` mode**: the full
+  light/dark custom-property token set from `WIREFRAME.html`; real
+  icon artwork (placeholders stay ☰ ✕ ⤢ ← › ‹ "CV" "PDF" `</>`); chip/
+  badge visual polish; drawer/viewer open/close animation; the
+  detail-page "Read more" line-clamp (spec §6 itself allows unclamped
+  scrolling text as an acceptable alternative — skipped entirely
+  rather than building a clamp+JS-toggle now only to redo it later);
+  `safe-area-inset-*` padding; the tablet/desktop two-column detail
+  layout; larger circular Prev/Next buttons + arrow-key support;
+  landscape-specific grid column counts/header collapse beyond what
+  the responsive rules above already produce.
+- **No content-model or CI-relevant changes** in this pass — no new
+  front-matter fields, no `content/` edits. Confirmed
+  `hugo build`/`hugo list all` output is unchanged, `check_typography.py`
+  passes (though note it only scans `content/**/*.{en,de}.md`, **not**
+  the new `i18n/*.toml` strings — those were reviewed manually against
+  de-CH conventions instead). The interactive behavior itself
+  (drawer/viewer open-close, focus handling, tag back-arrow) can't be
+  verified by `hugo build` at all — it needs a manual `hugo server` +
+  browser/keyboard/screen-reader check, which Sascha still needs to do
+  (this session has no browser access — see the "No system automation"
+  memory).
 
 ## Known open items (as of last content session)
 

@@ -86,8 +86,54 @@ other = "Sprachen"
 [gallery_empty]
 other = "Hier gibt es noch nichts zu sehen – schau bald wieder vorbei."
 
-[language_switcher_label]
-other = "Sprache:"
-
 [footer_copyright]
 other = "© {{.Year}} Sascha Brawer"
+
+# siehe i18n/en.toml
+[menu_open]
+other = "Menü öffnen"
+[menu_close]
+other = "Menü schliessen"
+[menu_label]
+other = "Navigationsmenü"
+[home_label]
+other = "Startseite"
+[back_label]
+other = "Zurück"
+[zoom_open]
+other = "Vollbild ansehen"
+[viewer_label]
+other = "Vollbild-Bildbetrachter"
+[viewer_close]
+other = "Schliessen"
+[viewer_prev]
+other = "Vorheriges Werk"
+[viewer_next]
+other = "Nächstes Werk"
+[viewer_position]
+other = "{{.Position}} / {{.Total}}"
+[prev_label]
+other = "Zurück"
+[next_label]
+other = "Weiter"
+[prev_next_label]
+other = "Vor/Zurück-Navigation"
+[all_chip_label]
+other = "Alle"
+[tag_filter_label]
+other = "Nach Tag filtern"
+[skip_to_content]
+other = "Zum Inhalt springen"
+
+[item_count_flat]
+one = "{{.Count}} Eintrag"
+other = "{{.Count}} Einträge"
+[item_count_projects]
+one = "{{.Count}} Projekt"
+other = "{{.Count}} Projekte"
+[item_count_publications]
+one = "{{.Count}} Publikation"
+other = "{{.Count}} Publikationen"
+[item_count_artworks]
+one = "{{.Count}} Kunstwerk"
+other = "{{.Count}} Kunstwerke"

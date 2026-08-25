@@ -4,7 +4,7 @@
      tag pages (e.g. Memes) carry their own intro body content, which
      .Content renders above the grid. */}}
 {{ define "main" }}
-<h1>{{ .Title }}</h1>
+{{ partial "grid-header.html" (dict "page" . "gridKind" "term") }}
 {{ .Content }}
 {{ partial "gallery-grid.html" (dict "pages" .Pages) }}
 {{ end }}

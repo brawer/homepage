@@ -5,11 +5,50 @@
 {{ .Content }}
 <p class="intro">{{ .Site.Params.intro }}</p>
 {{ partial "social-icons.html" . }}
-<nav class="section-links">
-  <ul>
-    {{ range .Site.Menus.main }}
-      <li><a href="{{ .URL }}">{{ .Name }}</a></li>
-    {{ end }}
-  </ul>
-</nav>
+
+{{/* Entry page section list — NAVIGATION_DESIGN_SPEC.md §2: "a
+     visible list with small representative icons/thumbnails... not
+     hidden behind the hamburger." Matched to each menu entry by URL
+     slug, same pattern grid-header.html/list.html already use for
+     translated-heading lookup. Icon/thumbnail is decorative
+     (aria-hidden/alt="") since the adjacent link text (.Name) is
+     already the tile's accessible name.
+
+     Projects and Publications reuse the exact same .badge-code/
+     .badge-pdf classes as the grid tile badges (gallery-grid.html) —
+     spec explicitly wants "the same glyph as the Projects icon on the
+     entry page, for consistency", not a separately chosen icon. */}}
+<ul class="section-tiles">
+  {{ range site.Menus.main }}
+    {{ $slug := strings.Trim .URL "/" }}
+    <li class="section-tile">
+      <a href="{{ .URL }}">
+        <span class="tile-icon" aria-hidden="true">
+          {{ if eq $slug "resume" }}
+            <span class="badge badge-cv">CV</span>
+          {{ else if eq $slug "projects" }}
+            <span class="badge badge-code">&lt;/&gt;</span>
+          {{ else if eq $slug "publications" }}
+            <span class="badge badge-pdf">PDF</span>
+          {{ else if eq $slug "art" }}
+            {{ with site.GetPage "/art" }}
+              {{ with index .RegularPages 0 }}
+                {{ $img := "" }}
+                {{ if .Params.teaser }}
+                  {{ $img = .Resources.GetMatch .Params.teaser }}
+                {{ else if .Params.image }}
+                  {{ $img = .Resources.GetMatch .Params.image }}
+                {{ end }}
+                {{ with $img }}
+                  {{ partial "picture-thumbnail.html" (dict "image" . "alt" "" "widths" (slice 80 160) "sizes" "40px") }}
+                {{ end }}
+              {{ end }}
+            {{ end }}
+          {{ end }}
+        </span>
+        <span class="tile-label">{{ .Name }}</span>
+      </a>
+    </li>
+  {{ end }}
+</ul>
 {{ end }}

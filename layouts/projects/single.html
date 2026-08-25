@@ -16,7 +16,10 @@
     {{ $img = $.Resources.GetMatch . }}
   {{ end }}
   {{ if or $img .Params.github_url }}
-    <div class="hero">
+    {{/* hero-matte-light: theme-following (Canvas), same bucket as
+         Publications -- NAVIGATION_DESIGN_SPEC.md §7's table treats
+         code screenshots like documents, not framed artwork. */}}
+    <div class="hero hero-matte-light">
       {{ with $img }}
         <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
       {{ end }}
@@ -26,6 +29,15 @@
     </div>
   {{ end }}
   <h1>{{ .Title }}</h1>
+
+  {{/* Fixed page order per NAVIGATION_DESIGN_SPEC.md §6: tag chips
+       come right after the title, before the role/date/status byline
+       below. */}}
+  {{ with .GetTerms "tags" }}
+    {{ $chips := slice }}
+    {{ range . }}{{ $chips = $chips | append (dict "label" .Title "href" .RelPermalink) }}{{ end }}
+    {{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tags_label")) }}
+  {{ end }}
 
   {{/* role/date-range/status form a byline, same shape as
        publications' kind/authors/venue/date byline. The date range is
@@ -78,11 +90,7 @@
     </ul>
   {{ end }}
 
-  {{ with .GetTerms "tags" }}
-    <p class="tags">
-      {{ i18n "tags_label" }}
-      {{ range . }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
-    </p>
-  {{ end }}
 </article>
+
+{{ partial "prev-next.html" . }}
 {{ end }}
