@@ -1,10 +1,29 @@
 {{/* See CLAUDE.md's Projects bundle front matter section. */}}
 {{ define "main" }}
 <article>
+  {{/* image and github_url are wrapped in one .hero container -- even
+       though nothing here draws it as an overlay yet -- specifically
+       so a later /design pass can position the GitHub link as a
+       button on top of the hero image with CSS alone (position:
+       relative on .hero, position: absolute on .hero-cta), without
+       another template edit. Wrapping is conditional on having
+       *either* field, not just image, so a project with a
+       github_url but no teaser image yet still gets its link
+       rendered (as a plain, non-overlaid one) instead of losing it
+       silently. See CLAUDE.md's Templates section. */}}
+  {{ $img := "" }}
   {{ with .Params.image }}
-    {{ with $.Resources.GetMatch . }}
-      <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
-    {{ end }}
+    {{ $img = $.Resources.GetMatch . }}
+  {{ end }}
+  {{ if or $img .Params.github_url }}
+    <div class="hero">
+      {{ with $img }}
+        <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
+      {{ end }}
+      {{ with .Params.github_url }}
+        <a class="hero-cta" href="{{ . }}">{{ i18n "view_on_github" }}</a>
+      {{ end }}
+    </div>
   {{ end }}
   <h1>{{ .Title }}</h1>
 
@@ -31,8 +50,6 @@
   {{ with .Params.summary }}<p>{{ . | markdownify }}</p>{{ end }}
 
   {{ .Content }}
-
-  {{ with .Params.github_url }}<p><a href="{{ . }}">{{ i18n "view_on_github" }}</a></p>{{ end }}
 
   {{ with .Params.related_publications }}
     <p>{{ i18n "related_label" }}</p>

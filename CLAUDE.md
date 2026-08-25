@@ -678,6 +678,17 @@ as a design decision, just a structural one.
   folded into general image-handling logic) specifically so an inline
   PDF embed/viewer can be added later as a sibling to it, near the
   "Download PDF" link, without restructuring this.
+- Projects detail page's `image` and `github_url` are wrapped in one
+  `<div class="hero">` (added 2026-08-25, structural-only — no CSS
+  yet, ahead of a planned `/design`-mode pass to show `github_url` as
+  a button overlaid on the hero image). Wrapping triggers on having
+  *either* field, not just `image`, so a project with a `github_url`
+  but no teaser image yet still gets its link rendered (as a plain,
+  non-overlaid `<a class="hero-cta">`) instead of silently losing it
+  — verified with a throwaway no-image test entry. Doing this now
+  rather than in `/design` mode means the later styling pass is pure
+  CSS (`position: relative` on `.hero`, `position: absolute` on
+  `.hero-cta`) with no further template edit needed.
 - `i18n/en.toml` + `i18n/de.toml` — every piece of UI chrome text
   (kind badges, "Download PDF", resume section headings, etc.) is a
   key here, translated for both languages, per the fully-bilingual
