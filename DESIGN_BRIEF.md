@@ -186,9 +186,11 @@ detail page's hero image instead of `image`; the gallery grid always
 uses `image` regardless).
 
 **Project bundle** (`content/projects/<slug>/index.<lang>.md`, one
-entry as of 2026-08-25): `title`, `date`, `publishDate`, `tags`,
-`image` (WebP teaser, optional), `date_range` (display string, e.g.
-"2019 – 2023" or "Since 2022"), `status` (`active`/`inactive` —
+entry as of 2026-08-25): `title`, `date` (also the displayed start
+year), `publishDate`, `tags`, `image` (WebP teaser, optional),
+`end_date` (optional integer year — omitted means ongoing; the byline
+date phrase, "Since 2016" or "2016–2021", is computed from `date` +
+`end_date`, not hand-written), `status` (`active`/`inactive` —
 whether Sascha is still involved, not whether the repo itself is
 alive), `role` (`creator`/`maintainer`/`contributor`, badge like
 publications' `kind`), `summary` (short blurb), `github_url`
