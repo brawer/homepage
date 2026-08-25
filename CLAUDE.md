@@ -826,6 +826,21 @@ the two files above.
   three detail templates, using Hugo's built-in
   `.PrevInSection`/`.NextInSection` (section-scoped, date-descending —
   no `weight` set anywhere in current content, no config needed).
+  **Hugo's `.Next`/`.Prev` naming is backwards from the visual
+  direction** — found and fixed 2026-08-25, empirically (not just from
+  docs), after Sascha reported the art fullscreen viewer's `N / M`
+  counter moving opposite to the chevron clicked: with pages sorted
+  newest-first (the same order the grid uses, unchanged), `.NextInSection`
+  returns the page at the LOWER index (the newer neighbor, lower
+  position number) and `.PrevInSection` returns the HIGHER index (the
+  older neighbor, higher position number) — exactly backwards from
+  what the method names suggest. So the visual "Prev" (‹, decrement)
+  is fed by `.NextInSection`, and visual "Next" (›, increment) is fed
+  by `.PrevInSection`, in both `prev-next.html` and the fullscreen
+  viewer's own prev/next links in `art/single.html`. Verified against
+  all 9 art pieces, including both boundary cases (position 1 has no
+  "Prev"/‹, position 9 has no "Next"/›). If a similar Prev/Next needs
+  building elsewhere, copy this swap, not the intuitive pairing.
 - **Grid-tile badges changed** (`gallery-grid.html`): publications get
   a generic "PDF" glyph, projects a generic `</>` glyph, art none — see
   "Superseded 2026-08-25, grid only" under "Art bundle front matter"

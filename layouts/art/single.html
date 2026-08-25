@@ -49,10 +49,22 @@
 {{/* Fullscreen viewer -- art only, per spec §8. Reused for every
      PrevInSection/NextInSection hop via a real page load (?view=full,
      auto-reopened by static/js/nav.js), not in-dialog image swapping
-     -- reuses the exact same Prev/Next relationship as below with no
-     separate data source. Near-black background regardless of theme
-     is the same deliberate non-theme-following exception as
-     hero-matte-dark above. */}}
+     -- reuses the exact same Prev/Next relationship as prev-next.html
+     with no separate data source.
+
+     $position/$total number the SAME newest-first order the grid uses
+     (position 1 = newest) -- position 1 counts up toward $total as
+     you move to older pieces. To match that direction, the › (next,
+     should INCREMENT the counter) button is fed by .PrevInSection and
+     the ‹ (prev, should DECREMENT) button by .NextInSection -- Hugo's
+     Next/borderline-Prev naming is backwards from the visual/counter
+     direction here, confirmed empirically 2026-08-25 (reported as the
+     counter moving opposite to the clicked chevron). See
+     prev-next.html's header comment for the full explanation; keep
+     both in sync if this ever changes again.
+
+     Near-black background regardless of theme is the same deliberate
+     non-theme-following exception as hero-matte-dark above. */}}
 {{ with $img }}
   {{ $siblings := $.CurrentSection.RegularPages }}
   {{ $total := len $siblings }}
@@ -64,8 +76,8 @@
       <span class="viewer-count">{{ i18n "viewer_position" (dict "Position" $position "Total" $total) }}</span>
     </div>
     <div class="viewer-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
-    {{ with $.PrevInSection }}<a class="viewer-prev" href="{{ .RelPermalink }}?view=full" aria-label="{{ i18n "viewer_prev" }}">‹</a>{{ end }}
-    {{ with $.NextInSection }}<a class="viewer-next" href="{{ .RelPermalink }}?view=full" aria-label="{{ i18n "viewer_next" }}">›</a>{{ end }}
+    {{ with $.NextInSection }}<a class="viewer-prev" href="{{ .RelPermalink }}?view=full" aria-label="{{ i18n "viewer_prev" }}">‹</a>{{ end }}
+    {{ with $.PrevInSection }}<a class="viewer-next" href="{{ .RelPermalink }}?view=full" aria-label="{{ i18n "viewer_next" }}">›</a>{{ end }}
   </dialog>
 {{ end }}
 
