@@ -677,7 +677,12 @@ as a design decision, just a structural one.
   independently. Kept as its own isolated block in the template (not
   folded into general image-handling logic) specifically so an inline
   PDF embed/viewer can be added later as a sibling to it, near the
-  "Download PDF" link, without restructuring this.
+  "Download PDF" link, without restructuring this. That hero image and
+  the `pdf` download link are, in turn, wrapped in one `<div
+  class="hero">` (added 2026-08-25) — same structural change, same
+  `/design`-mode-button-overlay reasoning, and same either-field
+  wrapping condition (not just heroImage) as projects' `.hero`/
+  `.hero-cta`, described next.
 - Projects detail page's `image` and `github_url` are wrapped in one
   `<div class="hero">` (added 2026-08-25, structural-only — no CSS
   yet, ahead of a planned `/design`-mode pass to show `github_url` as
