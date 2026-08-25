@@ -53,20 +53,26 @@ nav ul {
   gap: 1.2rem;
 }
 
-/* <picture> isn't a replaced element the way <img> is, so
-   aspect-ratio/object-fit on it directly is unreliable across
-   browsers (confirmed: WebKit/Safari ignored it and rendered the
-   image at something close to its natural ratio instead of square).
-   display: contents removes <picture> from the box model entirely —
-   its <img> child is what actually gets sized. */
+/* Square teaser crop for the grid. An earlier attempt put
+   aspect-ratio/object-fit on <img> with display:contents on
+   <picture> (see git history) and that reportedly still rendered
+   non-square in a real browser check on 2026-08-24 — not re-diagnosed
+   at the time. Trying the more standard container pattern instead,
+   2026-08-25: aspect-ratio + overflow:hidden on <picture> itself
+   (sized as a normal block box, not removed from the box model), with
+   its <img> child stretched to fill via height:100% + object-fit:cover.
+   Purely to make broken/missing teaser images obvious while there's
+   no real design yet — revisit in /design mode either way. */
 .gallery-grid picture {
-  display: contents;
+  display: block;
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
 }
 
 .gallery-grid img {
   display: block;
   width: 100%;
-  aspect-ratio: 1 / 1;
+  height: 100%;
   object-fit: cover;
 }
 
