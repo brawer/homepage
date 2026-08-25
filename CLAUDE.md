@@ -761,35 +761,43 @@ as a design decision, just a structural one.
   actual grid aspect ratio/column counts beyond the current bare
   hard-coded 3-column square grid) — everything in the "Templates"
   section above is structural/functional only.
-- **Gallery grid thumbnails don't render square in Safari/Chrome**,
-  found 2026-08-24. Confirmed by pixel-measuring a real screenshot:
-  613×799px (ratio 0.77), not 613×613 — real, substantial, not a
-  rounding thing. The `display: contents` fix in
-  `static/css/main.css` (see git history) did *not* resolve it, and
+- **Gallery grid thumbnails now render square, fixed 2026-08-25** --
+  see `static/css/main.css` git history. Root cause not fully
+  re-diagnosed (the original 2026-08-24 finding below still stands as
+  a data point), but the fix was straightforward: swap the previous
+  `display:contents`-on-`<picture>` approach for the more standard
+  container-crop pattern -- `aspect-ratio: 1/1` + `overflow:hidden`
+  directly on `<picture>` itself (kept as a normal sized block box),
+  with its `<img>` child stretched to fill via `height:100%` +
+  `object-fit:cover`. Confirmed by Sascha via the dev server on art,
+  projects, publications, and a mixed tag page. Still purely a
+  throwaway fix to make broken/missing teaser images visually
+  obvious ahead of real content review -- not a `/design`-mode
+  decision, and the exact crop/positioning may change once that
+  pass happens.
+  Original 2026-08-24 finding, kept for reference: confirmed by
+  pixel-measuring a real screenshot at the time: 613×799px (ratio
+  0.77), not 613×613 -- real, substantial, not a rounding thing. The
+  earlier `display: contents` fix did *not* resolve it then, and
   further remote debugging wasn't productive without eyes on the
-  actual DevTools computed styles. Deliberately **not** chased further
-  now — the parts that mattered for this session's derisking goal are
-  confirmed fine (image files are genuinely square at the file level;
-  `<picture>`/`<img>`/`srcset` markup is standard and correct; grid
-  columns compute to equal widths). This is purely a CSS box-sizing
-  question, not evidence of a structural/data problem, so it's
-  deferred to `/design` mode rather than blocking further work. Start
-  there with real DevTools access (computed styles on `.gallery-grid
-  img`), not more guessing from screenshots.
+  actual DevTools computed styles -- deliberately not chased further
+  at the time (the parts that mattered for that session's derisking
+  goal were confirmed fine: image files genuinely square at the file
+  level, `<picture>`/`<img>`/`srcset` markup standard and correct,
+  grid columns computing to equal widths).
   **Detail-page images (`picture.html`, e.g. any publication's hero
-  image) are not affected and need no fix** — confirmed 2026-08-24.
-  The bug is specifically about *forcing* an artificial 1:1 ratio via
-  CSS `aspect-ratio` on `<picture>` (a non-replaced element, where
-  that property is unreliable) to get square crops from non-square
-  sources — that's what `picture-thumbnail.html`/`.gallery-grid` do.
-  `picture.html` never does this: it shows images at their natural
-  shape (`.detail-image` is just `max-width:100%; height:auto`), and
-  relies on the `<img>`'s real `width`/`height` HTML attributes (set
-  from the actual resized dimensions) for layout-shift prevention —
-  which is standard, well-supported browser behavior (implicit
-  `aspect-ratio` derived from those attributes) requiring no CSS
-  `aspect-ratio` override at all. Different mechanism, not hit by the
-  same failure mode.
+  image) were never affected and need no fix** -- confirmed
+  2026-08-24, still true. The square-crop bug was specifically about
+  forcing an artificial 1:1 ratio to get square crops from
+  non-square sources -- that's what `picture-thumbnail.html`/
+  `.gallery-grid` do. `picture.html` never does this: it shows
+  images at their natural shape (`.detail-image` is just
+  `max-width:100%; height:auto`), and relies on the `<img>`'s real
+  `width`/`height` HTML attributes (set from the actual resized
+  dimensions) for layout-shift prevention -- which is standard,
+  well-supported browser behavior (implicit `aspect-ratio` derived
+  from those attributes) requiring no CSS `aspect-ratio` override at
+  all. Different mechanism, not hit by the same failure mode.
 - `content/resume/` still has no icons/timeline layout — see the
   "Resume bundle front matter" section above.
 - Section list pages (`content/art/_index.*.md`,
