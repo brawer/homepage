@@ -1,0 +1,20 @@
+{{/*
+  The one place `range site.Menus.main` lives for primary navigation —
+  shared by the desktop nav bar (header.html) and the drawer
+  (drawer.html), per NAVIGATION_DESIGN_SPEC.md §1/§3.
+
+  Params (dict):
+    page        (required) the current Page, for IsMenuCurrent.
+    includeHome (optional bool, default false) — the drawer wants an
+                explicit "Home" row (spec §3: "Home + four sections"),
+                the desktop bar doesn't (the logo already covers Home).
+*/}}
+{{ $page := .page }}
+<ul class="primary-links">
+  {{ if .includeHome }}
+    <li><a href="{{ "/" | relLangURL }}">{{ i18n "home_label" }}</a></li>
+  {{ end }}
+  {{ range site.Menus.main }}
+    <li><a href="{{ .URL }}"{{ if $page.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a></li>
+  {{ end }}
+</ul>

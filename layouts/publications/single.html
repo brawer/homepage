@@ -32,7 +32,10 @@
     {{ $pdfResource = $.Resources.GetMatch . }}
   {{ end }}
   {{ if or $heroImage $pdfResource }}
-    <div class="hero">
+    {{/* hero-matte-light: theme-following (Canvas), same bucket as
+         Projects -- "reads like paper" per NAVIGATION_DESIGN_SPEC.md
+         §7's table, unlike Art's fixed dark neutral. */}}
+    <div class="hero hero-matte-light">
       {{ with $heroImage }}
         <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
       {{ end }}
@@ -42,6 +45,16 @@
     </div>
   {{ end }}
   <h1>{{ .Title }}</h1>
+
+  {{/* Fixed page order per NAVIGATION_DESIGN_SPEC.md §6: tag chips
+       come right after the title, before the rest of the metadata
+       cluster (original-title/byline/fields) below. */}}
+  {{ with .GetTerms "tags" }}
+    {{ $chips := slice }}
+    {{ range . }}{{ $chips = $chips | append (dict "label" .Title "href" .RelPermalink) }}{{ end }}
+    {{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tags_label")) }}
+  {{ end }}
+
   {{/* Language name in the label is localized to the SITE's current
        language (e.g. "Japanisch" on the German page, "Japanese" on
        the English page) via a language_name_<code> i18n key — not
@@ -84,12 +97,7 @@
        as an intentional table/accordion rather than a plain list is
        a /design-mode CSS concern, not a templating one. */}}
   {{ .Content }}
-
-  {{ with .GetTerms "tags" }}
-    <p class="tags">
-      {{ i18n "tags_label" }}
-      {{ range . }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
-    </p>
-  {{ end }}
 </article>
+
+{{ partial "prev-next.html" . }}
 {{ end }}

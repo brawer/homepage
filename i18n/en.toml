@@ -109,8 +109,58 @@ other = "Languages"
 [gallery_empty]
 other = "Nothing here yet — check back soon."
 
-[language_switcher_label]
-other = "Language:"
-
 [footer_copyright]
 other = "© {{.Year}} Sascha Brawer"
+
+# NAVIGATION_DESIGN_SPEC.md — drawer, back arrow, fullscreen viewer,
+# grid header, skip link. See CLAUDE.md's Templates section.
+[menu_open]
+other = "Open menu"
+[menu_close]
+other = "Close menu"
+[menu_label]
+other = "Navigation menu"
+[home_label]
+other = "Home"
+[back_label]
+other = "Back"
+[zoom_open]
+other = "View full size"
+[viewer_label]
+other = "Full-size image viewer"
+[viewer_close]
+other = "Close"
+[viewer_prev]
+other = "Previous artwork"
+[viewer_next]
+other = "Next artwork"
+[viewer_position]
+other = "{{.Position}} / {{.Total}}"
+[prev_label]
+other = "Prev"
+[next_label]
+other = "Next"
+[prev_next_label]
+other = "Prev/next navigation"
+[all_chip_label]
+other = "All"
+[tag_filter_label]
+other = "Browse by tag"
+[skip_to_content]
+other = "Skip to content"
+
+# Item-count subtitle on grid pages -- flat form on section pages,
+# breakdown form (one per content type) on tag pages, since a tag page
+# mixes content types. See grid-header.html.
+[item_count_flat]
+one = "{{.Count}} item"
+other = "{{.Count}} items"
+[item_count_projects]
+one = "{{.Count}} project"
+other = "{{.Count}} projects"
+[item_count_publications]
+one = "{{.Count}} publication"
+other = "{{.Count}} publications"
+[item_count_artworks]
+one = "{{.Count}} artwork"
+other = "{{.Count}} artworks"

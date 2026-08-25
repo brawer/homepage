@@ -15,23 +15,82 @@ body {
   line-height: 1.5;
 }
 
+/* Accessibility primitive, not visual design — see
+   NAVIGATION_DESIGN_SPEC.md implementation plan §1. Off-canvas until
+   focused, since this pass adds a drawer trigger (and, at desktop
+   widths, a longer header row) that a keyboard/screen-reader user
+   should still be able to bypass in one action. */
+.skip-link {
+  position: absolute;
+  left: -999px;
+  top: auto;
+}
+
+.skip-link:focus {
+  position: fixed;
+  left: 1rem;
+  top: 1rem;
+  z-index: 100;
+  padding: .5rem 1rem;
+  background: Canvas;
+  color: CanvasText;
+  border: 2px solid CanvasText;
+}
+
 header {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  flex-wrap: wrap;
-  gap: 1rem;
   padding: 1.5rem 0;
   border-bottom: 1px solid CanvasText;
   margin-bottom: 2rem;
 }
 
-nav ul {
+.site-header-inner {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.site-logo {
+  font-size: 1.3rem;
+  text-decoration: none;
+  margin-right: auto;
+}
+
+.primary-links {
   list-style: none;
   display: flex;
   gap: 1.2rem;
   margin: 0;
   padding: 0;
+}
+
+/* Nav-bar vs. drawer-trigger — CSS-only responsive split (no template
+   needs to know the viewport). See implementation plan §1. */
+.nav-bar,
+.header-desktop {
+  display: none;
+}
+
+.drawer-trigger {
+  display: inline-flex;
+  font-size: 1.2rem;
+  background: none;
+  border: 1px solid CanvasText;
+  border-radius: .25rem;
+  padding: .3rem .6rem;
+  cursor: pointer;
+}
+
+@media (min-width: 768px) {
+  .nav-bar,
+  .header-desktop {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+  }
+  .drawer-trigger {
+    display: none;
+  }
 }
 
 .social-icons {
@@ -42,8 +101,310 @@ nav ul {
   padding: 0;
 }
 
-.language-switcher {
+.utility-nav {
   font-size: .85rem;
+}
+
+/* Drawer + fullscreen viewer — both native <dialog>, opened/closed via
+   static/js/nav.js. Bare positioning only, no visual polish (colors,
+   transitions) — /design mode's job. See implementation plan §1/§6/§8. */
+dialog {
+  border: 0;
+  padding: 0;
+  max-width: none;
+  max-height: none;
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, .5);
+}
+
+.drawer[open] {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  padding: 1.5rem;
+  overflow-y: auto;
+}
+
+/* Narrow panel rather than full-width once there's room for it — also
+   satisfies NAVIGATION_DESIGN_SPEC.md §9's mobile-landscape note
+   ("narrower drawer, not full-width") with this one rule, no separate
+   landscape-specific breakpoint needed. */
+@media (min-width: 768px) {
+  .drawer[open] {
+    left: auto;
+    width: min(400px, 100vw);
+  }
+}
+
+.drawer-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.drawer .primary-links {
+  flex-direction: column;
+  gap: 0;
+}
+
+.drawer .primary-links li {
+  padding: .6rem 0;
+  border-bottom: 1px solid CanvasText;
+}
+
+.drawer .utility-nav {
+  margin-top: 1.5rem;
+}
+
+body.drawer-open {
+  overflow: hidden;
+}
+
+.viewer[open] {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  /* Near-black regardless of theme — deliberate viewer convention
+     (isolates the image from surrounding chrome), same
+     non-theme-following exception as .hero-matte-dark below. Do not
+     make this theme-aware in a future /design pass. */
+  background: #0a0a0a;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+}
+
+.viewer-chrome {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem;
+}
+
+/* flex:1 gives this a fully definite box (100vw wide, remaining
+   viewport height tall) within .viewer[open]'s column layout. */
+.viewer-image {
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Same bulletproof pattern as the detail-page hero fix (see .hero
+   above): fill the container at width/height:100% and let
+   object-fit:contain do the letterbox/pillarbox scaling, rather than
+   relying on max-width/max-height alone. Found and fixed 2026-08-25
+   -- with only max-width/max-height set, the <img> was a flex item of
+   a flex container (.viewer-image, before this fix), and a flex
+   item's automatic minimum size (min-width/height: auto) refuses to
+   shrink a replaced element below its OWN intrinsic size -- so a
+   large source image stayed rendered at (part of) its natural pixel
+   size regardless of max-width/max-height, and .viewer-image's
+   overflow:hidden clipped the excess. Looked like "zoomed in
+   cropping", not distortion, because nothing was ever stretched --
+   the whole image just never got the chance to shrink to fit.
+   min-width/height:0 stays as a second line of defense even though
+   width/height:100% (not auto) already sidesteps the flex quirk on
+   its own. */
+.viewer-image img {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  object-fit: contain;
+}
+
+.viewer-prev,
+.viewer-next {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  color: #fff;
+  font-size: 1.5rem;
+  text-decoration: none;
+  padding: .5rem;
+}
+
+.viewer-prev {
+  left: .5rem;
+}
+
+.viewer-next {
+  right: .5rem;
+}
+
+/* Grid header + tag chip row — shared by section list pages and tag
+   pages (grid-header.html) and reused on every detail page's own tag
+   row. See implementation plan §3/§5. */
+.grid-title-row {
+  display: flex;
+  align-items: baseline;
+  gap: .8rem;
+  margin-bottom: .8rem;
+}
+
+.item-count {
+  font-size: .85rem;
+  opacity: .7;
+  margin: 0;
+}
+
+.chip-row {
+  display: flex;
+  gap: .5rem;
+  overflow-x: auto;
+  list-style: none;
+  margin: 0 0 1.2rem;
+  padding: 0 0 .3rem;
+}
+
+.chip {
+  display: inline-block;
+  white-space: nowrap;
+  font-size: .8rem;
+  text-decoration: none;
+  border: 1px solid CanvasText;
+  border-radius: 1rem;
+  padding: .2rem .7rem;
+}
+
+.chip-active {
+  font-weight: bold;
+}
+
+/* Hero image container — a genuinely FIXED-height box (not min-height:
+   a flex-centered min-height, tried first, left the box's real height
+   undetermined whenever the hero-zoom button inside it was taken out
+   of flow by position:absolute, so the <img>'s own max-height/
+   height:auto sizing had nothing reliable to size against and could
+   render distorted -- found and fixed 2026-08-25, reported as
+   "pillarbox filled on both dimensions, stretching the image").
+   Image sits inside at its native aspect ratio via object-fit: contain
+   on the <img> itself (see below), not by relying on the browser's
+   implicit width/height-attribute aspect-ratio computation -- matches
+   NAVIGATION_DESIGN_SPEC.md §7 exactly ("image sits inside at its
+   native aspect ratio (object-fit: contain), centered"). Matte color
+   is a two-bucket rule, not per-image, per the same section's table. */
+.hero {
+  position: relative;
+  height: 24rem;
+  overflow: hidden;
+  margin-bottom: 1rem;
+}
+
+.hero .detail-image,
+.hero .detail-image picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.hero .detail-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Fixed dark neutral regardless of system theme — DELIBERATE exception
+   to theme-following, per NAVIGATION_DESIGN_SPEC.md §7: gallery/
+   framing convention for showing color accurately. Do not "fix" this
+   by making it theme-aware. */
+.hero-matte-dark {
+  background: #2c2c2a;
+}
+
+/* Standard theme-following surface — reads like paper/a screenshot.
+   Uses the CSS system color keyword, so it already follows light/dark
+   mode with zero new custom properties. */
+.hero-matte-light {
+  background: Canvas;
+}
+
+.hero-zoom {
+  position: absolute;
+  inset: 0;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: zoom-in;
+}
+
+.zoom-icon {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  background: rgba(0, 0, 0, .5);
+  color: #fff;
+  border-radius: .25rem;
+  padding: .2rem .4rem;
+  font-size: .9rem;
+}
+
+.hero-cta {
+  position: absolute;
+  bottom: .8rem;
+  right: .8rem;
+}
+
+/* Grid-tile badges (gallery-grid.html) and the matching entry-page
+   tiles (index.html) — a small format/type glyph, not translated
+   prose (like "GitHub" or "URL"), so these stay literal strings, not
+   i18n keys. See implementation plan §4/§9. */
+.badge {
+  display: inline-block;
+  font-size: .7rem;
+  font-weight: bold;
+  border-radius: .25rem;
+  padding: .1rem .4rem;
+}
+
+.badge-pdf,
+.badge-code,
+.badge-cv {
+  border: 1px solid currentColor;
+}
+
+.prev-next {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 2rem;
+  font-size: .9rem;
+}
+
+/* Entry-page section tiles — NAVIGATION_DESIGN_SPEC.md §2. */
+.section-tiles {
+  list-style: none;
+  margin: 1.5rem 0 0;
+  padding: 0;
+}
+
+.section-tile a {
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  padding: .6rem 0;
+  border-top: 1px solid CanvasText;
+  text-decoration: none;
+  color: inherit;
+}
+
+.tile-icon {
+  display: inline-flex;
+  width: 2.2rem;
+  height: 2.2rem;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.tile-icon picture,
+.tile-icon img {
+  width: 100%;
+  height: 100%;
+  border-radius: .25rem;
 }
 
 /* Shared gallery grid — used by section list pages and tag pages. */
@@ -135,15 +496,6 @@ nav ul {
 
 .fields dd {
   margin: 0 0 .3rem 0;
-}
-
-.tags {
-  margin-top: 1rem;
-  font-size: .85rem;
-}
-
-.tags a {
-  margin-right: .5rem;
 }
 
 /* Resume */

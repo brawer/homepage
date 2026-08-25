@@ -1,0 +1,16 @@
+{{/*
+  Shared horizontally-scrollable tag-chip row — used by grid-header.html
+  (section/tag list pages) and each detail single.html's own tag row.
+  NAVIGATION_DESIGN_SPEC.md §4/§6.
+
+  Params (dict):
+    chips    (required) slice of {label, href, active (optional bool)}.
+    ariaLabel (required) accessible name for the chip group.
+*/}}
+{{ if gt (len .chips) 0 }}
+<ul class="chip-row" aria-label="{{ .ariaLabel }}">
+  {{ range .chips }}
+    <li><a class="chip{{ if .active }} chip-active{{ end }}" href="{{ .href }}"{{ if .active }} aria-current="page"{{ end }}>{{ .label }}</a></li>
+  {{ end }}
+</ul>
+{{ end }}

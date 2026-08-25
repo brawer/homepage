@@ -1,9 +1,34 @@
 {{ define "main" }}
 <article>
-  {{ with .Resources.GetMatch .Params.image }}
-    <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
+  {{/* Fixed page order per NAVIGATION_DESIGN_SPEC.md §6: Hero → Title
+       → Tag chips → Metadata → Description → Prev/Next.
+
+       Whole hero is tappable (opens the fullscreen viewer below), no
+       CTA button, small ⤢ icon — "within-page action, view larger, not
+       leave" (spec §6), unlike publications/projects' exit-action CTA
+       button. hero-matte-dark is a DELIBERATE exception to system-
+       theme following (spec §7's table) — do not make this
+       theme-aware in a future /design pass. */}}
+  {{ $img := "" }}
+  {{ with .Params.image }}
+    {{ $img = $.Resources.GetMatch . }}
+  {{ end }}
+  {{ with $img }}
+    <div class="hero hero-matte-dark">
+      <button type="button" class="hero-zoom" data-viewer-open aria-label="{{ i18n "zoom_open" }}">
+        <span class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</span>
+        <span class="zoom-icon" aria-hidden="true">⤢</span>
+      </button>
+    </div>
   {{ end }}
   <h1>{{ .Title }}</h1>
+
+  {{ with .GetTerms "tags" }}
+    {{ $chips := slice }}
+    {{ range . }}{{ $chips = $chips | append (dict "label" .Title "href" .RelPermalink) }}{{ end }}
+    {{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tags_label")) }}
+  {{ end }}
+
   {{/* height_cm/width_cm are two numeric fields, not one preformatted
        string -- joined here as "H x W cm" per CLAUDE.md/DESIGN_BRIEF.
        &#x202F; is U+202F NARROW NO-BREAK SPACE, around the
@@ -19,11 +44,42 @@
     {{ .Params.medium }} &middot; {{ .Params.height_cm }}&#x202F;&times;&#x202F;{{ .Params.width_cm }}&#x202F;cm &middot; {{ .Date.Format "2006" }}
   </p>
   {{ .Content }}
-  {{ with .GetTerms "tags" }}
-    <p class="tags">
-      {{ i18n "tags_label" }}
-      {{ range . }}<a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
-    </p>
-  {{ end }}
 </article>
+
+{{/* Fullscreen viewer -- art only, per spec §8. Reused for every
+     PrevInSection/NextInSection hop via a real page load (?view=full,
+     auto-reopened by static/js/nav.js), not in-dialog image swapping
+     -- reuses the exact same Prev/Next relationship as prev-next.html
+     with no separate data source.
+
+     $position/$total number the SAME newest-first order the grid uses
+     (position 1 = newest) -- position 1 counts up toward $total as
+     you move to older pieces. To match that direction, the › (next,
+     should INCREMENT the counter) button is fed by .PrevInSection and
+     the ‹ (prev, should DECREMENT) button by .NextInSection -- Hugo's
+     Next/borderline-Prev naming is backwards from the visual/counter
+     direction here, confirmed empirically 2026-08-25 (reported as the
+     counter moving opposite to the clicked chevron). See
+     prev-next.html's header comment for the full explanation; keep
+     both in sync if this ever changes again.
+
+     Near-black background regardless of theme is the same deliberate
+     non-theme-following exception as hero-matte-dark above. */}}
+{{ with $img }}
+  {{ $siblings := $.CurrentSection.RegularPages }}
+  {{ $total := len $siblings }}
+  {{ $position := 1 }}
+  {{ range $i, $p := $siblings }}{{ if eq $p.RelPermalink $.RelPermalink }}{{ $position = add $i 1 }}{{ end }}{{ end }}
+  <dialog id="viewer" class="viewer" aria-modal="true" aria-label="{{ i18n "viewer_label" }}">
+    <div class="viewer-chrome">
+      <button type="button" data-viewer-close aria-label="{{ i18n "viewer_close" }}" autofocus>✕</button>
+      <span class="viewer-count">{{ i18n "viewer_position" (dict "Position" $position "Total" $total) }}</span>
+    </div>
+    <div class="viewer-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
+    {{ with $.NextInSection }}<a class="viewer-prev" href="{{ .RelPermalink }}?view=full" aria-label="{{ i18n "viewer_prev" }}">‹</a>{{ end }}
+    {{ with $.PrevInSection }}<a class="viewer-next" href="{{ .RelPermalink }}?view=full" aria-label="{{ i18n "viewer_next" }}">›</a>{{ end }}
+  </dialog>
+{{ end }}
+
+{{ partial "prev-next.html" . }}
 {{ end }}

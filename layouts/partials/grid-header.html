@@ -1,0 +1,104 @@
+{{/*
+  Shared two-line grid header + tag chip row, used identically by
+  section list pages (Art/Publications/Projects) and tag pages —
+  NAVIGATION_DESIGN_SPEC.md §4/§5. Renders ONLY the title/back-arrow/
+  subtitle/chip-row block; the ≡ drawer trigger visible in
+  WIREFRAME.html's grid mockups is the global header.html trigger,
+  rendered once per page in baseof.html — this partial never renders
+  its own.
+
+  Params (dict):
+    page     (required) the current Page (a list or term page).
+    gridKind (required) "section" or "term".
+*/}}
+{{ $page := .page }}
+{{ $isTerm := eq .gridKind "term" }}
+
+<div class="grid-title-row">
+  {{ if $isTerm }}
+    {{/* Back arrow: a tag can be reached from many different parent
+         pages (any section grid, any other tag page it co-occurs on),
+         so there's no single correct static target. history.back()
+         (wired in nav.js) returns to wherever you actually pivoted
+         from, at the same scroll position; href="/" is the no-JS/
+         no-history fallback so the link is never a dead end. */}}
+    <a href="{{ "/" | relLangURL }}" class="back-arrow" data-history-back aria-label="{{ i18n "back_label" }}">←</a>
+  {{ end }}
+  <div>
+    <h1>
+      {{ if $isTerm }}
+        {{ $page.Title }}
+      {{ else }}
+        {{/* No content/<section>/_index.<lang>.md files exist yet, so
+             .Title has no translated value to give — borrow the label
+             already sitting in hugo.toml's per-language nav menu,
+             same single source of truth list.html used before this
+             partial existed. */}}
+        {{/* Matched via the menu entry's `identifier` (hugo.toml),
+             not by parsing .URL (language-prefixed on German pages,
+             "/de/art/") and not by .Page.Section (unreliable --
+             empty for single-page sections like resume, see
+             hugo.toml's menu comment). This partial only ever runs
+             for real list/term pages though, where $page.Section is
+             always a real non-empty section slug ("art" etc.). */}}
+        {{ $heading := $page.Title }}
+        {{ range site.Menus.main }}
+          {{ if eq .Identifier $page.Section }}
+            {{ $heading = .Name }}
+          {{ end }}
+        {{ end }}
+        {{ $heading }}
+      {{ end }}
+    </h1>
+
+    {{ if $isTerm }}
+      {{/* Breakdown count, not a flat total, since a tag page mixes
+           content types. Bucketed by Hugo's built-in .Section
+           ("art"/"publications"/"projects") — NOT the same thing as
+           publications' own front-matter Params.kind, a same-named
+           but unrelated concept. Zero-count buckets are omitted
+           rather than printed as "0 projects". */}}
+      {{ $artCount := len (where $page.Pages "Section" "art") }}
+      {{ $pubCount := len (where $page.Pages "Section" "publications") }}
+      {{ $projCount := len (where $page.Pages "Section" "projects") }}
+      {{ $parts := slice }}
+      {{ if gt $projCount 0 }}{{ $parts = $parts | append (i18n "item_count_projects" (dict "Count" $projCount)) }}{{ end }}
+      {{ if gt $pubCount 0 }}{{ $parts = $parts | append (i18n "item_count_publications" (dict "Count" $pubCount)) }}{{ end }}
+      {{ if gt $artCount 0 }}{{ $parts = $parts | append (i18n "item_count_artworks" (dict "Count" $artCount)) }}{{ end }}
+      <p class="item-count">{{ delimit $parts " · " }}</p>
+    {{ else }}
+      <p class="item-count">{{ i18n "item_count_flat" (dict "Count" (len $page.Pages)) }}</p>
+    {{ end }}
+  </div>
+</div>
+
+{{/* Dedup by RelPermalink explicitly, tracked in $seen -- Hugo's
+     `union` was tried first here but does NOT reliably dedupe Page
+     collections returned from separate .GetTerms calls (confirmed:
+     produced visible duplicate chips in a real build), so don't
+     reach for it again for Pages values. */}}
+{{ $chips := slice }}
+{{ $seen := slice }}
+{{ if $isTerm }}
+  {{ $chips = $chips | append (dict "label" $page.Title "href" $page.RelPermalink "active" true) }}
+  {{ $seen = $seen | append $page.RelPermalink }}
+  {{ range $page.Pages }}
+    {{ range .GetTerms "tags" }}
+      {{ if not (in $seen .RelPermalink) }}
+        {{ $seen = $seen | append .RelPermalink }}
+        {{ $chips = $chips | append (dict "label" .Title "href" .RelPermalink) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ else }}
+  {{ $chips = $chips | append (dict "label" (i18n "all_chip_label") "href" $page.RelPermalink "active" true) }}
+  {{ range $page.Pages }}
+    {{ range .GetTerms "tags" }}
+      {{ if not (in $seen .RelPermalink) }}
+        {{ $seen = $seen | append .RelPermalink }}
+        {{ $chips = $chips | append (dict "label" .Title "href" .RelPermalink) }}
+      {{ end }}
+    {{ end }}
+  {{ end }}
+{{ end }}
+{{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tag_filter_label")) }}

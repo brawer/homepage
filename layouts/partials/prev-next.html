@@ -1,0 +1,26 @@
+{{/*
+  Shared Prev/Next row for detail pages — NAVIGATION_DESIGN_SPEC.md §6,
+  "bottom of page." Scoped to the page's own section, ordered by the
+  section's default sort (date descending, newest first — no `weight`
+  set anywhere in current content; this is the same order the grid
+  views use, which is correct and must NOT change).
+
+  Confirmed 2026-08-25, empirically, not just from docs (Hugo's own
+  naming here is a well-known trap): with that newest-first order,
+  .NextInSection returns the page at the LOWER index (the NEWER
+  neighbor) and .PrevInSection returns the page at the HIGHER index
+  (the OLDER neighbor) -- backwards from what the method names
+  suggest. So "Prev" (visually: go back to something newer) is fed by
+  .NextInSection, and "Next" (visually: go forward to something
+  older) is fed by .PrevInSection. Do not "simplify" this back to the
+  intuitive pairing -- that's the bug this fixed (reported via the
+  fullscreen viewer's position counter incrementing/decrementing
+  backwards from the </>/‹ buttons). Same swap applies to the
+  viewer's own prev/next links in art/single.html.
+*/}}
+{{ if or .PrevInSection .NextInSection }}
+<nav class="prev-next" aria-label="{{ i18n "prev_next_label" }}">
+  {{ with .NextInSection }}<a class="prev" href="{{ .RelPermalink }}">‹ {{ i18n "prev_label" }}</a>{{ end }}
+  {{ with .PrevInSection }}<a class="next" href="{{ .RelPermalink }}">{{ i18n "next_label" }} ›</a>{{ end }}
+</nav>
+{{ end }}
