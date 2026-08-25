@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Navigation wireframe — mobile portrait</title>
+<style>
+:root {
+  --surface-0: #F1EFE8;
+  --surface-1: #FAFAF7;
+  --surface-2: #FFFFFF;
+  --text-primary: #232320;
+  --text-secondary: #5F5E5A;
+  --text-muted: #8A897F;
+  --border: rgba(0,0,0,0.09);
+  --border-strong: rgba(0,0,0,0.18);
+  --bg-accent: #E6F1FB;
+  --text-accent: #0C447C;
+  --border-accent: #378ADD;
+  --fill-accent: #378ADD;
+  --on-accent: #ffffff;
+  --bg-pro: #EEEDFE;
+  --bg-warning: #FAEEDA;
+  --bg-success: #EAF3DE;
+  --bg-danger: #FCEBEB;
+  --text-danger: #A32D2D;
+  --fill-primary: #232320;
+  --on-primary: #ffffff;
+  --radius: 8px;
+  --art-matte: #2C2C2A;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --surface-0: #141413;
+    --surface-1: #1C1C1B;
+    --surface-2: #232322;
+    --text-primary: #F1EFE8;
+    --text-secondary: #C2C0B6;
+    --text-muted: #8A887F;
+    --border: rgba(255,255,255,0.10);
+    --border-strong: rgba(255,255,255,0.20);
+    --bg-accent: #0C2E4A;
+    --text-accent: #85B7EB;
+    --border-accent: #378ADD;
+    --fill-accent: #378ADD;
+    --on-accent: #ffffff;
+    --bg-pro: #2A2760;
+    --bg-warning: #412402;
+    --bg-success: #173404;
+    --bg-danger: #4A1010;
+    --text-danger: #F09595;
+    --fill-primary: #F1EFE8;
+    --on-primary: #232320;
+    --art-matte: #2C2C2A;
+  }
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--surface-0);
+  color: var(--text-primary);
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  margin: 0;
+  padding: 32px 16px 80px;
+}
+h1 { font-size: 18px; font-weight: 500; text-align: center; margin: 0 0 4px; }
+.intro { text-align: center; color: var(--text-secondary); font-size: 13px; margin: 0 0 32px; }
+.flow { display: flex; flex-direction: column; align-items: center; gap: 8px; max-width: 280px; margin: 0 auto; }
+.frame {
+  width: 280px;
+  border: 0.5px solid var(--border-strong);
+  border-radius: 28px;
+  overflow: hidden;
+  background: var(--surface-2);
+  display: flex;
+  flex-direction: column;
+}
+.frame.dark-frame { border: none; background: rgba(0,0,0,0.94); }
+.caption { font-size: 11px; color: var(--text-muted); text-align: center; margin: 2px 0; }
+.arrow { font-size: 15px; color: var(--text-muted); text-align: center; }
+.note { font-size: 10px; color: var(--text-muted); text-align: center; margin: 0 0 4px; }
+.header-row { height: 52px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; border-bottom: 0.5px solid var(--border); flex-shrink: 0; }
+.chip-row { display: flex; gap: 8px; padding: 10px 16px; overflow-x: auto; flex-shrink: 0; }
+.chip { font-size: 11px; padding: 4px 12px; border-radius: 12px; white-space: nowrap; flex-shrink: 0; border: 0.5px solid var(--border); color: var(--text-secondary); }
+.chip.active { background: var(--fill-accent); color: var(--on-accent); border: none; }
+.tile { aspect-ratio: 1/1; border-radius: 8px; position: relative; display: flex; flex-direction: column; justify-content: center; gap: 4px; }
+.tile.doc { background: var(--surface-1); border: 0.5px solid var(--border); padding: 10px; }
+.badge { position: absolute; top: 4px; left: 4px; font-size: 8px; padding: 1px 4px; border-radius: 3px; }
+.badge.pdf { background: var(--bg-danger); color: var(--text-danger); }
+.badge.code { position: static; font-size: 9px; color: var(--text-accent); margin-bottom: 4px; }
+.line { height: 3px; background: var(--border-strong); border-radius: 2px; }
+.grid { display: grid; grid-template-columns: repeat(3, minmax(0,1fr)); gap: 8px; padding: 10px 16px; flex: 1; }
+.round-icon { width: 32px; height: 32px; border-radius: 50%; background: var(--surface-2); border: 0.5px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 15px; color: var(--text-primary); }
+.round-icon.on-dark { background: rgba(255,255,255,0.14); border: none; color: #fff; }
+.cta-btn { position: absolute; bottom: 14px; right: 14px; background: var(--fill-accent); color: var(--on-accent); border: none; font-size: 13px; padding: 9px 14px; border-radius: var(--radius); }
+.scrim { position: absolute; bottom: 0; left: 0; right: 0; height: 64px; background: var(--fill-primary); }
+</style>
+</head>
+<body>
+
+<h1>Navigation wireframe — mobile portrait</h1>
+<p class="intro">Follows system light/dark mode. See navigation-design-spec.md for the written rules behind each screen.</p>
+
+<div class="flow">
+
+  <!-- ENTRY -->
+  <div class="frame" style="height:560px; position:relative; padding:22px;">
+    <span style="position:absolute; top:16px; right:18px; font-size:19px;">&#8801;</span>
+    <div style="display:flex; flex-direction:column; align-items:center; padding:14px 0 18px;">
+      <span style="font-size:28px; margin-bottom:8px;">&#127804;</span>
+      <p style="font-weight:500; font-size:16px; margin:0;">Hello, I'm Sascha</p>
+      <p style="font-size:11px; margin:5px 0 0; color:var(--text-secondary);">Visual artist &amp; engineer</p>
+    </div>
+    <div>
+      <div style="display:flex; align-items:center; gap:10px; padding:8px 2px; border-top:0.5px solid var(--border);">
+        <div style="width:38px; height:38px; border-radius:8px; background:var(--surface-1); border:0.5px solid var(--border); display:flex; align-items:center; justify-content:center; font-size:14px;">CV</div>
+        <span style="flex:1; font-size:13px;">Resume</span><span style="color:var(--text-muted);">&rsaquo;</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; padding:8px 2px; border-top:0.5px solid var(--border);">
+        <div style="width:38px; height:38px; border-radius:8px; background:var(--bg-accent); color:var(--text-accent); display:flex; align-items:center; justify-content:center; font-size:14px;">&lt;/&gt;</div>
+        <span style="flex:1; font-size:13px;">Projects</span><span style="color:var(--text-muted);">&rsaquo;</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; padding:8px 2px; border-top:0.5px solid var(--border);">
+        <div style="width:38px; height:38px; border-radius:8px; background:var(--surface-1); border:0.5px solid var(--border); position:relative; display:flex; flex-direction:column; justify-content:center; gap:3px; padding:7px;">
+          <span class="badge pdf" style="font-size:6px;">PDF</span>
+          <div class="line" style="width:20px;"></div><div class="line" style="width:14px;"></div>
+        </div>
+        <span style="flex:1; font-size:13px;">Publications</span><span style="color:var(--text-muted);">&rsaquo;</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; padding:8px 2px; border-top:0.5px solid var(--border); border-bottom:0.5px solid var(--border);">
+        <div style="width:38px; height:38px; border-radius:8px; background:var(--bg-pro); display:flex; align-items:center; justify-content:center; font-size:18px;">&#128049;</div>
+        <span style="flex:1; font-size:13px;">Art</span><span style="color:var(--text-muted);">&rsaquo;</span>
+      </div>
+    </div>
+    <div style="margin-top:auto; padding-top:14px; display:flex; justify-content:center; gap:8px;">
+      <span style="font-size:11px; color:var(--text-secondary);">EN</span><span style="font-size:10px; color:var(--text-muted);">&middot;</span>
+      <span style="font-size:11px; color:var(--text-muted);">DE</span><span style="font-size:10px; color:var(--text-muted);">&middot;</span>
+      <span style="font-size:11px; color:var(--text-muted);">Imprint</span>
+    </div>
+  </div>
+  <p class="caption">entry page</p>
+  <div class="arrow">&#8595;</div>
+  <p class="note">tap &#8801; &mdash; reachable from any page below</p>
+
+  <!-- MENU -->
+  <div class="frame" style="height:480px;">
+    <div class="header-row"><span style="font-size:16px;">&#127804;</span><span style="font-size:18px;">&#10005;</span></div>
+    <div style="flex:1; background:var(--surface-1); padding:18px; display:flex; flex-direction:column;">
+      <div style="padding:10px 0; font-size:13px; color:var(--text-muted); border-bottom:0.5px solid var(--border);">Home</div>
+      <div style="padding:13px 0; font-size:15px; border-bottom:0.5px solid var(--border);">Resume</div>
+      <div style="padding:13px 0; font-size:15px; border-bottom:0.5px solid var(--border);">Projects</div>
+      <div style="padding:13px 0; font-size:15px; border-bottom:0.5px solid var(--border);">Publications</div>
+      <div style="padding:13px 0; font-size:15px; border-bottom:0.5px solid var(--border);">Art</div>
+      <div style="display:flex; gap:8px; margin-top:18px;">
+        <span style="background:var(--bg-accent); color:var(--text-accent); font-size:12px; padding:4px 12px; border-radius:var(--radius);">EN</span>
+        <span style="border:0.5px solid var(--border); color:var(--text-secondary); font-size:12px; padding:4px 12px; border-radius:var(--radius);">DE</span>
+      </div>
+      <div style="margin-top:auto; font-size:12px; color:var(--text-muted);">Imprint</div>
+    </div>
+  </div>
+  <p class="caption">menu &mdash; overlays whatever page you tapped it from</p>
+  <div class="arrow">&#8595;</div>
+
+  <!-- GRID (ART) -->
+  <div class="frame" style="height:480px;">
+    <div class="header-row">
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span style="font-size:15px;">&#127804;</span>
+        <div><span style="font-weight:500; font-size:14px;">Art</span><br><span style="font-size:10px; color:var(--text-muted);">24 items</span></div>
+      </div>
+      <span style="font-size:17px;">&#8801;</span>
+    </div>
+    <div class="chip-row">
+      <span class="chip active">All</span><span class="chip">Oil</span><span class="chip">Drawing</span><span class="chip">Patent</span>
+      <span class="chip" style="color:var(--text-accent); border-color:var(--border-accent);">Unicode</span>
+    </div>
+    <div class="grid">
+      <div class="tile doc"><span class="badge pdf">PDF</span><div class="line" style="width:80%;"></div><div class="line" style="width:60%;"></div></div>
+      <div class="tile" style="background:var(--bg-pro); align-items:center; justify-content:center; font-size:20px;">&#128049;</div>
+      <div class="tile doc"><span class="badge code">&lt;/&gt;</span><div class="line" style="width:70%; margin-top:6px;"></div><div class="line" style="width:50%;"></div></div>
+      <div class="tile" style="background:var(--bg-warning); align-items:center; justify-content:center; font-size:20px;">&#128049;</div>
+      <div class="tile doc"><span class="badge pdf">PDF</span><div class="line" style="width:75%;"></div><div class="line" style="width:55%;"></div></div>
+      <div class="tile" style="background:var(--bg-danger); align-items:center; justify-content:center; font-size:20px;">&#128049;</div>
+      <div class="tile" style="background:var(--bg-success); align-items:center; justify-content:center; font-size:20px;">&#128049;</div>
+    </div>
+  </div>
+  <p class="caption">grid gallery &mdash; mat + badge system, chip row cut off</p>
+  <div class="arrow">&#8595;</div>
+  <p class="note">tap the Unicode chip</p>
+
+  <!-- TAG PIVOT -->
+  <div class="frame" style="height:480px;">
+    <div class="header-row">
+      <div style="display:flex; align-items:center; gap:10px;">
+        <span>&#8592;</span>
+        <div><span style="font-weight:500; font-size:14px;">Unicode</span><br><span style="font-size:10px; color:var(--text-muted);">3 projects &middot; 4 publications &middot; 5 artworks</span></div>
+      </div>
+      <span style="font-size:17px;">&#8801;</span>
+    </div>
+    <div class="chip-row">
+      <span class="chip active">Unicode</span><span class="chip">Drawing</span><span class="chip">Patent</span><span class="chip">Oil</span>
+    </div>
+    <div class="grid">
+      <div class="tile" style="background:var(--bg-pro); align-items:center; justify-content:center; font-size:20px;">&#128049;</div>
+      <div class="tile doc"><span class="badge pdf">PDF</span><div class="line" style="width:80%;"></div><div class="line" style="width:60%;"></div></div>
+      <div class="tile" style="background:var(--bg-warning); align-items:center; justify-content:center; font-size:20px;">&#128049;</div>
+      <div class="tile doc"><span class="badge code">&lt;/&gt;</span><div class="line" style="width:70%; margin-top:6px;"></div><div class="line" style="width:50%;"></div></div>
+      <div class="tile" style="background:var(--bg-danger); align-items:center; justify-content:center; font-size:20px;">&#128049;</div>
+      <div class="tile doc"><span class="badge pdf">PDF</span><div class="line" style="width:65%;"></div><div class="line" style="width:45%;"></div></div>
+    </div>
+  </div>
+  <p class="caption">Unicode tag pivot &mdash; no "All", back returns to Art</p>
+  <div class="arrow">&#8595;</div>
+
+  <!-- PUBLICATION DETAIL -->
+  <div class="frame" style="height:600px;">
+    <div style="position:relative; height:260px; background:var(--surface-1); display:flex; align-items:center; justify-content:center;">
+      <div style="width:140px; height:260px; background:var(--surface-2); border-left:0.5px solid var(--border); border-right:0.5px solid var(--border); display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; padding:20px;">
+        <div class="line" style="width:80%;"></div><div class="line" style="width:60%;"></div><div class="line" style="width:70%;"></div><div class="line" style="width:50%;"></div>
+      </div>
+      <div class="round-icon" style="position:absolute; top:14px; left:14px;">&#8592;</div>
+      <div class="scrim"></div>
+      <button class="cta-btn">&#8595; Download PDF</button>
+    </div>
+    <div style="padding:16px 16px 0;">
+      <p style="font-weight:500; font-size:15px; margin:0;">Adaptive routing method</p>
+      <div style="display:flex; gap:6px; margin-top:8px;">
+        <span class="chip">Patent</span><span class="chip">Unicode</span>
+      </div>
+      <p style="font-size:12px; margin:8px 0 0; color:var(--text-secondary);">US Patent, 2023</p>
+      <p style="font-size:12px; margin:10px 0 0; color:var(--text-secondary); line-height:1.6; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">A routing method that adapts path selection based on live network conditions, reducing latency under variable load. Filed as a continuation of prior work on adaptive systems.</p>
+      <span style="font-size:12px; color:var(--text-accent); display:block; margin-top:4px;">Read more</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:16px; margin-top:auto; font-size:13px; color:var(--text-secondary);">
+      <span>&#8249; Prev</span><span>Next &#8250;</span>
+    </div>
+  </div>
+  <p class="caption">publication detail &mdash; light matte (system-adaptive), pillarboxed portrait scan</p>
+  <div class="arrow">&#8595;</div>
+
+  <!-- ARTWORK DETAIL -->
+  <div class="frame" style="height:600px;">
+    <div style="position:relative; height:260px; background:var(--art-matte); display:flex; align-items:center; justify-content:center;">
+      <div style="width:248px; height:140px; background:var(--bg-pro); display:flex; align-items:center; justify-content:center; font-size:40px;">&#128049;</div>
+      <div class="round-icon on-dark" style="position:absolute; top:14px; left:14px;">&#8592;</div>
+      <div class="round-icon on-dark" style="position:absolute; top:14px; right:14px;">&#10021;</div>
+    </div>
+    <div style="padding:16px 16px 0;">
+      <p style="font-weight:500; font-size:15px; margin:0;">Sunlit rooftop, evening</p>
+      <div style="display:flex; gap:6px; margin-top:8px;">
+        <span class="chip">Oil</span><span class="chip">Landscape</span>
+      </div>
+      <p style="font-size:12px; margin:8px 0 0; color:var(--text-secondary);">Oil on canvas, 2023</p>
+      <p style="font-size:12px; margin:10px 0 0; color:var(--text-secondary); line-height:1.6; display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden;">Painted over three sessions from a rooftop studio, chasing the same hour of light each evening. The palette shifted with the season, moving from warm ochres to cooler blues.</p>
+      <span style="font-size:12px; color:var(--text-accent); display:block; margin-top:4px;">Read more</span>
+    </div>
+    <div style="display:flex; justify-content:space-between; padding:16px; margin-top:auto; font-size:13px; color:var(--text-secondary);">
+      <span>&#8249; Prev</span><span>Next &#8250;</span>
+    </div>
+  </div>
+  <p class="caption">artwork detail &mdash; fixed dark matte (does not follow system mode), no CTA, tap-to-zoom only</p>
+  <div class="arrow">&#8595;</div>
+
+  <!-- FULLSCREEN VIEWER -->
+  <div class="frame dark-frame" style="height:420px;">
+    <div style="height:48px; display:flex; align-items:center; justify-content:space-between; padding:0 16px; color:rgba(255,255,255,0.9);">
+      <span>&#10005;</span><span style="font-size:11px; color:rgba(255,255,255,0.6);">4 / 12</span>
+    </div>
+    <div style="position:relative; flex:1; display:flex; align-items:center; justify-content:center;">
+      <span style="font-size:84px;">&#128049;</span>
+      <div style="position:absolute; left:8px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.8); font-size:20px;">&#8249;</div>
+      <div style="position:absolute; right:8px; top:50%; transform:translateY(-50%); color:rgba(255,255,255,0.8); font-size:20px;">&#8250;</div>
+    </div>
+  </div>
+  <p class="caption">fullscreen viewer &mdash; near-black regardless of theme, no CTA</p>
+  <div class="arrow">&#8595;</div>
+
+  <!-- IMPRINT -->
+  <div class="frame" style="height:420px;">
+    <div class="header-row" style="justify-content:flex-start; gap:12px;">
+      <span>&#8592;</span><span style="font-weight:500; font-size:15px;">Imprint</span>
+    </div>
+    <div style="padding:18px 16px; display:flex; flex-direction:column; gap:14px;">
+      <div><p style="font-size:13px; font-weight:500; margin:0;">Contact</p><p style="font-size:12px; margin:4px 0 0; color:var(--text-secondary);">Sascha, Zurich, Switzerland</p></div>
+      <div><p style="font-size:13px; font-weight:500; margin:0;">Cookie policy</p><p style="font-size:12px; margin:4px 0 0; color:var(--text-secondary);">No tracking cookies used.</p></div>
+      <div style="display:flex; gap:16px; margin-top:8px;"><span style="font-size:12px; color:var(--text-accent);">Privacy</span><span style="font-size:12px; color:var(--text-accent);">Terms</span></div>
+    </div>
+  </div>
+  <p class="caption">imprint</p>
+
+</div>
+</body>
+</html>
