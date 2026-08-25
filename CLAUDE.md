@@ -427,8 +427,10 @@ matter (like `venue`) rather than free-form Markdown, so a future
 template can render it consistently (icons, timeline layout, etc.)
 rather than parsing prose.
 
-- `title` — "Resume" / "Lebenslauf", matching the nav label in
-  `hugo.toml`.
+- `title` — "Résumé" / "Lebenslauf", matching the nav label in
+  `hugo.toml`. English changed from "Resume" to "Résumé" 2026-08-25
+  (Sascha's call) — update both together if this ever changes again,
+  per the "matching the nav label" rule.
 - `experience` — list of jobs/roles, each with `date_range` (display
   string, e.g. `"10/2019 – 9/2021"` or `"Since 10/2021"`/`"Seit
   10/2021"` — not split into structured start/end fields, same

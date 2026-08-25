@@ -9,13 +9,12 @@
 {{/* Entry page section list — NAVIGATION_DESIGN_SPEC.md §2: "a
      visible list with small representative icons/thumbnails... not
      hidden behind the hamburger." Matched to each menu entry by its
-     resolved .Page's .Section (from hugo.toml's pageRef), same
-     pattern grid-header.html uses for its translated-heading lookup —
-     NOT by parsing .URL, which is language-prefixed on German pages
-     ("/de/art/") and would no longer match a bare "art" slug. See
-     hugo.toml's menu comment. Icon/thumbnail is decorative
-     (aria-hidden/alt="") since the adjacent link text (.Name) is
-     already the tile's accessible name.
+     hugo.toml `identifier` (language-independent, same value in both
+     menus) — NOT by parsing .URL (language-prefixed on German pages,
+     "/de/art/") and NOT by .Page.Section (empty for resume, which has
+     no auto-vivified Hugo section — see hugo.toml's menu comment).
+     Icon/thumbnail is decorative (aria-hidden/alt="") since the
+     adjacent link text (.Name) is already the tile's accessible name.
 
      Projects and Publications reuse the exact same .badge-code/
      .badge-pdf classes as the grid tile badges (gallery-grid.html) —
@@ -23,8 +22,7 @@
      entry page, for consistency", not a separately chosen icon. */}}
 <ul class="section-tiles">
   {{ range site.Menus.main }}
-    {{ $slug := "" }}
-    {{ with .Page }}{{ $slug = .Section }}{{ end }}
+    {{ $slug := .Identifier }}
     <li class="section-tile">
       <a href="{{ .URL }}">
         <span class="tile-icon" aria-hidden="true">

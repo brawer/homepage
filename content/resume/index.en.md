@@ -1,5 +1,5 @@
 ---
-title: "Resume"
+title: "Résumé"
 experience:
   - date_range: "Since 10/2021"
     location: "Bern, Switzerland"

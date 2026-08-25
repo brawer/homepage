@@ -10,10 +10,22 @@ defaultContentLanguageInSubdir = false   # English at /, German at /de/
 # was set in both the English and German menu blocks, so every German
 # menu link pointed at the un-prefixed English URL ("/art/" instead of
 # "/de/art/") -- Hugo does NOT localize a literal `url` for you. `pageRef`
-# resolves within the current language's page tree and also exposes the
-# resolved page as the menu entry's `.Page`, which templates use instead
-# of parsing `.URL` strings for the section slug -- see
-# layouts/partials/primary-nav-links.html, grid-header.html, index.html.
+# resolves within the current language's page tree, per language.
+#
+# Each entry also carries an explicit `identifier` (same value in both
+# languages: "resume"/"projects"/"publications"/"art") -- templates that
+# need to know WHICH section a menu entry is (index.html's tile icons,
+# grid-header.html's translated heading) match on this, not on
+# `.Page.Section`. Found 2026-08-25: `.Page.Section` is empty for
+# `content/resume/` (and `content/imprint/`) specifically, because
+# Hugo only auto-vivifies a real "section" for a top-level content
+# directory that holds more than one page -- a lone single-page bundle
+# like resume's does NOT get one, unlike art/projects/publications
+# (each has multiple pages). That silently broke the entry page's
+# Résumé tile icon (the slug-match against "resume" never fired) even
+# though the exact same pattern worked fine for the other three
+# sections. `identifier` sidesteps this entirely, since it doesn't
+# depend on Hugo's section auto-vivification at all.
 
 # Pretty URLs like /art/golden-retriever/ instead of /art/golden-retriever.html
 uglyURLs = false
@@ -38,19 +50,23 @@ uglyURLs = false
 	"""
 
     [[languages.en.menu.main]]
-      name = "Resume"
+      name = "Résumé"
+      identifier = "resume"
       pageRef = "/resume"
       weight = 10
     [[languages.en.menu.main]]
       name = "Projects"
+      identifier = "projects"
       pageRef = "/projects"
       weight = 20
     [[languages.en.menu.main]]
       name = "Publications"
+      identifier = "publications"
       pageRef = "/publications"
       weight = 30
     [[languages.en.menu.main]]
       name = "Art"
+      identifier = "art"
       pageRef = "/art"
       weight = 40
 
@@ -72,18 +88,22 @@ uglyURLs = false
 
     [[languages.de.menu.main]]
       name = "Lebenslauf"
+      identifier = "resume"
       pageRef = "/resume"
       weight = 10
     [[languages.de.menu.main]]
       name = "Projekte"
+      identifier = "projects"
       pageRef = "/projects"
       weight = 20
     [[languages.de.menu.main]]
       name = "Publikationen"
+      identifier = "publications"
       pageRef = "/publications"
       weight = 30
     [[languages.de.menu.main]]
       name = "Kunst"
+      identifier = "art"
       pageRef = "/art"
       weight = 40
 

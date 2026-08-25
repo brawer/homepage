@@ -34,14 +34,16 @@
              already sitting in hugo.toml's per-language nav menu,
              same single source of truth list.html used before this
              partial existed. */}}
-        {{/* Matched via the menu entry's resolved .Page (from
-             hugo.toml's pageRef), not by parsing .URL -- a literal
-             URL string would be language-prefixed on German pages
-             ("/de/art/") and no longer match a bare "art" section
-             slug. See hugo.toml's menu comment. */}}
+        {{/* Matched via the menu entry's `identifier` (hugo.toml),
+             not by parsing .URL (language-prefixed on German pages,
+             "/de/art/") and not by .Page.Section (unreliable --
+             empty for single-page sections like resume, see
+             hugo.toml's menu comment). This partial only ever runs
+             for real list/term pages though, where $page.Section is
+             always a real non-empty section slug ("art" etc.). */}}
         {{ $heading := $page.Title }}
         {{ range site.Menus.main }}
-          {{ if and .Page (eq .Page.Section $page.Section) }}
+          {{ if eq .Identifier $page.Section }}
             {{ $heading = .Name }}
           {{ end }}
         {{ end }}
