@@ -186,17 +186,34 @@ body.drawer-open {
   padding: 1rem;
 }
 
+/* flex:1 gives this a fully definite box (100vw wide, remaining
+   viewport height tall) within .viewer[open]'s column layout. */
 .viewer-image {
   flex: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   overflow: hidden;
 }
 
+/* Same bulletproof pattern as the detail-page hero fix (see .hero
+   above): fill the container at width/height:100% and let
+   object-fit:contain do the letterbox/pillarbox scaling, rather than
+   relying on max-width/max-height alone. Found and fixed 2026-08-25
+   -- with only max-width/max-height set, the <img> was a flex item of
+   a flex container (.viewer-image, before this fix), and a flex
+   item's automatic minimum size (min-width/height: auto) refuses to
+   shrink a replaced element below its OWN intrinsic size -- so a
+   large source image stayed rendered at (part of) its natural pixel
+   size regardless of max-width/max-height, and .viewer-image's
+   overflow:hidden clipped the excess. Looked like "zoomed in
+   cropping", not distortion, because nothing was ever stretched --
+   the whole image just never got the chance to shrink to fit.
+   min-width/height:0 stays as a second line of defense even though
+   width/height:100% (not auto) already sidesteps the flex quirk on
+   its own. */
 .viewer-image img {
-  max-width: 100%;
-  max-height: 100%;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
   object-fit: contain;
 }
 
