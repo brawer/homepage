@@ -4,6 +4,7 @@ date: 2024-02-28
 publishDate: 2026-08-23
 tags: ["Memes", "Tiere", "Öl"]
 medium: "Öl auf Leinwand"
+kind_label: "Ölgemälde"
 height_cm: 40
 width_cm: 40
 image: "anti-joke-chicken.webp"

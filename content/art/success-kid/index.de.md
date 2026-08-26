@@ -4,6 +4,7 @@ date: 2024-06-24
 publishDate: 2026-08-24
 tags: ["Memes", "Menschen", "Öl"]
 medium: "Öl auf Leinwand"
+kind_label: "Ölgemälde"
 height_cm: 40
 width_cm: 40
 image: "success-kid.webp"

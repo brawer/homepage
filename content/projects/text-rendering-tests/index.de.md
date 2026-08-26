@@ -5,6 +5,7 @@ date: 2016-08-31
 publishDate: 2026-08-25
 status: "active"
 role: "creator"
+kind_label: "Test-Suite"
 tags: ["Typografie", "Google", "Unicode", "Python", "C++", "Quelloffen"]
 summary: "Unicodes Testsuite für Text-Rendering-Engines"
 github_url: "https://github.com/unicode-org/text-rendering-tests"

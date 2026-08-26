@@ -6,6 +6,7 @@ date: 2010-10-19
 publishDate: 2026-08-23
 tags: ["Geo", "NLP", "Google", "Unicode", "Quelloffen"]
 kind: "talk"
+kind_label: "Vortrag"
 authors: ["Sascha Brawer", "Martin Jansche", "Hiroshi Takenaka", "Yui Terashima"]
 venue: '34\. Internationalization & Unicode Conference (2010)'
 abstract: >

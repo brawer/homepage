@@ -6,6 +6,7 @@ date: 2019-05-15
 publishDate: 2026-08-23
 tags: ["Geo", "NLP", "i18n", "Google"]
 kind: "patent"
+kind_label: "Japanese Patent"
 authors: ["Sascha Brawer", "Martin Jansche", "Richard Sproat", "Hiroshi Takenaka", "Yui Terashima"]
 venue: "Japan Patent Office"
 patent_number: "JP6511221B2"
