@@ -1,14 +1,106 @@
-/* Deliberately minimal — this is the bare-bones structural pass, not
-   the visual design (that's /design mode's job, once there's more
-   content to design against). Just enough to make the shared grid,
-   nav, and detail pages legible while we prove the templates work. */
+/* Grid view design ("Paper & Plum"), ported 2026-08-26 from an
+   extensively hand-tuned HTML/CSS mockup Artifact (colors, type,
+   shadows, corner treatment, document wash/filter/blur -- see
+   CLAUDE.md's "Grid design pass" note for the full history/rationale
+   behind every value below; not reproduced here to avoid duplicating
+   that write-up). Scope of THIS port is deliberately the grid + the
+   page canvas it sits on (tokens, body, chips) -- header/drawer/
+   footer/hero/resume are still the earlier bare-bones pass and will
+   get their own design pass once more content exists; see CLAUDE.md's
+   Known open items. Body-level font/background/color had to move to
+   the new tokens too, not just the grid itself -- the design's
+   card-vs-page relationship (extensively tuned) only holds if the
+   page underneath the cards is the same paper tone the cards were
+   tuned against, not an arbitrary system color. */
 
 :root {
   color-scheme: light dark;
+  --paper: #FAFAF7;
+  --paper-dim: #fbf5eb;
+  --paper-raised: #FFFFFF;
+  --ink: #242019;
+  --ink-soft: #5C5648;
+  --ink-faint: #6A6454;
+  --line: rgba(36, 32, 25, .12);
+  --accent: #8C3F5C;
+  --accent-soft: rgba(140, 63, 92, .10);
+  --shadow-color: 36, 32, 25;
+  --shadow-op-card-1: .06;
+  --shadow-op-card-2: .09;
+  --shadow-op-hover-1: .08;
+  --shadow-op-hover-2: .14;
+  --shadow-op-image: .07;
+  /* Document/project teaser treatment (see .tile-doc-filter/
+     .tile-scrim below) -- Sascha's tuned defaults, not starting
+     guesses. */
+  --doc-brightness: .9;
+  --doc-contrast: 1.5;
+  --doc-blur: 1.6px;
+  --doc-wash-opacity: .2;
+  --doc-wash-color: #fbf5eb;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #1A1613;
+    --paper-dim: #2E271F;
+    --paper-raised: #362D23;
+    --ink: #F2E9D8;
+    --ink-soft: #C9BCA5;
+    --ink-faint: #A0947D;
+    --line: rgba(242, 233, 216, .14);
+    --accent: #E2A0BC;
+    --accent-soft: rgba(226, 160, 188, .14);
+    --shadow-color: 0, 0, 0;
+    --shadow-op-card-1: .09;
+    --shadow-op-card-2: .13;
+    --shadow-op-hover-1: .12;
+    --shadow-op-hover-2: .20;
+    --shadow-op-image: .10;
+    --doc-wash-color: var(--paper);
+  }
+}
+
+:root[data-theme="dark"] {
+  --paper: #1A1613;
+  --paper-dim: #2E271F;
+  --paper-raised: #362D23;
+  --ink: #F2E9D8;
+  --ink-soft: #C9BCA5;
+  --ink-faint: #A0947D;
+  --line: rgba(242, 233, 216, .14);
+  --accent: #E2A0BC;
+  --accent-soft: rgba(226, 160, 188, .14);
+  --shadow-color: 0, 0, 0;
+  --shadow-op-card-1: .09;
+  --shadow-op-card-2: .13;
+  --shadow-op-hover-1: .12;
+  --shadow-op-hover-2: .20;
+  --shadow-op-image: .10;
+  --doc-wash-color: var(--paper);
+}
+
+/* Self-hosted, not a Google Fonts CDN link -- keeps the "no
+   third-party requests" posture the imprint page states. One
+   variable-font file (wght 400-800, latin subset) covers every weight
+   this site uses (400/500/600/700); the "latin" subset alone already
+   covers German umlauts/ß and the Swiss guillemets used throughout
+   this site's content (all within U+0000-00FF) -- "latin-ext" wasn't
+   needed. SIL Open Font License -- see static/fonts/karla-OFL.txt.
+   Loading-performance tuning (font-display strategy, preload, avoiding
+   layout shift on load) is a deliberate follow-up, not done here. */
+@font-face {
+  font-family: "Karla";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("/fonts/karla-latin-variable.woff2") format("woff2");
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: "Karla", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: var(--paper);
+  color: var(--ink);
   max-width: 60rem;
   margin: 0 auto;
   padding: 0 1rem 3rem;
@@ -266,13 +358,32 @@ body.drawer-open {
   white-space: nowrap;
   font-size: .8rem;
   text-decoration: none;
-  border: 1px solid CanvasText;
-  border-radius: 1rem;
-  padding: .2rem .7rem;
+  color: var(--ink-soft);
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  padding: .3rem .85rem;
+  transition: border-color .15s ease, color .15s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .chip { transition: none; }
+}
+
+.chip:hover {
+  border-color: var(--accent);
+  color: var(--accent);
 }
 
 .chip-active {
-  font-weight: bold;
+  background: var(--ink);
+  color: var(--paper);
+  border-color: var(--ink);
+  font-weight: 600;
+}
+
+.chip-active:hover {
+  border-color: var(--ink);
+  color: var(--paper);
 }
 
 /* Hero image container — a genuinely FIXED-height box (not min-height:
@@ -458,34 +569,6 @@ body.drawer-open {
   }
 }
 
-/* Square teaser crop for the grid. An earlier attempt put
-   aspect-ratio/object-fit on <img> with display:contents on
-   <picture> (see git history) and that reportedly still rendered
-   non-square in a real browser check on 2026-08-24 — not re-diagnosed
-   at the time. Trying the more standard container pattern instead,
-   2026-08-25: aspect-ratio + overflow:hidden on <picture> itself
-   (sized as a normal block box, not removed from the box model), with
-   its <img> child stretched to fill via height:100% + object-fit:cover.
-   Purely to make broken/missing teaser images obvious while there's
-   no real design yet — revisit in /design mode either way. */
-.gallery-grid picture {
-  display: block;
-  aspect-ratio: 1 / 1;
-  overflow: hidden;
-}
-
-.gallery-grid img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.gallery-item {
-  text-decoration: none;
-  color: inherit;
-}
-
 /* Small uppercase pill — a publication's kind (Talk/Paper/...) in the
    gallery grid and on its detail page's byline, or a project's
    Open Source indicator. One rule, not scoped to .gallery-item, so
@@ -501,14 +584,165 @@ body.drawer-open {
   margin-bottom: .2rem;
 }
 
-.gallery-item h3 {
-  font-size: .95rem;
-  margin: .4rem 0 0;
-  /* With the column floor removed above, a long unbreakable word
-     (rare, but e.g. a long title) would otherwise overflow the tile
-     instead of the old (buggy) behavior of widening the whole
-     column -- break it instead, keeping the grid uniform. */
-  overflow-wrap: break-word;
+/* ============ Grid tile anatomy ("Paper & Plum", ported 2026-08-26) */
+
+.gallery-item {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  border-radius: 14px;
+  overflow: hidden;
+  background: var(--paper-dim);
+  box-shadow: 0 1px 2px rgba(var(--shadow-color), var(--shadow-op-card-1)),
+              0 4px 14px rgba(var(--shadow-color), var(--shadow-op-card-2));
+  transition: box-shadow .18s ease, transform .18s ease;
+  container-type: inline-size;
+}
+
+.gallery-item:hover {
+  box-shadow: 0 2px 4px rgba(var(--shadow-color), var(--shadow-op-hover-1)),
+              0 10px 24px rgba(var(--shadow-color), var(--shadow-op-hover-2));
+  transform: translateY(-2px);
+}
+
+.gallery-item:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gallery-item { transition: none; }
+  .gallery-item:hover { transform: none; }
+}
+
+.tile-frame {
+  position: relative;
+  aspect-ratio: 1 / 1;
+}
+
+/* Image + scrim live in their own clipping wrapper, separate from
+   .tile-kind/.tile-title below (which live in .tile-caption, a
+   sibling, not a child) -- so a re-added overflow:hidden here only
+   ever clips the photo, never anything meant to sit outside it.
+   Rounds bottom corners to echo .gallery-item's own 14px radius,
+   turning the flat image/caption seam into a soft scalloped one --
+   .gallery-item's own --paper-dim background already sits behind
+   this, showing through the new corner cutouts with no extra markup.
+   Its own drop shadow is deliberately smaller/tighter than
+   .gallery-item's card shadow above (a clear size hierarchy: page
+   lifts card more than card lifts photo) and, per the same tuning,
+   numerically weaker than .gallery-item's OWN resting shadow at every
+   breakpoint (not just weaker in isolation) -- a small inset photo
+   shouldn't out-shadow the whole card it sits on. */
+.tile-image-clip {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 0 0 12px 12px;
+  box-shadow: 0 2px 4px rgba(var(--shadow-color), var(--shadow-op-image));
+}
+
+.tile-frame picture {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.tile-frame img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Document/project teaser treatment -- dulls the glaring white of a
+   scanned document/screenshot while keeping its text at MORE
+   contrast, not less: brightness() scales down multiplicatively from
+   zero, so it barely touches already-dark pixels while pulling the
+   near-white background down a lot; contrast() then widens that gap
+   back out, deepening the (now dimmer) blacks further; blur() (added
+   after both, softening the already tone-mapped image rather than the
+   raw scan) settles the scanned-text noise a bit more, kept as its
+   own conservative-by-default value since too much stops it reading
+   as a document at all. Combined with a soft wash (.tile-scrim) for a
+   touch of physical "paper" softness. Deliberately NOT applied to
+   artwork -- confirmed by direct comparison that it dulls paintings
+   in a way that looks bad, not calmer, unlike documents. Which tiles
+   get it is the `teaser_is_document` front-matter field (hand-set per
+   item, not derived from .Section -- transliteration-with-icu is a
+   publication whose teaser is a colorful map, not a flat scan, so it
+   opts out; a future b&w art sketch could opt in the other direction).
+   See gallery-grid.html and CLAUDE.md's front-matter sections. */
+.tile-doc-filter img {
+  filter: brightness(var(--doc-brightness)) contrast(var(--doc-contrast)) blur(var(--doc-blur));
+}
+
+.tile-scrim {
+  position: absolute;
+  inset: 0;
+  background: var(--doc-wash-color);
+  opacity: var(--doc-wash-opacity);
+  pointer-events: none;
+}
+
+/* Present whenever there's a title/kind label to show; min-height
+   keeps titleless tiles (there are none today, but the rule is
+   content-agnostic) the same card height as their siblings in the
+   same grid row. */
+.tile-caption {
+  position: relative;
+  min-height: 1.6rem;
+  padding: 0 .95rem .75rem;
+}
+
+.tile-title {
+  position: relative;
+  font-size: 1rem;
+  font-weight: 600;
+  margin: .4em 0 0;
+  /* Long titles crop with an ellipsis rather than wrapping or
+     widening the tile. */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The grid-badge replacement -- see gallery-grid.html and CLAUDE.md's
+   front-matter sections for why generic "PDF"/"</>" glyphs got
+   retired in favor of this real, specific, hand-authored text.
+   Deliberately BELOW the title, not above (a real finding, not a
+   style default -- see CLAUDE.md): the title is the one thing that
+   differs per item and should get visual priority; the kind is true
+   of a whole category and is genuinely secondary. Matches this file's
+   own small-label typography elsewhere (e.g. .item-count) rather than
+   inventing a competing treatment. Stored in normal reading case in
+   content, uppercased here via CSS -- not the other way around, so a
+   screen reader gets the real words rather than risking an all-caps
+   string being read as an acronym letter by letter. */
+.tile-kind {
+  margin: 0;
+  line-height: 1.2;
+  font-size: .7rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* A tile can end up small either from a narrow viewport OR from the
+   responsive auto-fill grid above simply fitting more columns on a
+   wide screen -- a container query reacts to the TILE's own width
+   either way, unlike a viewport media query. Below that width, the
+   whole caption disappears -- never a middle state with an empty bar
+   and no text. .gallery-item (container-type set above) is the
+   nearest container its own descendants query against. */
+@container (max-width: 10rem) {
+  .tile-caption {
+    display: none;
+  }
 }
 
 /* Detail pages */

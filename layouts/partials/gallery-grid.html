@@ -3,15 +3,7 @@
   Publications, Projects) and tag pages, per DESIGN_BRIEF: "All three
   content sections now share one gallery-style grid... a tag page
   doesn't need per-section styling logic even when it mixes items
-  from different sections." Renders whatever mix of pages it's given
-  uniformly — a small badge is the only thing that varies: publications
-  show their translated `kind` (Talk/Paper/...), art shows `medium`
-  verbatim (already per-language free text like "Oil on canvas", not
-  a controlled vocabulary, so no i18n lookup for it — see CLAUDE.md's
-  Art bundle front matter section for why this isn't a `kind` field),
-  and projects show their translated `role` (Creator/Maintainer/
-  Contributor — see CLAUDE.md's Projects bundle front matter section).
-  None of these three is shown for pages with none of the three fields.
+  from different sections."
 
   Params (dict):
     pages (required) — a Pages collection to render as a grid.
@@ -29,15 +21,22 @@
   art piece whose full/uncropped `image` doesn't have a good
   square-ish region to autocrop at all).
 
-  Badge: NAVIGATION_DESIGN_SPEC.md §4 — "only where they carry
-  information the thumbnail can't." Discriminated by Hugo's built-in
-  .Section (art/publications/projects), not by which optional param
-  happens to be set. Publications/patents get a generic "PDF" glyph,
-  projects get a generic "</>" glyph, art gets none (the image is
-  already unambiguous) — none of these are the translated kind/role
-  text shown elsewhere (detail-page bylines still show those,
-  unchanged). This supersedes the 2026-08-24 "medium/role double as
-  the grid badge" decisions FOR THE GRID ONLY — see CLAUDE.md.
+  Tile anatomy ("Paper & Plum" design, ported 2026-08-26 — see
+  static/css/main.css and CLAUDE.md's "Grid design pass" note for the
+  full rationale, not repeated here):
+    .tile-frame > .tile-image-clip > (picture + optional .tile-scrim)
+    .tile-caption > (optional .tile-kind) + .tile-title
+
+  `teaser_is_document` (required boolean, every content type) decides
+  whether a teaser gets the document wash/filter/blur treatment —
+  hand-set per item, NOT derived from .Section, since a publication's
+  teaser can be as colorful as artwork (transliteration-with-icu) and
+  a future art piece could conceivably want the opposite (a
+  black-and-white sketch). See CLAUDE.md's front-matter sections.
+
+  `kind_label` (required, every content type) replaces the old
+  generic "PDF"/"</>" grid badges — see CLAUDE.md for why; omitted
+  from the tile entirely if unset, though every current item sets it.
 */}}
 {{ $pages := .pages }}
 {{ if eq (len $pages) 0 }}
@@ -52,14 +51,18 @@
     {{ else if $page.Params.image }}
       {{ $img = $page.Resources.GetMatch $page.Params.image }}
     {{ end }}
+    {{ $isDoc := $page.Params.teaser_is_document }}
     <a class="gallery-item" href="{{ $page.RelPermalink }}">
-      {{ with $img }}{{ partial "picture-thumbnail.html" (dict "image" . "alt" $page.Title) }}{{ end }}
-      {{ if eq $page.Section "publications" }}
-        <span class="badge badge-pdf" aria-hidden="true">PDF</span>
-      {{ else if eq $page.Section "projects" }}
-        <span class="badge badge-code" aria-hidden="true">&lt;/&gt;</span>
-      {{ end }}
-      <h3>{{ $page.Title }}</h3>
+      <div class="tile-frame{{ if $isDoc }} tile-doc-filter{{ end }}">
+        <div class="tile-image-clip">
+          {{ with $img }}{{ partial "picture-thumbnail.html" (dict "image" . "alt" $page.Title) }}{{ end }}
+          {{ if $isDoc }}<div class="tile-scrim"></div>{{ end }}
+        </div>
+      </div>
+      <div class="tile-caption">
+        {{ with $page.Params.kind_label }}<p class="tile-kind">{{ . }}</p>{{ end }}
+        <h3 class="tile-title">{{ $page.Title }}</h3>
+      </div>
     </a>
   {{ end }}
 </div>

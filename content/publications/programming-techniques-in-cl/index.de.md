@@ -5,6 +5,7 @@ publishDate: 2026-08-23
 tags: ["NLP", "Prolog"]
 kind: "lecture"
 kind_label: "Vorlesungsreihe"
+teaser_is_document: true
 venue: "Universität Zürich, Institut für Informatik, Computerlinguistik"
 abstract: >
   Eine Vorlesungsreihe zu Programmiertechniken der Computerlinguistik,

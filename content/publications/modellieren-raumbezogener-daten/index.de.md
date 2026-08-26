@@ -5,6 +5,7 @@ publishDate: 2026-08-23
 tags: ["Geo"]
 kind: "book"
 kind_label: "Buch"
+teaser_is_document: true
 authors: ["Joseph Dorfschmid", "Sascha Brawer"]
 venue: "[KOGIS](https://www.swisstopo.admin.ch/de/koordination-geo-information-und-services-kogis), [swisstopo](https://www.swisstopo.admin.ch/de)"
 abstract: >
