@@ -700,7 +700,7 @@ body.drawer-open {
   position: relative;
   font-size: 1rem;
   font-weight: 600;
-  margin: .4em 0 0;
+  margin: 0;
   /* Long titles crop with an ellipsis rather than wrapping or
      widening the tile. */
   white-space: nowrap;
@@ -721,7 +721,7 @@ body.drawer-open {
    screen reader gets the real words rather than risking an all-caps
    string being read as an acronym letter by letter. */
 .tile-kind {
-  margin: 0;
+  margin: .4em 0 0;
   line-height: 1.2;
   font-size: .7rem;
   letter-spacing: .06em;

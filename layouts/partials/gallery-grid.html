@@ -60,8 +60,8 @@
         </div>
       </div>
       <div class="tile-caption">
-        {{ with $page.Params.kind_label }}<p class="tile-kind">{{ . }}</p>{{ end }}
         <h3 class="tile-title">{{ $page.Title }}</h3>
+        {{ with $page.Params.kind_label }}<p class="tile-kind">{{ . }}</p>{{ end }}
       </div>
     </a>
   {{ end }}
