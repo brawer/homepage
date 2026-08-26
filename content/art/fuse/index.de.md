@@ -4,6 +4,7 @@ date: 2019-06-13
 publishDate: 2026-08-24
 tags: ["Werkzeuge", "Öl"]
 medium: "Öl auf Leinwand"
+kind_label: "Ölgemälde"
 height_cm: 40
 width_cm: 50
 image: "fuse.webp"

@@ -4,6 +4,7 @@ date: 2003-10-01
 publishDate: 2026-08-23
 tags: ["Geo"]
 kind: "book"
+kind_label: "Buch"
 authors: ["Joseph Dorfschmid", "Sascha Brawer"]
 venue: "[KOGIS](https://www.swisstopo.admin.ch/de/koordination-geo-information-und-services-kogis), [swisstopo](https://www.swisstopo.admin.ch/de)"
 abstract: >

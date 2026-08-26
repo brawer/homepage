@@ -4,6 +4,7 @@ date: 2019-07-04
 publishDate: 2026-08-24
 tags: ["People", "Oil"]
 medium: "Oil on canvas"
+kind_label: "Oil Painting"
 height_cm: 50
 width_cm: 40
 image: "anna-gabbioneta-after-christian-schad.webp"

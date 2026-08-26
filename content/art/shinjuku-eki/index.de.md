@@ -4,6 +4,7 @@ date: 2020-10-07
 publishDate: 2026-08-24
 tags: ["Menschen", "Öl"]
 medium: "Öl auf Leinwand"
+kind_label: "Ölgemälde"
 height_cm: 70
 width_cm: 100
 image: "shinjuku-eki.webp"

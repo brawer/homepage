@@ -204,6 +204,19 @@ the physical top-to-bottom measurement regardless of orientation),
   and Projects tiles similarly dropped their `kind`/`role`-text badges
   in favor of a generic format glyph ("PDF" / `</>`) — see "Templates"
   below.
+- **Superseded again, 2026-08-26**: the generic glyph badges above
+  didn't survive real design review either — "PDF" is true of a
+  patent, a talk, a lecture series, and a paper alike, so it carried
+  almost no information for its ink. Replaced site-wide by a new
+  `kind_label` field (see "Templates" below for the full rationale,
+  shared across all three content types) — every art piece now has
+  `kind_label: "Oil Painting"` / `"Ölgemälde"`. Deliberately a new
+  field, not a repurposing of `medium` (which stays exactly what it
+  was: required, free text, shown on the detail page) — `kind_label`
+  is purely the grid's own short display string, and the two are free
+  to diverge (a future sketch might have `medium: "Graphite on paper"`
+  but still choose a `kind_label` like "Sketch" rather than something
+  automatically derived from `medium`).
 
 ## Publications bundle front matter
 
@@ -212,7 +225,12 @@ the physical top-to-bottom measurement regardless of orientation),
 in every language, since it's an internal value templates branch on,
 not display text; translate it for display via i18n strings, e.g.
 `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the
-front matter value itself), `authors` (list, order matters —
+front matter value itself), `kind_label` (grid-badge display text, see
+"Templates" below — usually just the translated `kind`, e.g. `"Talk"`/
+`"Vortrag"`, but not always: `JP6511221B2` uses `"Japanese Patent"`/
+`"Japanisches Patent"` instead of plain "Patent", since the original
+document being Japanese is genuinely informative and worth surfacing
+at a glance), `authors` (list, order matters —
 verified against source for patents), `venue`, `abstract`.
 
 - `venue` can contain inline Markdown links, not just plain text —
@@ -387,6 +405,15 @@ don't resurrect it.
   in the prose/body (as it does on `text-rendering-tests`) or in
   `status`/`end_date`, which already cover "is Sascha still
   involved."
+- `kind_label` — required, added 2026-08-26 (`text-rendering-tests`:
+  `"Test Suite"`/`"Test-Suite"`). The grid-badge display text — see
+  "Templates" below for the full rationale (shared across all three
+  content types; this is the field publications call `kind_label` too,
+  see that section). Projects had no equivalent of publications' `kind`
+  before this — `role` answers a different question (Sascha's
+  involvement) and doesn't double as a content-type descriptor the way
+  `kind` does for publications, so this is a genuinely new field, not
+  a rename or repurposing of anything existing.
 - `summary` — one or two plain-text sentences (may contain inline
   Markdown, rendered via `markdownify`), the short blurb shown on the
   detail page. Plays the role publications' `abstract` plays. Keep it
@@ -905,13 +932,83 @@ the two files above.
   (this session has no browser access — see the "No system automation"
   memory).
 
+### Grid design pass ("Paper & Plum") and `kind_label`, 2026-08-26
+
+A separate design session (an HTML/CSS Artifact mockup, not template
+work directly) settled the actual visual design of the shared grid —
+colors, type, shadows, and the grid badges specifically, which turned
+out to need a bigger rethink than a font/color tweak. Recorded here
+since it changes the content model, unlike the rest of that session's
+purely visual CSS/token work (which isn't reproduced in this file —
+see the mockup's own extensive inline comments for that history).
+
+- **Grid badges retired a second time.** The 2026-08-25 fix (generic
+  "PDF"/`</>` glyphs replacing translated `kind`/`role` text) didn't
+  survive real scrutiny: a glyph like "PDF" is true of a patent, a
+  talk, a lecture series, and a paper alike, so it carried almost no
+  information for its ink — a content problem, not a legibility one,
+  so no amount of contrast tuning would have fixed it.
+- **Replaced by `kind_label`** — a new, required, bilingual field on
+  **every** content type (art included, reversing the "no badge on
+  art" call from 2026-08-25, which was specifically about a decorative
+  glyph fighting the image; a quiet text label doesn't have that
+  problem). Deliberately **hand-authored per item, not computed** from
+  other fields (e.g. NOT derived from `kind` + `original_language` via
+  template logic) — Sascha's call: there are only a handful of these
+  across the whole site, so hand-authoring is simpler and more
+  maintainable than composition logic for a few one-off cases. The
+  fields it sits alongside (`kind` on publications, `medium` on art,
+  `role` on projects) are untouched, still doing their own existing
+  jobs — `kind_label` is purely the grid's display string, free to
+  diverge from them (usually it's just the translated `kind` for
+  publications, but not always: `JP6511221B2` uses "Japanese
+  Patent"/"Japanisches Patent", not plain "Patent", since the source
+  document's language is genuinely informative).
+- **Stored in normal reading case** ("Test Suite", not "TEST SUITE"),
+  **uppercased via CSS** (`text-transform: uppercase`) — matching how
+  `i18n/en.toml`'s existing `kind_talk`/`kind_paper`/etc. are already
+  stored. Not just a style call: a literal all-caps short string in
+  content risks some assistive tech reading it as an acronym letter by
+  letter, where CSS-driven uppercase keeps the real words in the
+  accessibility tree.
+- **Rendered below the title, not above** — genuinely surprised both
+  of us; "category before headline" (an eyebrow/kicker, in editorial
+  terms) was the more obvious pick, but it lost to Sascha's own read:
+  the title is the one thing that actually differs per item (the
+  focus), the kind is true of a whole category (the context), so focus
+  should get the eye's attention first. Matches how card-based UI (app
+  listings, product cards) usually does this, as opposed to how
+  newspaper layout does it — no single established UX term covers
+  this exactly ("eyebrow"/"kicker" specifically means above; Material
+  Design's "supporting text" is the nearer term for below).
+- All 28 existing bilingual content files (9 art × 2, 4 publications ×
+  2, 1 project × 2) already carry a `kind_label` value — see the
+  bundle front-matter sections above for the exact ones and their
+  reasoning. Any new content item from here on needs one too, same as
+  every other required field.
+- Not yet done: **porting the settled design (tokens, `kind_label`
+  rendering, corner/shadow treatment) into the real
+  `gallery-grid.html`/`static/css/main.css`.** This CLAUDE.md update
+  only covers the content-model change (the field now exists on real
+  content); the template/CSS side is still pending — see "Known open
+  items" below.
+
 ## Known open items (as of last content session)
 
-- `/design` mode: real visual design (color, type scale, spacing,
-  the lecture-series list treatment, resume icons/timeline, deciding
-  actual grid aspect ratio/column counts beyond the current bare
-  hard-coded 3-column square grid) — everything in the "Templates"
-  section above is structural/functional only.
+- **The "Paper & Plum" grid design (2026-08-26) is validated but not
+  yet ported into real templates/CSS.** Content model is done (every
+  item has `kind_label`, see above); `gallery-grid.html` and
+  `static/css/main.css` still need the actual port — tokens (color,
+  type, shadow), corner rounding, the wash/filter/blur treatment for
+  document teasers, `kind_label` rendering, and the container-query
+  tight-tile behavior. Sascha wants to add more artwork and more
+  patents before this port happens (more real test cases for the
+  content-mix questions the mockup explored) — check with him before
+  starting it.
+- `/design` mode: everything else (color, type scale, spacing outside
+  the grid, the lecture-series list treatment, resume icons/timeline)
+  — everything in the "Templates" section above is structural/
+  functional only, apart from the grid work called out just above.
 - **Gallery grid thumbnails now render square, fixed 2026-08-25** --
   see `static/css/main.css` git history. Root cause not fully
   re-diagnosed (the original 2026-08-24 finding below still stands as
