@@ -5,6 +5,7 @@ publishDate: 2026-08-24
 tags: ["Menschen", "Öl"]
 medium: "Öl auf Leinwand"
 kind_label: "Ölgemälde"
+teaser_is_document: false
 height_cm: 50
 width_cm: 80
 image: "woman-in-a-leather-jacket.webp"

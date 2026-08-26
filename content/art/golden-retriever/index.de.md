@@ -5,6 +5,7 @@ publishDate: 2026-08-23
 tags: ["Tiere", "Öl"]
 medium: "Öl auf Leinwand"
 kind_label: "Ölgemälde"
+teaser_is_document: false
 height_cm: 50
 width_cm: 50
 image: "golden-retriever.webp"

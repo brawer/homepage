@@ -5,6 +5,7 @@ publishDate: 2026-08-23
 tags: ["Animals", "Oil"]
 medium: "Oil on canvas"
 kind_label: "Oil Painting"
+teaser_is_document: false
 height_cm: 50
 width_cm: 50
 image: "golden-retriever.webp"

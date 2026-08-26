@@ -6,6 +6,7 @@ publishDate: 2026-08-25
 status: "active"
 role: "creator"
 kind_label: "Test Suite"
+teaser_is_document: true
 tags: ["Typography", "Google", "Unicode", "Python", "C++", "Open Source"]
 summary: "Unicode’s test suite for text rendering engines"
 github_url: "https://github.com/unicode-org/text-rendering-tests"

@@ -217,6 +217,14 @@ the physical top-to-bottom measurement regardless of orientation),
   to diverge (a future sketch might have `medium: "Graphite on paper"`
   but still choose a `kind_label` like "Sketch" rather than something
   automatically derived from `medium`).
+- `teaser_is_document` (required boolean, added 2026-08-26 alongside
+  the grid port) — every current art piece is `false`. Controls the
+  grid's document wash/filter/blur treatment (see "Templates" below);
+  deliberately hand-set per item rather than derived from section, so
+  a future black-and-white sketch could set this `true` if its teaser
+  would genuinely benefit from the same treatment scanned documents
+  get — oil paintings' vivid color is exactly why they're `false`
+  today, not a rule about art as a section.
 
 ## Publications bundle front matter
 
@@ -230,7 +238,14 @@ front matter value itself), `kind_label` (grid-badge display text, see
 `"Vortrag"`, but not always: `JP6511221B2` uses `"Japanese Patent"`/
 `"Japanisches Patent"` instead of plain "Patent", since the original
 document being Japanese is genuinely informative and worth surfacing
-at a glance), `authors` (list, order matters —
+at a glance), `teaser_is_document` (required boolean — whether the
+grid teaser gets the document wash/filter/blur treatment; `true` for
+`JP6511221B2`, `modellieren-raumbezogener-daten`, and
+`programming-techniques-in-cl`, all genuinely flat scans/diagrams;
+`false` for `transliteration-with-icu`, whose teaser is a colorful
+geographic map, not a flat document — proof this has to be a per-item
+call, not a blanket "all publications" default), `authors` (list,
+order matters —
 verified against source for patents), `venue`, `abstract`.
 
 - `venue` can contain inline Markdown links, not just plain text —
@@ -414,6 +429,11 @@ don't resurrect it.
   involvement) and doesn't double as a content-type descriptor the way
   `kind` does for publications, so this is a genuinely new field, not
   a rename or repurposing of anything existing.
+- `teaser_is_document` (required boolean, added 2026-08-26 alongside
+  the grid port) — `true` for `text-rendering-tests` (a genuine code/
+  test-suite screenshot). Same field and rationale as publications'
+  and art's — see either of those sections; not re-explained per
+  section.
 - `summary` — one or two plain-text sentences (may contain inline
   Markdown, rendered via `markdownify`), the short blurb shown on the
   detail page. Plays the role publications' `abstract` plays. Keep it
@@ -613,7 +633,8 @@ localized) `.Title`, no separate i18n key.
 
 ## Git LFS
 
-- `*.webp` and `*.pdf` are tracked via `.gitattributes`.
+- `*.webp`, `*.pdf`, and (as of the 2026-08-26 self-hosted Karla font)
+  `*.woff2` are tracked via `.gitattributes`.
 - CI checkout MUST use `actions/checkout@v4` with `lfs: true`, or
   PDFs/images silently come through as broken LFS pointer files
   instead of actual content — easy to miss since the build won't
@@ -986,29 +1007,41 @@ see the mockup's own extensive inline comments for that history).
   bundle front-matter sections above for the exact ones and their
   reasoning. Any new content item from here on needs one too, same as
   every other required field.
-- Not yet done: **porting the settled design (tokens, `kind_label`
-  rendering, corner/shadow treatment) into the real
-  `gallery-grid.html`/`static/css/main.css`.** This CLAUDE.md update
-  only covers the content-model change (the field now exists on real
-  content); the template/CSS side is still pending — see "Known open
-  items" below.
+- **Ported into the real templates/CSS, 2026-08-26** (same day, second
+  commit) — this content-model update and the actual
+  `gallery-grid.html`/`static/css/main.css` port shipped together
+  after all, once Sascha asked to lock in the validated design before
+  it existed only in the mockup Artifact/session state. See "Known
+  open items" below for exactly what shipped and what's still
+  deferred (header/drawer/footer/hero/resume, still the earlier
+  bare-bones pass).
 
 ## Known open items (as of last content session)
 
-- **The "Paper & Plum" grid design (2026-08-26) is validated but not
-  yet ported into real templates/CSS.** Content model is done (every
-  item has `kind_label`, see above); `gallery-grid.html` and
-  `static/css/main.css` still need the actual port — tokens (color,
-  type, shadow), corner rounding, the wash/filter/blur treatment for
-  document teasers, `kind_label` rendering, and the container-query
-  tight-tile behavior. Sascha wants to add more artwork and more
-  patents before this port happens (more real test cases for the
-  content-mix questions the mockup explored) — check with him before
-  starting it.
-- `/design` mode: everything else (color, type scale, spacing outside
-  the grid, the lecture-series list treatment, resume icons/timeline)
-  — everything in the "Templates" section above is structural/
-  functional only, apart from the grid work called out just above.
+- **The "Paper & Plum" grid design is live, ported 2026-08-26**
+  (`static/css/main.css` + `layouts/partials/gallery-grid.html`) —
+  tokens (color, light+dark, self-hosted Karla via `@font-face`),
+  rounded-corner/shadow tile treatment, the document wash/filter/blur
+  (`teaser_is_document`-gated), `kind_label` rendering, and the
+  container-query tight-tile behavior are all real now, not just in
+  the mockup. Ported ahead of Sascha's own "add more art/patents
+  first" plan specifically so the validated design would live in git
+  rather than only in session state/the mockup Artifact — that
+  content-completeness check now applies to *validating the design
+  further* (more real test cases for `teaser_is_document`'s
+  bidirectional override), not to whether the port itself could
+  happen. Scope was deliberately the grid + the page canvas it sits on
+  (body font/background/color had to move to the new tokens too, plus
+  the chip row, since a page can't tastefully mix Karla-and-warm-tokens
+  cards with system-font-and-Canvas chrome) — header/drawer/footer/
+  hero images/resume are untouched, still the earlier bare-bones pass,
+  and will look inconsistent against the new grid until their own
+  pass happens. Not done in this port: loading-performance tuning for
+  the font (`font-display`/`preload`/layout-shift), explicitly
+  deferred per Sascha's own "get the design working first."
+- `/design` mode: everything else (header/drawer/footer chrome, hero
+  images, resume icons/timeline, the lecture-series list treatment) —
+  still structural/functional only, apart from the grid work above.
 - **Gallery grid thumbnails now render square, fixed 2026-08-25** --
   see `static/css/main.css` git history. Root cause not fully
   re-diagnosed (the original 2026-08-24 finding below still stands as

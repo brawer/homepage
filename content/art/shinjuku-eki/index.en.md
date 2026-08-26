@@ -5,6 +5,7 @@ publishDate: 2026-08-24
 tags: ["People", "Oil"]
 medium: "Oil on canvas"
 kind_label: "Oil Painting"
+teaser_is_document: false
 height_cm: 70
 width_cm: 100
 image: "shinjuku-eki.webp"

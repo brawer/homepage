@@ -7,6 +7,7 @@ publishDate: 2026-08-23
 tags: ["NLP", "Prolog"]
 kind: "lecture"
 kind_label: "Lecture Series"
+teaser_is_document: true
 venue: "Universität Zürich, Institut für Informatik, Computerlinguistik"
 abstract: >
   A lecture series on programming techniques in computational
