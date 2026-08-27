@@ -5,7 +5,7 @@ publishDate: 2026-08-27
 tags: ["Tiere", "Zeichnung"]
 medium: "Kugelschreiber auf Papier"
 kind_label: "Skizze"
-teaser_is_document: true
+teaser_is_document: false
 height_cm: 12
 width_cm: 12
 image: "budgie.webp"

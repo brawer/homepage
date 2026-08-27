@@ -5,7 +5,7 @@ publishDate: 2026-08-27
 tags: ["Animals", "Sketch"]
 medium: "Ballpoint pen on paper"
 kind_label: "Sketch"
-teaser_is_document: true
+teaser_is_document: false
 height_cm: 12
 width_cm: 12
 image: "budgie.webp"
