@@ -26,4 +26,4 @@ so.
 mich, was wohl passiert, wenn ich diese seltsamen, zufällig
 entstandenen Bildchen in Öl male. Das Ergebnis ist dieses
 3×3-Raster – neun kleine Gemälde, jedes ein kleines Denkmal für die
-Absurdität, die eigene Menschlichkeit beweisen zu müssen.
+Absurdität, das eigene Menschsein beweisen zu müssen.
