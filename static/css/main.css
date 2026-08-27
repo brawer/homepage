@@ -155,16 +155,29 @@ body {
 /* The flex item that grows to absorb leftover viewport height -- see
    body's own comment above. Also now the page's own centered content
    column (max-width/margin/padding moved here from body itself, which
-   needed to become full-width so header/footer below could break out
-   to true full-bleed -- see their own comments). width:100% needed
-   because a flex item's default is to shrink to its content's width,
-   which would break max-width's centering (margin:auto can't center a
-   box that's already only as wide as its own content). Top/side/bottom
+   needed to become full-width so header/.site-footer could sit
+   edge-to-edge as ordinary block children -- see their own comments).
+   No explicit width -- found and fixed 2026-08-27 (Sascha, via an
+   iPhone SE simulation: ~16px of horizontal scroll, persisting even
+   after removing header/footer's own 100vw hack). An earlier version
+   of this rule set width:100%, on the mistaken belief that a flex
+   item's default is to shrink to its content's width the way a flex
+   item along the MAIN axis can -- true for a row container's width,
+   NOT true here: body is a COLUMN flex container, so width is the
+   CROSS axis, and align-items defaults to stretch (never overridden),
+   which already fills the available width correctly. The explicit
+   width:100% was actively harmful, not just redundant: combined with
+   this rule's own horizontal padding and the lack of any
+   box-sizing:border-box reset in this file, "100% width, content-box
+   sizing" ADDS the padding on top of that 100%, overflowing the real
+   viewport by exactly the padding amount -- the classic width:100%
+   plus padding footgun. Plain width:auto (the default, now that the
+   explicit value is gone) correctly subtracts padding on its own, the
+   same way it always has for ordinary block layout. Top/side/bottom
    padding values match what body used to provide, plus a bit of top
    padding now that header no longer supplies its own margin-bottom. */
 main {
   flex: 1 0 auto;
-  width: 100%;
   max-width: 60rem;
   margin: 0 auto;
   padding: 2rem 1rem 3rem;
