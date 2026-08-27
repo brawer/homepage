@@ -225,6 +225,31 @@ the physical top-to-bottom measurement regardless of orientation),
   would genuinely benefit from the same treatment scanned documents
   get — oil paintings' vivid color is exactly why they're `false`
   today, not a rule about art as a section.
+- `dimensions_text` (optional) — added 2026-08-27 for
+  `are-you-a-human`, a one-off 3×3 grid of nine separate 40×40cm
+  panels. `height_cm`/`width_cm` alone render as plain "H × W cm" (see
+  above), which would misrepresent this piece as a single 40×40
+  canvas; `dimensions_text`, when present, overrides that whole
+  computed caption segment with a hand-authored string instead (here:
+  `"40 × 40 cm each, nine parts (3 × 3 grid)"` /
+  `"40 × 40 cm pro Bild, neunteilig (3 × 3-Raster)"`).
+  `height_cm`/`width_cm` stay required and still describe one panel —
+  only the *display* is overridden. Deliberately a hand-authored
+  override rather than a general multi-panel schema (e.g.
+  `panel_count`/`grid_rows`/`grid_cols` fields driving a computed
+  string): Sascha doesn't expect to paint more grids like this, so
+  per-item text is simpler and more maintainable than building
+  composition logic for what may stay a single occurrence — same
+  reasoning as `kind_label` being hand-authored rather than derived.
+  Its `×` signs use the same U+202F (narrow no-break space) as the
+  computed "H × W cm" string, typed as the raw character directly in
+  the content string (verified via a small Python script reading the
+  file back and checking codepoints, not by trusting what looked
+  right when typed — see the `\uXXXX`-fragility note under
+  "Templates" below) rather than as HTML entities, since this flows
+  through `.Params` as page data, not as template source text; Go's
+  auto-escaper only touches `<>&"'`, so the raw character survives
+  untouched the same way the résumé's `date_range` dash does.
 
 ## Publications bundle front matter
 
