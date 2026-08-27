@@ -395,6 +395,19 @@ dialog {
   padding: 0;
   max-width: none;
   max-height: none;
+  /* Found and fixed 2026-08-27 (Sascha, via a real dev server -- same
+     class of bug as body's own missing margin:0): the UA stylesheet
+     gives <dialog> a default margin:auto, meant for the browser's own
+     un-styled centered-dialog appearance. Neither this rule nor
+     .drawer[open]/.viewer[open] (both position:fixed; inset:0 with
+     explicit width/height) ever overrode it, so the default margin
+     survived alongside our own positioning -- 28.45px top/bottom, 16px
+     left/right, on top of an inset:0 fixed box that's supposed to be
+     flush with the viewport, making the drawer scrollable when it
+     shouldn't be. Fixed here (not just on .drawer[open]) since
+     .viewer[open] sets the identical position:fixed;inset:0 pattern
+     and has the same latent bug, just not yet reported. */
+  margin: 0;
   color: inherit;
 }
 
