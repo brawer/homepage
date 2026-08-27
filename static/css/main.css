@@ -199,16 +199,23 @@ main {
    under it." Hairline stays: the paper/paper-dim contrast is
    deliberately subtle (both are meant to feel like the same warm
    family, not two competing surfaces), so the line still does real
-   work marking the edge. Full-bleed via the standard
-   full-bleed-inside-a-centered-body trick (100vw + centering
-   transform), now that <main> (not <body>) is the constrained column. */
+   work marking the edge.
+
+   No 100vw/transform full-bleed hack needed -- found and removed
+   2026-08-27 (Sascha, via a real iPhone SE simulation: ~16px of
+   horizontal scroll despite <html> itself measuring exactly 375px).
+   That's the classic 100vw pitfall: 100vw measures the full window
+   width as if no scrollbar existed, while the page's actual scrollable
+   layout width is narrower by the scrollbar's own width -- sizing an
+   element to 100vw makes it wider than the real content area. The
+   trick was copied over from the mockup's structure without noticing
+   it had already become unnecessary: <body> has no max-width/padding
+   of its own (that moved to <main> in this same port), so header, as
+   an ordinary block-level direct child of an already-full-width
+   <body>, is already edge-to-edge with zero extra CSS. */
 header {
   background: var(--paper-dim);
   border-bottom: 1px solid var(--line);
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
 }
 
 .site-header-inner {
@@ -1161,17 +1168,18 @@ body.drawer-open {
    shift alone to read as a boundary; now that header and footer are
    the same tone as each other, that asymmetry no longer has a reason
    to exist, and the contrast is deliberately too subtle to carry the
-   boundary alone either way. Standard full-bleed-inside-a-centered-box
-   trick, same as header's own (100vw + centering transform), now that
-   <main> is the constrained column instead of <body>. */
+   boundary alone either way.
+
+   No 100vw/transform hack -- same fix and reasoning as header's own
+   (see its comment): <body> has no max-width/padding of its own, so
+   .site-footer, as an ordinary block-level direct child of an
+   already-full-width <body>, is already edge-to-edge for free. 100vw
+   would make it wider than the page's real scrollable width whenever a
+   scrollbar is present, causing spurious horizontal scroll. */
 .site-footer {
   margin-top: 3rem;
   background: var(--paper-dim);
   border-top: 1px solid var(--line);
-  width: 100vw;
-  position: relative;
-  left: 50%;
-  transform: translateX(-50%);
 }
 .footer-inner {
   max-width: 60rem;
