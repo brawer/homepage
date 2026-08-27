@@ -391,11 +391,32 @@ header {
 }
 
 .social-icons {
+  /* flex-wrap:wrap -- found and fixed 2026-08-27 (Sascha, via a real
+     dev server): at narrow widths (320-375px), the row's combined
+     content (location + GitHub + LinkedIn + the email address) didn't
+     fit on one line, and the default nowrap forced the whole row --
+     and therefore the whole page -- wider than the viewport. wrap lets
+     items drop to additional lines instead of forcing horizontal
+     overflow. Doesn't fully solve it alone, though: the email address
+     itself is one long token with no natural break point (no spaces/
+     hyphens), so even on its own line it could still be wider than a
+     narrow viewport -- see .social-icons a[href^="mailto:"] below for
+     the other half of this fix. */
   display: flex;
+  flex-wrap: wrap;
   gap: .8rem;
   list-style: none;
   margin: 0;
   padding: 0;
+}
+
+/* Lets the email address itself break mid-string if it has to, rather
+   than being one unbreakable token wider than a narrow viewport --
+   scoped to the mailto: link specifically (not e.g. "GitHub"/
+   "LinkedIn", which are short enough to never need this and would
+   otherwise risk an ugly mid-word break for no reason). */
+.social-icons a[href^="mailto:"] {
+  overflow-wrap: anywhere;
 }
 
 /* Utility nav -- deliberately quiet (low-frequency, always-available),
