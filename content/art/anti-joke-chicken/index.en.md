@@ -10,7 +10,7 @@ height_cm: 40
 width_cm: 40
 image: "anti-joke-chicken.webp"
 ---
-This one belongs to my [Memes](/tags/memes/) series — internet memes
+This one joins my [Memes](/tags/memes/) series — internet memes
 reimagined in oil.
 
 The Anti-Joke Chicken is an image macro built around a chicken

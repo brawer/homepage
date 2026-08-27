@@ -10,9 +10,11 @@ height_cm: 40
 width_cm: 40
 image: "success-kid.webp"
 ---
-Another piece in my [Memes](/tags/memes/) series. [Success
-Kid](https://en.wikipedia.org/wiki/Success_Kid) started life as a
-2007 snapshot of a toddler on a beach, fist clenched, looking
+This one joins my [Memes](/tags/memes/) series — internet memes
+reimagined in oil.
+
+[Success Kid](https://en.wikipedia.org/wiki/Success_Kid) started life
+as a 2007 snapshot of a toddler on a beach, fist clenched, looking
 improbably pleased with himself — it went on to caption a decade of
 online “mission accomplished” moments.
 

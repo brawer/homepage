@@ -10,11 +10,14 @@ height_cm: 40
 width_cm: 40
 image: "disaster-girl.webp"
 ---
-Ein weiteres Bild aus meiner [Memes](/de/tags/memes/)-Serie. [Disaster
-Girl](https://en.wikipedia.org/wiki/Disaster_Girl) ist das Foto eines
-Mädchens, das vor einem brennenden Haus grinst. Das Foto wurde 2005
-vom Vater des Mädchens bei einem Wettbewerb eingereicht, ging danach
-viral, und wurde zu einem der bekanntesten Memes des Internets.
+Dieses Bild gehört zu meiner [Memes](/de/tags/memes/)-Serie –
+Internet-Memes, neu gedacht in Öl.
+
+[Disaster Girl](https://en.wikipedia.org/wiki/Disaster_Girl) ist das
+Foto eines Mädchens, das vor einem brennenden Haus grinst. Das Foto
+wurde 2005 vom Vater des Mädchens bei einem Wettbewerb eingereicht,
+ging danach viral, und wurde zu einem der bekanntesten Memes des
+Internets.
 
 Gemalt habe ich es vor allem als Übung in älteren Öltechniken, die ich
 vorher noch nicht ausprobiert hatte. Haare, Haut und Rauch verhalten
