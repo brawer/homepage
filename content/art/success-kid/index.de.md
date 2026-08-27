@@ -10,12 +10,14 @@ height_cm: 40
 width_cm: 40
 image: "success-kid.webp"
 ---
-Ein weiteres Bild aus meiner [Memes](/de/tags/memes/)-Serie. [Success
-Kid](https://en.wikipedia.org/wiki/Success_Kid) war ursprünglich ein
-Schnappschuss von 2007: ein Kleinkind am Strand, Faust geballt, mit
-einem Gesichtsausdruck von unglaublicher Selbstzufriedenheit. Später
-wurde daraus ein Meme für all die kleinen «Mission erfüllt»-Momente
-des Internets.
+Dieses Bild gehört zu meiner [Memes](/de/tags/memes/)-Serie –
+Internet-Memes, neu gedacht in Öl.
+
+[Success Kid](https://en.wikipedia.org/wiki/Success_Kid) war
+ursprünglich ein Schnappschuss von 2007: ein Kleinkind am Strand,
+Faust geballt, mit einem Gesichtsausdruck von unglaublicher
+Selbstzufriedenheit. Später wurde daraus ein Meme für all die
+kleinen «Mission erfüllt»-Momente des Internets.
 
 Die Reaktionen auf dieses Gemälde gehen stark auseinander: Die einen
 sehen ein süsses, entschlossenes Kind, die anderen fühlen sich eher
