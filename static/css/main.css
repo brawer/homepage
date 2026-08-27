@@ -178,6 +178,21 @@ body {
    padding now that header no longer supplies its own margin-bottom. */
 main {
   flex: 1 0 auto;
+  /* min-width:0 -- found and fixed 2026-08-27 (Sascha: overflow scaled
+     with content, present on /art [9 tiles, many tags -> a wide
+     .chip-row] and absent on /tags/animals [2 tiles, few tags] and
+     /resume [no chip-row at all]). Flex items default to
+     min-width:auto, which resolves to "at least as wide as my widest
+     un-shrinkable content," not 0 -- the exact same mechanism already
+     documented on .viewer-image img elsewhere in this file. This hits
+     <main> itself, one level up from .chip-row's own overflow-x:auto,
+     so that overflow rule was never the problem -- the constraint
+     forces <main>'s minimum width up to match the chip row's natural,
+     unwrapped content width regardless of what the chip row does
+     internally. min-width:0 is the standard, textbook fix: opt out of
+     the automatic minimum so <main> can actually shrink to the
+     viewport, letting .chip-row's own overflow-x:auto do its job. */
+  min-width: 0;
   max-width: 60rem;
   margin: 0 auto;
   padding: 2rem 1rem 3rem;
