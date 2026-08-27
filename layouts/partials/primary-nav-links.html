@@ -12,7 +12,15 @@
 {{ $page := .page }}
 <ul class="primary-links">
   {{ if .includeHome }}
-    <li><a href="{{ "/" | relLangURL }}">{{ i18n "home_label" }}</a></li>
+    {{/* .IsHome, not a manual RelPermalink comparison -- Hugo's own
+         per-language check for "is the current page this site's
+         homepage" (true for the EN homepage on the EN site, true for
+         the DE homepage on the DE site). Found missing entirely
+         2026-08-27 (Sascha: Home/Startseite never highlighted in the
+         drawer) -- unlike the loop below, which already checks
+         IsMenuCurrent for every other link, this hardcoded row never
+         had any current-page check at all. */}}
+    <li><a href="{{ "/" | relLangURL }}"{{ if $page.IsHome }} aria-current="page"{{ end }}>{{ i18n "home_label" }}</a></li>
   {{ end }}
   {{ range site.Menus.main }}
     <li><a href="{{ .URL }}"{{ if $page.IsMenuCurrent "main" . }} aria-current="page"{{ end }}>{{ .Name }}</a></li>
