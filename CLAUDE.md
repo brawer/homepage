@@ -130,7 +130,8 @@ templates/CSS via `/design` mode.
   that are already `.Translations` of each other, with no
   `content/tags/google/` files needed.
 - Some tags are translated (`Animals`/`Tiere`, `Oil`/`Öl`,
-  `Open Source`/`Quelloffen`, `People`/`Menschen`) — each pair lives at
+  `Open Source`/`Quelloffen`, `People`/`Menschen`,
+  `Sketches`/`Zeichnungen`) — each pair lives at
   `content/tags/<term>/_index.<lang>.md` in *different* folders, and
   each page MUST carry a matching `translationKey` (e.g.
   `tag-animals`) so Hugo knows they're the same concept — unlike the
@@ -140,6 +141,13 @@ templates/CSS via `/design` mode.
   them. Naming convention: `tag-<english-term-lowercase>` (e.g.
   `tag-memes`, `tag-oil`, `tag-open-source` — hyphenate multi-word
   terms).
+- **Countable subject tags are plural, mass-noun/medium tags stay
+  singular** — `Animals`, `Tools`, `People`, `Sketches` (things you can
+  count) vs. `Oil`, `Typography` (uncountable). Caught and fixed
+  2026-08-27: `Sketches`/`Zeichnungen` was initially added as singular
+  `Sketch`/`Zeichnung`, inconsistent with every other countable
+  subject-matter tag; renamed (folder, `title`, and `translationKey`
+  all together) once noticed.
 - Tag pages can hold real body content — e.g.
   `content/tags/memes/_index.*.md` explains the "memes painted in
   oil, as a series" concept once; individual art pieces link to the

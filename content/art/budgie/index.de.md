@@ -2,7 +2,7 @@
 title: "Sittich"
 date: 2023-12-27
 publishDate: 2026-08-27
-tags: ["Tiere", "Zeichnung"]
+tags: ["Tiere", "Zeichnungen"]
 medium: "Kugelschreiber auf Papier"
 kind_label: "Skizze"
 teaser_is_document: false
