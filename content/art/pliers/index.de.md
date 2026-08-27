@@ -4,13 +4,13 @@ date: 2019-05-23
 publishDate: 2026-08-24
 tags: ["Werkzeuge", "Öl"]
 medium: "Öl auf Leinwand"
-kind_label: "Ölgemälde"
+kind_label: "Ölbild"
 teaser_is_document: false
 height_cm: 40
 width_cm: 50
 image: "pliers.webp"
 ---
-Dies war mein allererstes Ölgemälde. Ich wollte einfach die Technik
+Dies war mein allererstes Ölbild. Ich wollte einfach die Technik
 lernen und suchte mir dafür ein einfaches Motiv – eine Zange.
 Werkzeuge interessieren mich überhaupt nicht; ich habe mir dieses
 Motiv rein deswegen ausgesucht, weil es leicht zu malen aussah.

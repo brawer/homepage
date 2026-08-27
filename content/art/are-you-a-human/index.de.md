@@ -4,7 +4,7 @@ date: 2021-06-21
 publishDate: 2026-08-24
 tags: ["Öl"]
 medium: "Öl auf Leinwand"
-kind_label: "Ölgemälde"
+kind_label: "Ölbild"
 teaser_is_document: false
 height_cm: 40
 width_cm: 40
