@@ -4,7 +4,7 @@ date: 2019-07-04
 publishDate: 2026-08-24
 tags: ["Menschen", "Öl"]
 medium: "Öl auf Leinwand"
-kind_label: "Ölgemälde"
+kind_label: "Ölbild"
 teaser_is_document: false
 height_cm: 50
 width_cm: 40
