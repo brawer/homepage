@@ -149,6 +149,12 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
+  /* Explicit, not relying on the default (normal, which behaves as
+     stretch for flex items per spec) -- doesn't by itself fix <main>'s
+     own width bug (see <main>'s own comment: its cross-axis auto
+     margins override this regardless of the value here), but does
+     correctly stretch header/.site-footer, which have no such margins. */
+  align-items: stretch;
   min-height: 100dvh;
 }
 
@@ -157,42 +163,51 @@ body {
    column (max-width/margin/padding moved here from body itself, which
    needed to become full-width so header/.site-footer could sit
    edge-to-edge as ordinary block children -- see their own comments).
-   No explicit width -- found and fixed 2026-08-27 (Sascha, via an
-   iPhone SE simulation: ~16px of horizontal scroll, persisting even
-   after removing header/footer's own 100vw hack). An earlier version
-   of this rule set width:100%, on the mistaken belief that a flex
-   item's default is to shrink to its content's width the way a flex
-   item along the MAIN axis can -- true for a row container's width,
-   NOT true here: body is a COLUMN flex container, so width is the
-   CROSS axis, and align-items defaults to stretch (never overridden),
-   which already fills the available width correctly. The explicit
-   width:100% was actively harmful, not just redundant: combined with
-   this rule's own horizontal padding and the lack of any
-   box-sizing:border-box reset in this file, "100% width, content-box
-   sizing" ADDS the padding on top of that 100%, overflowing the real
-   viewport by exactly the padding amount -- the classic width:100%
-   plus padding footgun. Plain width:auto (the default, now that the
-   explicit value is gone) correctly subtracts padding on its own, the
-   same way it always has for ordinary block layout. Top/side/bottom
-   padding values match what body used to provide, plus a bit of top
-   padding now that header no longer supplies its own margin-bottom. */
+
+   Three properties below exist specifically to avoid a real,
+   multi-round bug hunt, 2026-08-27 (Sascha found each new symptom via
+   a real dev server; the actual mechanism was only confirmed by
+   loading the site in a headless Chromium and inspecting computed
+   layout directly -- reasoning about it from the CSS alone had
+   produced two wrong fixes in a row first):
+
+   1. width:100%, not plain auto. A flex item with cross-axis auto
+      margins (margin:0 auto's left/right auto, needed for centering)
+      has STRETCH DISABLED for that axis, even with the container's own
+      align-items:stretch set explicitly -- confirmed empirically after
+      align-items:stretch alone made no difference. Without stretch,
+      <main>'s width falls back to shrink-to-fit sizing: it grows to
+      match its widest un-shrinkable content (specifically .chip-row,
+      the horizontally-scrollable tag row, whose own overflow-x:auto
+      only contains ITS children, not itself -- .chip-row was never the
+      bug). This is exactly why the overflow was content-dependent: big
+      on /art (9 tiles, many tags -> a wide chip row), small on
+      /tags/animals (few tags), absent on /resume (no chip row at all).
+      An explicit width:100% sidesteps the whole stretch-disabling
+      interaction by giving <main> a definite size outright.
+   2. box-sizing:border-box. Needed specifically because of #1: under
+      the default content-box model, "width:100%" plus this rule's own
+      horizontal padding ADDS the padding on top of that 100%,
+      overflowing the viewport by exactly the padding amount -- the
+      classic width:100%-plus-padding footgun, and a real bug on its
+      own right (confirmed as the sole cause on content-light pages
+      like /resume, before the chip-row issue above was even found).
+      There's no sitewide box-sizing:border-box reset in this file (a
+      gap worth closing generally), so it's set locally here.
+   3. min-width:0. Even with an explicit, definite width:100%, a flex
+      item's automatic minimum size (min-width:auto, resolving to "at
+      least as wide as my widest un-shrinkable content") can still
+      override a smaller specified width -- same underlying mechanism
+      as #1, needed as a second, independent guard against it.
+
+   Top/side/bottom padding values match what body used to provide,
+   plus a bit of top padding now that header no longer supplies its
+   own margin-bottom. */
 main {
   flex: 1 0 auto;
-  /* min-width:0 -- found and fixed 2026-08-27 (Sascha: overflow scaled
-     with content, present on /art [9 tiles, many tags -> a wide
-     .chip-row] and absent on /tags/animals [2 tiles, few tags] and
-     /resume [no chip-row at all]). Flex items default to
-     min-width:auto, which resolves to "at least as wide as my widest
-     un-shrinkable content," not 0 -- the exact same mechanism already
-     documented on .viewer-image img elsewhere in this file. This hits
-     <main> itself, one level up from .chip-row's own overflow-x:auto,
-     so that overflow rule was never the problem -- the constraint
-     forces <main>'s minimum width up to match the chip row's natural,
-     unwrapped content width regardless of what the chip row does
-     internally. min-width:0 is the standard, textbook fix: opt out of
-     the automatic minimum so <main> can actually shrink to the
-     viewport, letting .chip-row's own overflow-x:auto do its job. */
   min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
   max-width: 60rem;
   margin: 0 auto;
   padding: 2rem 1rem 3rem;
