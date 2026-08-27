@@ -2,7 +2,7 @@
 title: "Paranoid Parrot"
 date: 2024-10-16
 publishDate: 2026-08-27
-tags: ["Memes", "Oil"]
+tags: ["Memes", "Animals", "Oil"]
 medium: "Oil on canvas"
 kind_label: "Oil Painting"
 teaser_is_document: false
