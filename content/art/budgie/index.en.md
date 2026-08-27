@@ -2,7 +2,7 @@
 title: "Budgie"
 date: 2023-12-27
 publishDate: 2026-08-27
-tags: ["Animals", "Sketch"]
+tags: ["Animals", "Sketches"]
 medium: "Ballpoint pen on paper"
 kind_label: "Sketch"
 teaser_is_document: false
