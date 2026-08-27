@@ -39,9 +39,23 @@
        entity, in template source text outside any {{ }} action (Go's
        html/template auto-escaper would mangle it if it were inside
        an action's returned string), so it stays as plain, legible
-       ASCII in the file rather than a near-invisible raw character. */}}
+       ASCII in the file rather than a near-invisible raw character.
+
+       dimensions_text (optional) overrides this whole computed
+       segment -- added for are-you-a-human, a one-off 3x3 grid of
+       nine 40x40cm panels, where "H x W cm" alone would misrepresent
+       the piece as a single 40x40 canvas. height_cm/width_cm are
+       still required and still describe one panel; a hand-authored
+       string was chosen over a general multi-panel schema (e.g.
+       panel_count/grid_rows/grid_cols fields) since no other piece is
+       expected to need this. Its raw U+202F characters are typed
+       directly into the content string (verified via Python, not
+       typed through the editor -- see CLAUDE.md's note on \uXXXX
+       fragility), so it comes through .Params as-is here; unlike the
+       entity above, this is data flowing through the auto-escaper,
+       and the raw character (not `<>&"'`) passes through untouched. */}}
   <p class="caption">
-    {{ .Params.medium }} &middot; {{ .Params.height_cm }}&#x202F;&times;&#x202F;{{ .Params.width_cm }}&#x202F;cm &middot; {{ .Date.Format "2006" }}
+    {{ .Params.medium }} &middot; {{ with .Params.dimensions_text }}{{ . }}{{ else }}{{ .Params.height_cm }}&#x202F;&times;&#x202F;{{ .Params.width_cm }}&#x202F;cm{{ end }} &middot; {{ .Date.Format "2006" }}
   </p>
   {{ .Content }}
 </article>
