@@ -124,6 +124,8 @@ other = "Alle"
 other = "Nach Tag filtern"
 [skip_to_content]
 other = "Zum Inhalt springen"
+[language_switch_label]
+other = "Sprache"
 
 [item_count_flat]
 one = "{{.Count}} Eintrag"

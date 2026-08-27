@@ -3,27 +3,51 @@
    shadows, corner treatment, document wash/filter/blur -- see
    CLAUDE.md's "Grid design pass" note for the full history/rationale
    behind every value below; not reproduced here to avoid duplicating
-   that write-up). Scope of THIS port is deliberately the grid + the
-   page canvas it sits on (tokens, body, chips) -- header/drawer/
-   footer/hero/resume are still the earlier bare-bones pass and will
-   get their own design pass once more content exists; see CLAUDE.md's
-   Known open items. Body-level font/background/color had to move to
-   the new tokens too, not just the grid itself -- the design's
+   that write-up). Body-level font/background/color had to move to the
+   new tokens too, not just the grid itself -- the design's
    card-vs-page relationship (extensively tuned) only holds if the
    page underneath the cards is the same paper tone the cards were
-   tuned against, not an arbitrary system color. */
+   tuned against, not an arbitrary system color.
+
+   Header/drawer/footer design, ported 2026-08-27 from a second mockup
+   Artifact ("Paper & Plum Chrome") -- extends the same token system to
+   the page shell. See CLAUDE.md's "Header/drawer/footer design pass"
+   note for the full round-by-round history; not reproduced here. */
 
 :root {
   color-scheme: light dark;
   --paper: #FAFAF7;
   --paper-dim: #fbf5eb;
   --paper-raised: #FFFFFF;
+  /* Tonal elevation for the drawer specifically (Material 3 concept:
+     an elevated surface tints toward the theme's own accent color,
+     rather than just lightening). ONE declaration, no dark-mode
+     override needed -- --paper/--accent already swap per theme, so
+     color-mix() recomputes correctly on its own in both. Deliberately
+     NOT applied to chips/buttons (still plain --paper-raised) or grid
+     tiles (still shadow-only, no tint) -- this site only has one thing
+     that's a genuine floating overlay right now. 12%, not 14% first
+     tried: verified with real contrast math against every text token
+     used inside the drawer, in both themes -- 14% failed --ink-faint
+     in light mode (4.45:1, under the 4.5:1 AA floor for the drawer's
+     "DE · Imprint"-equivalent links); 12% clears all of them with real
+     margin (worst case 4.60:1 light / 4.83:1 dark). Re-verify the same
+     way if --paper or --accent ever change. */
+  --drawer-surface: color-mix(in srgb, var(--paper) 88%, var(--accent) 12%);
   --ink: #242019;
   --ink-soft: #5C5648;
   --ink-faint: #6A6454;
   --line: rgba(36, 32, 25, .12);
   --accent: #8C3F5C;
-  --accent-soft: rgba(140, 63, 92, .10);
+  /* Derived from --accent, not hand-typed -- color-mix(in srgb, C p%,
+     transparent) is mathematically identical to rgba(C.r, C.g, C.b,
+     p%), so this changes nothing about today's rendering. What it
+     buys: if --accent's hue ever changes, this (and the two dark-mode
+     copies below) follow automatically instead of needing their RGB
+     hand-updated to match. The alpha itself (10% here, 14% in dark)
+     stays a separate, deliberate per-theme value, same reasoning as
+     --shadow-op-* below also being stronger in dark mode. */
+  --accent-soft: color-mix(in srgb, var(--accent) 10%, transparent);
   --shadow-color: 36, 32, 25;
   --shadow-op-card-1: .06;
   --shadow-op-card-2: .09;
@@ -50,7 +74,7 @@
     --ink-faint: #A0947D;
     --line: rgba(242, 233, 216, .14);
     --accent: #E2A0BC;
-    --accent-soft: rgba(226, 160, 188, .14);
+    --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
     --shadow-color: 0, 0, 0;
     --shadow-op-card-1: .09;
     --shadow-op-card-2: .13;
@@ -70,7 +94,7 @@
   --ink-faint: #A0947D;
   --line: rgba(242, 233, 216, .14);
   --accent: #E2A0BC;
-  --accent-soft: rgba(226, 160, 188, .14);
+  --accent-soft: color-mix(in srgb, var(--accent) 14%, transparent);
   --shadow-color: 0, 0, 0;
   --shadow-op-card-1: .09;
   --shadow-op-card-2: .13;
@@ -97,14 +121,96 @@
   src: url("/fonts/karla-latin-variable.woff2") format("woff2");
 }
 
+/* Viewport-anchored footer -- NOT position:sticky (that's a separate,
+   later idea reserved for the résumé page specifically), this is the
+   classic "sticky footer" LAYOUT technique: on a page shorter than one
+   screen, <main> below is told to grow and absorb the leftover space,
+   pushing the footer down to the real bottom edge instead of leaving
+   it floating mid-screen with plain --paper showing beneath it (found
+   on an iPad Mini simulation, whose short content didn't fill the
+   viewport). On a page long enough to scroll, this rule does nothing.
+   100dvh, not 100vh -- 100vh overshoots the actually-visible height on
+   mobile Safari whenever the address bar is showing; 100dvh tracks the
+   real, current viewport. No html{height:100%} needed the way the old
+   pre-dvh version of this technique required -- dvh units are
+   viewport-relative already, not dependent on an ancestor's height. */
 body {
   font-family: "Karla", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   background: var(--paper);
   color: var(--ink);
+  line-height: 1.5;
+  /* Explicit margin:0 -- found and fixed 2026-08-27 (Sascha, via a
+     real dev server, not something visible from raw HTML output): the
+     old body rule's margin:0 auto centered it AND, as a side effect,
+     zeroed out the browser's own default ~8px body margin. Moving the
+     centering to <main> (see below) dropped that rule entirely and
+     left the default margin free to come back, insetting the whole
+     page and the full-bleed header/footer with it. */
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  /* Explicit, not relying on the default (normal, which behaves as
+     stretch for flex items per spec) -- doesn't by itself fix <main>'s
+     own width bug (see <main>'s own comment: its cross-axis auto
+     margins override this regardless of the value here), but does
+     correctly stretch header/.site-footer, which have no such margins. */
+  align-items: stretch;
+  min-height: 100dvh;
+}
+
+/* The flex item that grows to absorb leftover viewport height -- see
+   body's own comment above. Also now the page's own centered content
+   column (max-width/margin/padding moved here from body itself, which
+   needed to become full-width so header/.site-footer could sit
+   edge-to-edge as ordinary block children -- see their own comments).
+
+   Three properties below exist specifically to avoid a real,
+   multi-round bug hunt, 2026-08-27 (Sascha found each new symptom via
+   a real dev server; the actual mechanism was only confirmed by
+   loading the site in a headless Chromium and inspecting computed
+   layout directly -- reasoning about it from the CSS alone had
+   produced two wrong fixes in a row first):
+
+   1. width:100%, not plain auto. A flex item with cross-axis auto
+      margins (margin:0 auto's left/right auto, needed for centering)
+      has STRETCH DISABLED for that axis, even with the container's own
+      align-items:stretch set explicitly -- confirmed empirically after
+      align-items:stretch alone made no difference. Without stretch,
+      <main>'s width falls back to shrink-to-fit sizing: it grows to
+      match its widest un-shrinkable content (specifically .chip-row,
+      the horizontally-scrollable tag row, whose own overflow-x:auto
+      only contains ITS children, not itself -- .chip-row was never the
+      bug). This is exactly why the overflow was content-dependent: big
+      on /art (9 tiles, many tags -> a wide chip row), small on
+      /tags/animals (few tags), absent on /resume (no chip row at all).
+      An explicit width:100% sidesteps the whole stretch-disabling
+      interaction by giving <main> a definite size outright.
+   2. box-sizing:border-box. Needed specifically because of #1: under
+      the default content-box model, "width:100%" plus this rule's own
+      horizontal padding ADDS the padding on top of that 100%,
+      overflowing the viewport by exactly the padding amount -- the
+      classic width:100%-plus-padding footgun, and a real bug on its
+      own right (confirmed as the sole cause on content-light pages
+      like /resume, before the chip-row issue above was even found).
+      There's no sitewide box-sizing:border-box reset in this file (a
+      gap worth closing generally), so it's set locally here.
+   3. min-width:0. Even with an explicit, definite width:100%, a flex
+      item's automatic minimum size (min-width:auto, resolving to "at
+      least as wide as my widest un-shrinkable content") can still
+      override a smaller specified width -- same underlying mechanism
+      as #1, needed as a second, independent guard against it.
+
+   Top/side/bottom padding values match what body used to provide,
+   plus a bit of top padding now that header no longer supplies its
+   own margin-bottom. */
+main {
+  flex: 1 0 auto;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
   max-width: 60rem;
   margin: 0 auto;
-  padding: 0 1rem 3rem;
-  line-height: 1.5;
+  padding: 2rem 1rem 3rem;
 }
 
 /* Accessibility primitive, not visual design — see
@@ -129,86 +235,264 @@ body {
   border: 2px solid CanvasText;
 }
 
+/* --paper-dim, not --paper -- matches the footer and the grid tiles'
+   own mat tone, so header + footer read as a matching pair of warm mat
+   bands bracketing the cooler --paper content area between them,
+   rather than the header just being "page background with a line
+   under it." Hairline stays: the paper/paper-dim contrast is
+   deliberately subtle (both are meant to feel like the same warm
+   family, not two competing surfaces), so the line still does real
+   work marking the edge.
+
+   No 100vw/transform full-bleed hack needed -- found and removed
+   2026-08-27 (Sascha, via a real iPhone SE simulation: ~16px of
+   horizontal scroll despite <html> itself measuring exactly 375px).
+   That's the classic 100vw pitfall: 100vw measures the full window
+   width as if no scrollbar existed, while the page's actual scrollable
+   layout width is narrower by the scrollbar's own width -- sizing an
+   element to 100vw makes it wider than the real content area. The
+   trick was copied over from the mockup's structure without noticing
+   it had already become unnecessary: <body> has no max-width/padding
+   of its own (that moved to <main> in this same port), so header, as
+   an ordinary block-level direct child of an already-full-width
+   <body>, is already edge-to-edge with zero extra CSS. */
 header {
-  padding: 1.5rem 0;
-  border-bottom: 1px solid CanvasText;
-  margin-bottom: 2rem;
+  background: var(--paper-dim);
+  border-bottom: 1px solid var(--line);
 }
 
 .site-header-inner {
+  max-width: 60rem;
+  margin: 0 auto;
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
+  padding: 1.1rem 1rem;
 }
 
 .site-logo {
-  font-size: 1.3rem;
+  font-size: 1.5rem;
+  line-height: 1;
   text-decoration: none;
-  margin-right: auto;
+  display: inline-flex;
+  border-radius: 6px;
+  transition: transform .15s ease;
+  /* Invisible padding, sized to whatever's ALREADY the header row's
+     tallest sibling at this breakpoint. The logo's own glyph is ~24px
+     tall, right at the WCAG 24px touch-target floor with no real
+     margin, unlike everything else in the header, which already
+     clears it comfortably. .site-header-inner has no fixed height of
+     its own; it's sized by its tallest visible child, which at mobile
+     is .drawer-trigger's fixed 40px box. Matching the logo's padded
+     box to that exactly means this is genuinely free -- the row was
+     already reserving this much vertical space for its sibling, so
+     nothing here makes the header taller. (40 - 24) / 2 = 8px = .5rem
+     each side. See the 768px override below for the desktop case. */
+  padding: .5rem 0;
+}
+.site-logo:hover { transform: scale(1.08); }
+@media (prefers-reduced-motion: reduce) {
+  .site-logo { transition: none; }
+  .site-logo:hover { transform: none; }
+}
+.site-logo:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
 }
 
 .primary-links {
   list-style: none;
   display: flex;
-  gap: 1.2rem;
+  gap: 1.75rem;
   margin: 0;
   padding: 0;
+}
+.primary-links a {
+  color: var(--ink);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: .95rem;
+  padding-bottom: .35rem;
+  border-bottom: 2px solid transparent;
+  transition: color .15s ease, border-color .15s ease;
+}
+@media (prefers-reduced-motion: reduce) {
+  .primary-links a { transition: none; }
+}
+.primary-links a:hover { color: var(--accent); }
+.primary-links a[aria-current="page"] {
+  color: var(--accent);
+  border-bottom-color: var(--accent);
+}
+.primary-links a:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: 3px;
 }
 
 /* Nav-bar vs. drawer-trigger — CSS-only responsive split (no template
    needs to know the viewport). See implementation plan §1. */
-.nav-bar,
-.header-desktop {
+.nav-bar {
   display: none;
 }
 
 .drawer-trigger {
+  /* Right-aligned on mobile: nav-bar is display:none there, so it
+     contributes no flex box for anything else to push against --
+     without its own margin-left:auto, this would sit bunched up right
+     next to the logo instead of at the far edge. Inert once
+     .drawer-trigger itself goes display:none at desktop widths. */
+  margin-left: auto;
   display: inline-flex;
-  font-size: 1.2rem;
-  background: none;
-  border: 1px solid CanvasText;
-  border-radius: .25rem;
-  padding: .3rem .6rem;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.15rem;
+  background: var(--paper-raised);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
   cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
 }
+@media (prefers-reduced-motion: reduce) {
+  .drawer-trigger { transition: none; }
+}
+.drawer-trigger:hover { border-color: var(--accent); background: var(--accent-soft); }
+.drawer-trigger:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 @media (min-width: 768px) {
-  .nav-bar,
-  .header-desktop {
-    display: flex;
-    align-items: center;
-    gap: 1.2rem;
-  }
-  .drawer-trigger {
-    display: none;
-  }
+  /* Desktop header is identity-only: logo + primary sections, full
+     stop. Utility nav (language, imprint) was dropped from the header
+     entirely -- with pages this short, showing it in both the header
+     AND the footer on every single page load was duplication for its
+     own sake, not a real usability win. It still lives in exactly one
+     place per viewport: the footer at desktop widths (reachable
+     without opening anything), the drawer at mobile widths (where the
+     drawer is the only way to reach it anyway, since the desktop
+     nav-bar itself is hidden there). Two clear zones, not one
+     right-heavy cluster: logo + primary nav sit together on the left
+     (margin-left below); the gap itself is the separator, no divider
+     needed once there's real distance. */
+  .nav-bar { display: flex; align-items: center; gap: 1.2rem; margin-left: 1.75rem; }
+  .drawer-trigger { display: none; }
+  /* Desktop-specific override of .site-logo's own padding above --
+     .drawer-trigger is hidden here, so the row's tallest sibling is
+     now .primary-links a (~28.4px: .95rem font-size, this file's
+     inherited line-height:1.5, plus its own .35rem padding-bottom),
+     not the trigger's 40px box. (28.4 - 24) / 2 ~= 2.2px, rounded to a
+     clean .15rem (2.4px) each side -- still doesn't exceed what the
+     row already reserves, so the header's height stays identical to
+     mobile's calculation, just re-derived against a different
+     sibling. */
+  .site-logo { padding: .15rem 0; }
 }
 
 .social-icons {
+  /* flex-wrap:wrap -- found and fixed 2026-08-27 (Sascha, via a real
+     dev server): at narrow widths (320-375px), the row's combined
+     content (location + GitHub + LinkedIn + the email address) didn't
+     fit on one line, and the default nowrap forced the whole row --
+     and therefore the whole page -- wider than the viewport. wrap lets
+     items drop to additional lines instead of forcing horizontal
+     overflow. Doesn't fully solve it alone, though: the email address
+     itself is one long token with no natural break point (no spaces/
+     hyphens), so even on its own line it could still be wider than a
+     narrow viewport -- see .social-icons a[href^="mailto:"] below for
+     the other half of this fix. */
   display: flex;
+  flex-wrap: wrap;
   gap: .8rem;
   list-style: none;
   margin: 0;
   padding: 0;
 }
 
-.utility-nav {
-  font-size: .85rem;
+/* Lets the email address itself break mid-string if it has to, rather
+   than being one unbreakable token wider than a narrow viewport --
+   scoped to the mailto: link specifically (not e.g. "GitHub"/
+   "LinkedIn", which are short enough to never need this and would
+   otherwise risk an ugly mid-word break for no reason). */
+.social-icons a[href^="mailto:"] {
+  overflow-wrap: anywhere;
 }
 
+/* Utility nav -- deliberately quiet (low-frequency, always-available),
+   used by the footer only now (see the 768px block above for why the
+   header no longer calls this, and drawer-utility.html for the
+   drawer's own different treatment). Flex row + one uniform gap, not
+   literal spaces/middot-with-spaces in the text -- widening the EN/DE
+   gap for easier tapping without also widening the gap around the
+   middot would leave DE closer to Imprint than to EN, visually
+   implying "DE · Imprint" as a pair, which isn't true. One shared gap
+   guarantees every adjacent pair is exactly equal, rather than
+   independently-typed spacing values that could silently drift apart
+   later. The dot is its own aria-hidden span -- purely decorative (a
+   screen reader already gets "EN, DE, Imprint" as distinct links
+   without it). */
+.utility-nav {
+  display: inline-flex;
+  align-items: baseline;
+  gap: .65em;
+  font-size: .85rem;
+  color: var(--ink-faint);
+  margin: 0;
+}
+.utility-nav strong { color: var(--ink); font-weight: 700; }
+.utility-nav a {
+  /* Invisible padding, no visible size/color change -- measured at
+     ~20.4px tall with zero padding, under the 24px touch-target floor.
+     Not applied to the <strong> above (the current-language
+     indicator): it isn't a link, nothing to tap. inline-block so the
+     padding actually expands a real box; symmetric top/bottom padding
+     doesn't shift the text's own baseline, so this doesn't disturb the
+     row's align-items:baseline alignment with the unpadded <strong>. */
+  display: inline-block;
+  padding: .3rem 0;
+  color: var(--ink-faint);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 2px;
+}
+.utility-nav a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+.utility-nav a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+
 /* Drawer + fullscreen viewer — both native <dialog>, opened/closed via
-   static/js/nav.js. Bare positioning only, no visual polish (colors,
-   transitions) — /design mode's job. See implementation plan §1/§6/§8. */
+   static/js/nav.js. See implementation plan §1/§6/§8. */
 dialog {
   border: 0;
   padding: 0;
   max-width: none;
   max-height: none;
+  /* Found and fixed 2026-08-27 (Sascha, via a real dev server -- same
+     class of bug as body's own missing margin:0): the UA stylesheet
+     gives <dialog> a default margin:auto, meant for the browser's own
+     un-styled centered-dialog appearance. Neither this rule nor
+     .drawer[open]/.viewer[open] (both position:fixed; inset:0 with
+     explicit width/height) ever overrode it, so the default margin
+     survived alongside our own positioning -- 28.45px top/bottom, 16px
+     left/right, on top of an inset:0 fixed box that's supposed to be
+     flush with the viewport, making the drawer scrollable when it
+     shouldn't be. Fixed here (not just on .drawer[open]) since
+     .viewer[open] sets the identical position:fixed;inset:0 pattern
+     and has the same latent bug, just not yet reported. */
+  margin: 0;
+  color: inherit;
 }
 
 dialog::backdrop {
   background: rgba(0, 0, 0, .5);
+}
+
+/* Fixed warm-black scrim, not theme-swapped and not shared with the
+   generic dialog::backdrop above (the fullscreen art viewer keeps the
+   original neutral scrim -- untouched, unreviewed by this pass) -- a
+   dark isolating scrim doesn't need to follow the page theme, same
+   convention the viewer already uses for its own background. */
+#nav-drawer::backdrop {
+  background: rgba(26, 22, 19, .55);
 }
 
 .drawer[open] {
@@ -216,18 +500,35 @@ dialog::backdrop {
   inset: 0;
   width: 100vw;
   height: 100vh;
-  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  /* No padding here -- deliberately. A single blanket inset used to
+     apply to the header row AND the links AND the utility nav alike,
+     which drags the close button away from the exact slot the
+     hamburger trigger occupied. .drawer-header below gets the SAME
+     padding as .site-header-inner, so the close button lands exactly
+     where the trigger was -- "same control, now showing close" --
+     while .drawer-body (links + utility nav) keeps its own, more
+     generous reading margin independently. */
   overflow-y: auto;
+  /* Tonal, not flat -- see --drawer-surface's own definition/comment
+     above for the full rationale and the verified contrast numbers. */
+  background: var(--drawer-surface);
 }
 
-/* Narrow panel rather than full-width once there's room for it — also
-   satisfies NAVIGATION_DESIGN_SPEC.md §9's mobile-landscape note
+/* Desktop preview width: docks right, rounded on its exposed left edge
+   only, with a cast shadow -- read as the single most "elevated"
+   surface in the whole site, since it's the one component that floats
+   fully above the page rather than sitting in the flow like a card.
+   Also satisfies NAVIGATION_DESIGN_SPEC.md §9's mobile-landscape note
    ("narrower drawer, not full-width") with this one rule, no separate
    landscape-specific breakpoint needed. */
 @media (min-width: 768px) {
   .drawer[open] {
     left: auto;
     width: min(400px, 100vw);
+    border-radius: 20px 0 0 20px;
+    box-shadow: -8px 0 32px rgba(var(--shadow-color), var(--shadow-op-hover-2));
   }
 }
 
@@ -235,22 +536,148 @@ dialog::backdrop {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1.5rem;
+  padding: 1.1rem 1rem;
 }
+.drawer-logo { font-size: 1.5rem; line-height: 1; text-decoration: none; }
+.drawer-body { padding: .5rem 1.75rem 1.75rem; display: flex; flex-direction: column; flex: 1; }
+
+.drawer-close {
+  /* Same size/type-scale as .drawer-trigger -- literally the same
+     button, just showing the other icon while open.
+
+     Fill color is the ONE deliberate exception to "literally the same
+     button" -- .drawer-trigger uses --paper-raised, this uses --paper.
+     Not an oversight: --paper-raised has drifted close to
+     --drawer-surface's own tonal color in dark mode (the two were
+     never designed against each other, but color-mix() landed them
+     near the same value), so if this button matched the trigger
+     exactly, it would nearly vanish into the drawer's own background
+     right when it's most needed. Verified with real contrast numbers:
+     on --drawer-surface (dark), --paper-raised as a fill contrasts at
+     only 1.07 (practically invisible) vs. --paper's 1.25. In light
+     mode --paper and --paper-raised are close enough that this reads
+     as "the same button" anyway -- the divergence only actually
+     matters, and only actually shows up, in dark mode. */
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.15rem;
+  background: var(--paper);
+  color: var(--ink);
+  border: 1px solid var(--line);
+  border-radius: 10px;
+  cursor: pointer;
+}
+.drawer-close:hover { border-color: var(--accent); background: var(--accent-soft); }
+.drawer-close:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
 .drawer .primary-links {
   flex-direction: column;
   gap: 0;
 }
 
+/* Full edge-to-edge dividers, not scoped to the label's own width -- a
+   hairline that stops exactly where "Home"/"Résumé"/etc. stops reads
+   as scoped to that one label, not as a row separator for the whole
+   list -- the standard native-list convention (settings-style lists on
+   both major mobile platforms) is the opposite: each row's label keeps
+   its own inset, but the separator beneath it runs the full list width
+   regardless. Negative margin equal to .drawer-body's own 1.75rem
+   horizontal padding bleeds the <li> box out to .drawer[open]'s TRUE
+   edge. The <a>'s own horizontal padding then restores the label text
+   to exactly its original visual position -- only the invisible
+   bounding box (and therefore the hairline) moved. */
 .drawer .primary-links li {
-  padding: .6rem 0;
-  border-bottom: 1px solid CanvasText;
+  border-bottom: 1px solid var(--line);
+  margin: 0 -1.75rem;
+}
+.drawer .primary-links li:last-child { border-bottom: none; }
+.drawer .primary-links a {
+  display: block;
+  padding: 1rem 1.75rem;
+  font-size: 1.1rem;
+}
+.drawer .primary-links a[aria-current="page"] { color: var(--accent); }
+
+/* Utility tier pinned to the foot of the drawer via margin-top:auto --
+   it's always the LAST thing in reading order regardless of how much
+   vertical space the primary links leave. CENTERED, not edge-anchored
+   (space-between was tried and rejected): .drawer-header above already
+   anchors logo-left/close-right, which is fine on its own
+   (title-left/dismiss-right is a near-universal modal convention), but
+   the utility row mirroring that same corner shape underneath it made
+   the whole panel read as "something in every corner." Centering
+   instead is the same move used for the page footer -- a quiet,
+   self-contained closing block reads as "rest," not "direction," since
+   it's the last thing in the drawer's own reading flow, same
+   relationship the footer has to the whole page. Row, not a stacked
+   column: stacking a rounded pill directly above flush plain text
+   creates an optical-alignment problem that can't be resolved by
+   nudging either one (a curve's visual weight sits further inset than
+   its literal edge), and even a perfect fix would still visually GROUP
+   the two as if Imprint were a footnote of the language picker, which
+   isn't true. */
+.drawer-utility {
+  margin-top: auto;
+  padding-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
 }
 
-.drawer .utility-nav {
-  margin-top: 1.5rem;
+/* Segmented control, not two separate buttons with a gap -- language is
+   a single binary STATE (exactly one of {EN, DE} is always selected),
+   not two independent actions, so one merged pill makes that "pick one
+   of exactly two" relationship visible from the shape alone, the way a
+   macOS/iOS segmented control does. Reuses the site's existing "small
+   muted text, real tap target" chip language rather than inventing a
+   new button style. Current language is a plain <span>, not a link
+   (mirrors .utility-nav's own <strong>-for-current convention) --
+   tapping the segment you're already on shouldn't be a dead link. */
+.lang-switch {
+  display: inline-flex;
+  align-self: flex-start;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--paper-raised);
 }
+.lang-switch span,
+.lang-switch a {
+  padding: .4rem .95rem;
+  font-size: .8rem;
+  text-decoration: none;
+  color: var(--ink-soft);
+}
+.lang-switch a:hover { color: var(--accent); }
+.lang-switch a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.lang-switch span[aria-current="page"] {
+  background: var(--ink);
+  color: var(--paper);
+  font-weight: 600;
+}
+
+.utility-nav-plain { margin: 0; font-size: .85rem; }
+.utility-nav-plain a {
+  /* Invisible padding -- the drawer's standalone "Imprint" (its own
+     one-word paragraph, unlike the footer's compound "EN · DE ·
+     Imprint" line) is a shakier fit for the usual "inline text link"
+     exception on touch-target size, measured at ~20.4px tall with zero
+     padding. Padding here is purely an invisible hit-area expansion:
+     no background, no border, nothing rendered changes. inline-block
+     so the padding actually expands a real box rather than just
+     nudging inline line-height. */
+  display: inline-block;
+  padding: .3rem 0;
+  color: var(--ink-faint);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 2px;
+}
+.utility-nav-plain a:hover { color: var(--accent); text-decoration-color: var(--accent); }
 
 body.drawer-open {
   overflow: hidden;
@@ -796,10 +1223,40 @@ body.drawer-open {
   opacity: .7;
 }
 
-footer {
+/* Deliberately full-bleed --paper-dim, the same warm mat tone the grid
+   tiles sit on AND the header itself -- header and footer read as a
+   matching pair of warm mat bands bracketing the cooler --paper
+   content area between them. Border-top mirrors the header's own
+   border-bottom exactly: with only the header at --paper-dim, the
+   footer's hairline-free top edge relied on the paper/paper-dim tonal
+   shift alone to read as a boundary; now that header and footer are
+   the same tone as each other, that asymmetry no longer has a reason
+   to exist, and the contrast is deliberately too subtle to carry the
+   boundary alone either way.
+
+   No 100vw/transform hack -- same fix and reasoning as header's own
+   (see its comment): <body> has no max-width/padding of its own, so
+   .site-footer, as an ordinary block-level direct child of an
+   already-full-width <body>, is already edge-to-edge for free. 100vw
+   would make it wider than the page's real scrollable width whenever a
+   scrollbar is present, causing spurious horizontal scroll. */
+.site-footer {
   margin-top: 3rem;
-  padding-top: 1rem;
-  border-top: 1px solid CanvasText;
+  background: var(--paper-dim);
+  border-top: 1px solid var(--line);
+}
+.footer-inner {
+  max-width: 60rem;
+  margin: 0 auto;
+  padding: 1.75rem 1rem 2.5rem;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .35rem;
+  text-align: center;
+}
+.footer-copyright {
+  margin: 0;
   font-size: .85rem;
-  opacity: .7;
+  color: var(--ink-faint);
 }

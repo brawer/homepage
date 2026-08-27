@@ -1,0 +1,52 @@
+{{/*
+  Drawer's own utility row — a language segmented control + a plain
+  Imprint link, centered as one small cluster near the drawer's foot.
+  Added in the 2026-08-27 chrome design pass, deliberately NOT a call
+  to utility-nav.html (header no longer calls that at all; footer.html
+  still does, unchanged) — opening the drawer is a deliberate "I'm here
+  to act" gesture, same intent as tapping a primary link, so the
+  language toggle gets a real tap target here instead of the marginal
+  inline-text treatment that's still exactly right for the footer
+  (nobody arrives there mid-task) and for Imprint everywhere (a
+  one-off destination link, not a binary state — deliberately NOT
+  upgraded alongside language, kept exactly as marginal as the
+  footer's own Imprint link).
+
+  Segmented control, not two separate buttons: language is a single
+  binary STATE (exactly one of {EN, DE} is always selected), not two
+  independent actions, so one merged pill makes that "pick one of
+  exactly two" relationship visible from the shape alone. Current
+  language is a plain <span>, not a link (mirrors utility-nav.html's
+  own <strong>-for-current convention) — tapping the segment you're
+  already on shouldn't be a dead link.
+
+  Reuses the exact same .AllTranslations/.IsTranslated logic
+  utility-nav.html already has, just rendered into different markup.
+
+  Params: the current Page (called directly, not via a dict — this
+  partial takes no other options, unlike utility-nav.html's showImprint).
+*/}}
+{{ $page := . }}
+<div class="drawer-utility">
+  <div class="lang-switch" role="group" aria-label="{{ i18n "language_switch_label" }}">
+    {{ if $page.IsTranslated }}
+      {{ range $page.AllTranslations }}
+        {{/* aria-label spells out the language name, same "code, full
+             name" pattern and WCAG 2.5.3 reasoning as utility-nav.html
+             -- see that partial's own comment, not repeated here. */}}
+        {{ $langName := i18n (printf "language_name_%s" .Lang) }}
+        {{ if eq .Lang $page.Lang }}<span aria-current="page" aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</span>
+        {{- else }}<a href="{{ .RelPermalink }}" aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</a>
+        {{- end }}
+      {{ end }}
+    {{ else }}
+      {{/* Graceful degradation, same intent as utility-nav.html's own
+           fallback: never link to a missing translation. */}}
+      {{ $langName := i18n (printf "language_name_%s" $page.Lang) }}
+      <span aria-current="page" aria-label="{{ $page.Language.Label }}, {{ $langName }}">{{ $page.Language.Label }}</span>
+    {{ end }}
+  </div>
+  {{ with site.GetPage "/imprint" }}
+  <p class="utility-nav-plain"><a href="{{ .RelPermalink }}">{{ .Title }}</a></p>
+  {{ end }}
+</div>

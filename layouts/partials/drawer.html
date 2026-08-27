@@ -9,12 +9,25 @@
   whatever page you triggered it from" (spec §3): showModal() makes the
   rest of the page inert and never navigates/scrolls it, so closing
   always returns you exactly where you were.
+
+  .drawer-header and .drawer-body are a deliberate split, added in the
+  2026-08-27 chrome design pass: .drawer-header gets the SAME padding
+  as .site-header-inner, so the close button lands in exactly the same
+  visual slot the ☰ trigger occupied ("same control, now showing
+  close") -- a single blanket inset across the whole drawer (the
+  original shape) dragged the close button away from that slot,
+  measurably (found by Sascha: 1.75rem inset + a smaller button vs. the
+  trigger's 1rem/1.1rem inset + larger button). .drawer-body then keeps
+  its own, more generous reading margin for the links/utility row,
+  independently.
 */}}
 <dialog id="nav-drawer" class="drawer" aria-modal="true" aria-label="{{ i18n "menu_label" }}">
   <div class="drawer-header">
     <a href="{{ "/" | relLangURL }}" class="drawer-logo" aria-label="{{ i18n "home_label" }}">🌼</a>
-    <button type="button" data-drawer-close aria-label="{{ i18n "menu_close" }}">✕</button>
+    <button type="button" class="drawer-close" data-drawer-close aria-label="{{ i18n "menu_close" }}">✕</button>
   </div>
-  {{ partial "primary-nav-links.html" (dict "page" . "includeHome" true) }}
-  {{ partial "utility-nav.html" (dict "page" . "showImprint" true) }}
+  <div class="drawer-body">
+    {{ partial "primary-nav-links.html" (dict "page" . "includeHome" true) }}
+    {{ partial "drawer-utility.html" . }}
+  </div>
 </dialog>

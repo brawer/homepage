@@ -148,6 +148,8 @@ other = "All"
 other = "Browse by tag"
 [skip_to_content]
 other = "Skip to content"
+[language_switch_label]
+other = "Language"
 
 # Item-count subtitle on grid pages -- flat form on section pages,
 # breakdown form (one per content type) on tag pages, since a tag page

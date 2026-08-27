@@ -1,10 +1,12 @@
-<footer>
-  <p>{{ i18n "footer_copyright" (dict "Year" now.Year) }}</p>
-  {{/* Every page (including the entry page, via baseof.html's
-       unconditional footer call) gets the quiet "EN · DE · Imprint"
-       row here — NAVIGATION_DESIGN_SPEC.md §2's entry-page footer row
-       and §9's "imprint can stay footer-only by convention" are both
-       satisfied by this one call; no separate instance needed on
-       layouts/index.html. */}}
-  {{ partial "utility-nav.html" (dict "page" . "showImprint" true) }}
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p class="footer-copyright">{{ i18n "footer_copyright" (dict "Year" now.Year) }}</p>
+    {{/* Every page (including the entry page, via baseof.html's
+         unconditional footer call) gets the quiet "EN · DE · Imprint"
+         row here — NAVIGATION_DESIGN_SPEC.md §2's entry-page footer row
+         and §9's "imprint can stay footer-only by convention" are both
+         satisfied by this one call; no separate instance needed on
+         layouts/index.html. */}}
+    {{ partial "utility-nav.html" (dict "page" . "showImprint" true) }}
+  </div>
 </footer>
