@@ -598,6 +598,16 @@ dialog::backdrop {
   display: block;
   padding: 1rem 1.75rem;
   font-size: 1.1rem;
+  /* Resets the shared .primary-links a's own 2px accent border-bottom
+     (the desktop nav-bar's current-page underline) -- found and fixed
+     2026-08-27 (Sascha: a thick plum line appearing under the current
+     drawer row, on top of the drawer's own hairline divider, worst on
+     "Art" since it's the last row). The mockup already solved this
+     with this exact declaration; lost during the port when this block
+     was rewritten for the edge-to-edge hairline change. The desktop
+     underline-on-current trick doesn't fit a full-width row -- current
+     page is still shown via text color alone below. */
+  border-bottom: none;
 }
 .drawer .primary-links a[aria-current="page"] { color: var(--accent); }
 
