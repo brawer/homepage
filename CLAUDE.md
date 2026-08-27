@@ -1012,9 +1012,231 @@ see the mockup's own extensive inline comments for that history).
   `gallery-grid.html`/`static/css/main.css` port shipped together
   after all, once Sascha asked to lock in the validated design before
   it existed only in the mockup Artifact/session state. See "Known
-  open items" below for exactly what shipped and what's still
-  deferred (header/drawer/footer/hero/resume, still the earlier
-  bare-bones pass).
+  open items" below for exactly what shipped; header/drawer/footer got
+  their own design pass and port the following day (2026-08-27) — see
+  "Header/drawer/footer design pass" above.
+
+### Header/drawer/footer design pass, 2026-08-27
+
+A second mockup Artifact ("Paper & Plum Chrome") worked through the
+page shell — header, mobile drawer, footer — the same mockup-first,
+port-once-settled workflow as the grid design. Extensively iterated
+with Sascha (many rounds of live feedback, several genuine bugs found
+along the way); this section records the load-bearing decisions and
+the reasoning that would be expensive to re-derive, not a round-by-round
+transcript — see the mockup Artifact's own inline comments for that.
+Ported into real templates/CSS the same day, once settled.
+
+- **Body/main restructure, required for full-bleed header/footer**:
+  `<body>` was the page's own centered/padded column before this pass
+  (`max-width: 60rem; margin: 0 auto; padding: 0 1rem 3rem`) — that
+  responsibility moved to `<main>` instead, since header and footer now
+  need to visually extend edge-to-edge (a warm `--paper-dim` band, see
+  below) while the content between them stays in the narrower centered
+  column. `<body>` itself is now a `display: flex; flex-direction:
+  column; min-height: 100dvh` container, with `<main>` as the one flex
+  item that grows (`flex: 1 0 auto`) to absorb any leftover vertical
+  space. That flex setup is doing double duty as a **viewport-anchored
+  footer** (the classic pre-flexbox "sticky footer" LAYOUT TECHNIQUE —
+  note this is a completely different thing from `position: sticky`,
+  which is the unrelated, still-deferred résumé-only idea) — found and
+  fixed after Sascha noticed on an iPad Mini simulation that a
+  short-content page left the footer floating mid-screen with plain
+  `--paper` visible beneath it instead of sitting at the real bottom
+  edge. `100dvh`, not `100vh`: `100vh` overshoots the actually-visible
+  height on mobile Safari whenever the address bar is showing;
+  `100dvh` tracks the real, current viewport, and needs no
+  `html { height: 100% }` companion rule the way the old pre-`dvh`
+  version of this technique did (`dvh` units are viewport-relative
+  already).
+- **Header**: full-bleed `--paper-dim` (the same warm mat tone the
+  grid tiles and footer use — see below), with a `--line` hairline
+  along the bottom edge. Desktop layout is now identity-only — logo +
+  the four primary sections, full stop. The header's own utility-nav
+  call (language switcher, desktop-only, no imprint) was dropped
+  entirely: with pages this short, showing language in both the header
+  AND the footer on every page load was duplication for its own sake,
+  not a real usability win. It now lives in exactly one place per
+  viewport — the footer at desktop widths, the drawer at mobile widths
+  (a different treatment there, see below). Logo + primary nav are
+  grouped together on the left (not spread across the whole row) —
+  the gap itself is the separator from nothing else being in the row,
+  no divider needed. `.site-logo` gets invisible padding (no visible
+  size change) so its touch target matches whichever sibling is
+  already the header row's tallest at each breakpoint (40px at mobile,
+  matching `.drawer-trigger`'s fixed box; ~28.4px at desktop, matching
+  `.primary-links a`) — genuinely free, since the row was already
+  reserving that much height for its sibling. `.drawer-trigger` and
+  `.primary-links` were left untouched (already comfortably clear the
+  24px WCAG touch-target floor); padding them further would have
+  actually grown the header's rendered height, a real cost for no
+  real gain.
+- **Tonal elevation on the drawer** (`--drawer-surface`, a new token):
+  the drawer's background tints toward `--accent` via `color-mix(in
+  srgb, var(--paper) 88%, var(--accent) 12%)`, rather than the flat
+  `--paper-raised` lighten used for small chips/buttons — a genuine
+  Material 3 "tonal elevation" concept (elevated surfaces tint toward
+  the theme's own color, not just lighten), tried live as a toggleable
+  experiment before being made permanent. Deliberately NOT applied to
+  chips/buttons (still plain `--paper-raised`) or grid tiles (still
+  shadow-only, no tint) — this site only has one thing that's a
+  genuine floating overlay right now; unifying every "raised" surface
+  onto one mechanism would erase a real distinction (a tile is a photo
+  resting flat on a table, the drawer is a page floating above the
+  whole table — different physical relationships, different cues).
+  **12%, not the 14% first tried** — verified with the same
+  relative-luminance contrast method used throughout this project: 14%
+  failed `--ink-faint` in light mode (4.45:1, under the 4.5:1 AA floor
+  for text) against every text token actually used inside the drawer;
+  12% clears all of them in both themes with real margin (worst case
+  4.60:1 light / 4.83:1 dark). Re-verify the same way if `--paper` or
+  `--accent` ever change.
+- **`--accent-soft` is now derived, not hand-typed**: was a separately
+  hardcoded `rgba()` tuple happening to match `--accent`'s own RGB;
+  now `color-mix(in srgb, var(--accent) 10%, transparent)` (14% in
+  dark mode) — mathematically identical output (verified: this is
+  exactly what the spec defines the two forms to produce), so nothing
+  about current rendering changed. What it buys: a future `--accent`
+  hue change no longer needs `--accent-soft` hand-updated to match in
+  three separate places. The alpha itself stays a deliberate,
+  non-derived per-theme value (dark mode intentionally uses a stronger
+  one, same reasoning as `--shadow-op-*`).
+- **Drawer's close button is NOT the same fill color as the trigger,
+  on purpose**: `.drawer-trigger` uses `--paper-raised`,
+  `.drawer-close` uses `--paper` — everything else about them (size,
+  position, icon scale) is identical ("literally the same button, just
+  showing the other icon"), but `--paper-raised` has drifted close to
+  `--drawer-surface`'s own tonal value in dark mode (the two were never
+  designed against each other; `color-mix()` just landed them near the
+  same number), so matching the close button to the trigger exactly
+  would make it nearly vanish into the drawer's own background right
+  when it's most needed. Verified: `--paper-raised` as a fill contrasts
+  at only 1.07 against `--drawer-surface` in dark mode (practically
+  invisible) vs. `--paper`'s 1.25. In light mode the two fills are
+  close enough that this reads as "the same button" anyway — the
+  divergence only matters, and only shows up, in dark mode. Re-check
+  this pair with real numbers again if either token's formula changes.
+- **`.drawer-header`/`.drawer-body` split**: the drawer used to have
+  one blanket padding value for its entire contents. Found and fixed:
+  that dragged the close button's position away from the exact slot
+  the hamburger trigger occupied (measured — 1.75rem inset + a smaller
+  button vs. the trigger's 1rem/1.1rem inset + larger button).
+  `.drawer-header` now gets the SAME padding as `.site-header-inner`,
+  so close lands exactly where open was tapped ("same control, now
+  showing close"); `.drawer-body` (links + utility row) keeps its own,
+  more generous padding independently.
+- **Drawer's primary-links dividers are full edge-to-edge**, not
+  scoped to each label's own width — the standard native-list
+  convention (settings-style lists on both major mobile platforms):
+  each row's label keeps its own inset, but the separator beneath it
+  runs the full list width regardless. Implemented via a negative
+  margin on each `<li>` equal to `.drawer-body`'s own horizontal
+  padding (bleeding the divider out to the drawer's TRUE edge, not
+  just partway), with matching padding on the `<a>` restoring the
+  label's visual position — only the invisible box moved. (An
+  intermediate idea — align the divider's end to the logo's own 1rem
+  inset instead of the true edge — was tried and rejected: that number
+  is itself just a coincidental match with the header's unrelated
+  technical requirement, not a reference point anyone would actually
+  perceive.)
+- **Drawer's utility row is its own partial**,
+  `layouts/partials/drawer-utility.html` — NOT a call to
+  `utility-nav.html` (which header no longer calls at all, and
+  footer.html still calls unchanged). Reasoning: opening the drawer is
+  a deliberate "I'm here to act" gesture, same intent as tapping a
+  primary link, so the language toggle deserves a real tap target
+  instead of the marginal inline-text treatment that's still correct
+  for the footer (nobody arrives there mid-task). Renders:
+  - A **segmented control** (`.lang-switch`) for language, not two
+    separate buttons with a gap — language is a single binary STATE
+    (exactly one of {EN, DE} always selected), not two independent
+    actions, so one merged pill makes "pick one of exactly two"
+    visible from the shape alone. Reuses the site's existing chip
+    visual language (small muted text, real tap target via padding +
+    pill shape) rather than inventing a new button style. Current
+    language is a plain `<span>`, not a link (mirrors
+    `utility-nav.html`'s own `<strong>`-for-current convention).
+  - A **plain "Imprint" link**, deliberately NOT upgraded alongside
+    language — it's a one-off destination link, not a binary state,
+    and stays exactly as marginal as the footer's own Imprint.
+  - Both **centered as one row**, not edge-anchored — found and fixed
+    twice: first tried stacked in a column (rejected: a rounded pill
+    directly above flush text has an unresolvable optical-alignment
+    mismatch, and even a perfect fix would still visually GROUP the
+    two as if Imprint were a footnote of the language picker, which
+    isn't true); then tried as a `space-between` row (rejected: with
+    `.drawer-header` already anchoring logo-left/close-right, mirroring
+    that same corner shape underneath made the whole panel read as
+    "something in every corner"). Centering instead reuses the exact
+    reasoning the page footer already uses — a quiet, self-contained
+    closing block reads as "rest," not "direction," since it's the
+    last thing in the drawer's own reading flow, same relationship the
+    footer has to the whole page.
+  - **`aria-label`s spelling out the language name** (e.g. `"DE,
+    German"`, localized via the existing `language_name_<code>` i18n
+    keys already used for `original_title_label`) — screen readers
+    don't reliably pronounce two-letter codes as words. Combined
+    "code, name" rather than just the name alone: WCAG 2.5.3 (Label in
+    Name) wants the accessible name to CONTAIN the visible text, for
+    voice-control users who say the visible label out loud — a bare
+    `aria-label="German"` on a visibly-"DE" control would drop the
+    visible label from the accessible name entirely and fail that.
+    Same treatment applied to `utility-nav.html`'s own EN/DE (footer),
+    which had the identical latent issue.
+- **`#nav-drawer::backdrop` is scoped separately from the generic
+  `dialog::backdrop`** — a fixed warm-black scrim (`rgba(26, 22, 19,
+  .55)`), not theme-swapped, matching the fullscreen art viewer's own
+  "dark isolating scrim doesn't need to follow the page theme"
+  convention. Deliberately scoped to `#nav-drawer` only, not the shared
+  `dialog::backdrop` rule — the viewer's own backdrop was never
+  reviewed in this pass and stays on the original neutral value.
+- **Footer**: full-bleed `--paper-dim`, same tone as the header and the
+  grid tiles' own mat, plus a `--line` hairline along the TOP edge —
+  header and footer now read as a matching pair of warm mat bands
+  bracketing the cooler `--paper` content area between them. The
+  hairline is new/symmetric with the header's: with only the header at
+  `--paper-dim` (an earlier point in this same pass), the footer's
+  hairline-free top edge relied on the paper/paper-dim tonal shift
+  alone to read as a boundary; once both were the same tone as each
+  other, that asymmetry no longer had a reason to exist, and the
+  contrast is deliberately too subtle to carry the boundary alone
+  either way. `.footer-inner`'s content is centered, not left-aligned
+  — a short, symmetrical, self-contained closing block reads as "rest"
+  when centered (no direction left to point in), where left-alignment
+  is reserved for content that implies "keep reading this way."
+- **`utility-nav.html` (footer's EN · DE · Imprint) rewritten as a flex
+  row with one uniform `gap`**, not literal spaces/a middot-with-spaces
+  baked into the text — widening the EN/DE gap for easier tapping
+  without also widening the gap around the middot would leave DE
+  closer to Imprint than to EN, visually implying "DE · Imprint" as a
+  pair, which isn't true. One shared `gap` keeps every adjacent pair
+  exactly equal. The middot is its own `aria-hidden` `<span>` — purely
+  decorative, a screen reader already gets "EN, DE, Imprint" as
+  distinct links without it.
+- **Touch-target sizes were checked with real numbers, not assumed**
+  (WCAG 2.5.8's 24×24 CSS px floor) — everything on the site now
+  clears it. Two real, measured failures were found and fixed, both via
+  *invisible* padding (no visible size/color change, just a bigger
+  hit-box): the footer/header's EN/DE/Imprint links and the drawer's
+  standalone Imprint link both measured ~20.4px tall with zero padding;
+  both now measure ~30px. (The drawer's Imprint specifically needed
+  this even though the footer's compound "EN · DE · Imprint" line
+  might arguably qualify for the usual "inline text" exception — the
+  drawer's version is its own standalone one-word paragraph, a shakier
+  fit for that exception.) `.drawer-trigger`/`.drawer-close` (fixed
+  40×40px), `.drawer .primary-links a` (~58px), `.lang-switch`
+  segments (~32px), and `.chip` (~29px) were all already comfortably
+  over the floor and needed no change.
+- **Deliberately NOT done in this pass, and why**: no hover-state
+  color change on grid tile titles (unlike the header/footer/drawer's
+  text links) — a whole-card link already has its own hover language
+  (shadow deepens + lifts, tuned during the grid design pass), and
+  adding accent-colored text on top would be a redundant second cue
+  for a state the card already signals clearly, not reinforcement. No
+  sticky/pinned header anywhere yet — deferred specifically to the
+  résumé page's own future design pass (the one page expected to be
+  long enough for it to earn its keep); everything else stays
+  non-sticky since short pages make the difference imperceptible.
 
 ## Known open items (as of last content session)
 
@@ -1033,15 +1255,19 @@ see the mockup's own extensive inline comments for that history).
   happen. Scope was deliberately the grid + the page canvas it sits on
   (body font/background/color had to move to the new tokens too, plus
   the chip row, since a page can't tastefully mix Karla-and-warm-tokens
-  cards with system-font-and-Canvas chrome) — header/drawer/footer/
-  hero images/resume are untouched, still the earlier bare-bones pass,
-  and will look inconsistent against the new grid until their own
-  pass happens. Not done in this port: loading-performance tuning for
-  the font (`font-display`/`preload`/layout-shift), explicitly
-  deferred per Sascha's own "get the design working first."
-- `/design` mode: everything else (header/drawer/footer chrome, hero
-  images, resume icons/timeline, the lecture-series list treatment) —
-  still structural/functional only, apart from the grid work above.
+  cards with system-font-and-Canvas chrome). Not done in this port:
+  loading-performance tuning for the font (`font-display`/`preload`/
+  layout-shift), explicitly deferred per Sascha's own "get the design
+  working first."
+- **Header/drawer/footer chrome is now also live, ported 2026-08-27**
+  — see "Header/drawer/footer design pass" above for the full list of
+  what shipped (tonal drawer elevation, full-bleed header/footer mat
+  bands, the drawer's segmented language control, touch-target fixes,
+  the viewport-anchored footer). What's left, deferred to `/design`
+  mode: hero images, résumé icons/timeline layout, the lecture-series
+  list treatment, and a sticky/pinned header specifically for the
+  résumé page once that page's own pass happens (tracked separately,
+  not sitewide — see that page's own future notes).
 - **Gallery grid thumbnails now render square, fixed 2026-08-25** --
   see `static/css/main.css` git history. Root cause not fully
   re-diagnosed (the original 2026-08-24 finding below still stands as

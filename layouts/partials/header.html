@@ -1,20 +1,28 @@
 {{/*
-  Page header shell — NAVIGATION_DESIGN_SPEC.md §1/§9's "tablet/desktop"
-  recap. Renders THREE things unconditionally, every time, on every
-  page; CSS alone (static/css/main.css) decides which are visible at
-  which viewport width, so no template here needs to know the
+  Page header shell. Renders TWO things unconditionally, every time, on
+  every page; CSS alone (static/css/main.css) decides which are visible
+  at which viewport width, so no template here needs to know the
   viewport:
     - .nav-bar: the plain horizontal link list (desktop/tablet only)
-    - .utility-nav.header-desktop: language switcher, no imprint
-      (desktop/tablet only — imprint stays footer-only by convention)
     - .drawer-trigger: the ≡ button that opens drawer.html (mobile only)
+
+  Desktop header is identity-only as of the 2026-08-27 chrome design
+  pass -- logo + primary sections, full stop. It no longer also renders
+  utility-nav.html (language/imprint) at desktop widths: with pages this
+  short, showing that in both the header AND the footer on every page
+  load was duplication for its own sake. Language/imprint now live in
+  exactly one place per viewport -- the footer at desktop, the drawer
+  at mobile (via drawer-utility.html, a different treatment from
+  utility-nav.html -- see that partial's own header comment). See
+  CLAUDE.md's "Header/drawer/footer design pass" note for the full
+  reasoning; NAVIGATION_DESIGN_SPEC.md §1/§9 predates and doesn't
+  reflect this specific change.
 */}}
 <div class="site-header-inner">
   <a href="{{ "/" | relLangURL }}" class="site-logo" aria-label="{{ i18n "home_label" }}">🌼</a>
   <nav class="nav-bar" aria-label="{{ i18n "menu_label" }}">
     {{ partial "primary-nav-links.html" (dict "page" . "includeHome" false) }}
   </nav>
-  <div class="header-desktop">{{ partial "utility-nav.html" (dict "page" . "showImprint" false) }}</div>
   <button type="button" class="drawer-trigger" data-drawer-open
           aria-haspopup="dialog" aria-controls="nav-drawer"
           aria-label="{{ i18n "menu_open" }}">☰</button>

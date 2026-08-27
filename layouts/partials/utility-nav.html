@@ -5,12 +5,17 @@
   unconditionally in the header) and the imprint-only line that used to
   live directly in footer.html.
 
-  Call sites: footer.html (every page, showImprint=true — this alone
-  satisfies the entry page's own quiet footer row, no separate instance
-  needed in index.html), header.html (desktop widths only,
-  showImprint=false — imprint stays footer-only by convention even at
-  desktop, per spec's tablet/desktop recap), drawer.html
-  (showImprint=true, per spec §3's drawer inventory).
+  Call site: footer.html only, as of the 2026-08-27 chrome design pass
+  (every page, showImprint=true — this alone satisfies the entry page's
+  own quiet footer row, no separate instance needed in index.html).
+  header.html no longer calls this at desktop widths (dropped —
+  duplication with the footer wasn't a real usability win), and
+  drawer.html no longer calls this either — the drawer's language
+  toggle gets its own different treatment (a real tap target, not
+  marginal inline text) via drawer-utility.html instead, since opening
+  the drawer is a deliberate "I'm here to act" gesture unlike glancing
+  at the footer. showImprint stays a real param (not simplified away)
+  in case a future call site needs language-only again.
 
   Params (dict):
     page        (required) the current Page.
@@ -20,8 +25,22 @@
 <p class="utility-nav">
   {{ if $page.IsTranslated }}
     {{ range $page.AllTranslations }}
-      {{ if eq .Lang $page.Lang }}<strong>{{ .Language.Label }}</strong>
-      {{- else }} <a href="{{ .RelPermalink }}">{{ .Language.Label }}</a>
+      {{/* aria-label spells out the language name (e.g. "DE, German")
+           instead of leaving "DE"/"EN" as the accessible name --
+           screen readers don't reliably pronounce two-letter codes as
+           words. Combined "code, full name" rather than just the full
+           name alone: WCAG 2.5.3 (Label in Name) wants the accessible
+           name to CONTAIN the visible text, for voice-control users
+           who say the visible label out loud -- an aria-label of just
+           "German" on a visible "DE" would drop the visible label
+           entirely and fail that. Reuses the existing
+           language_name_<code> i18n keys (already added for
+           original_title_label; add a new pair to both i18n files if
+           a third language is ever added, same as that field already
+           requires). */}}
+      {{ $langName := i18n (printf "language_name_%s" .Lang) }}
+      {{ if eq .Lang $page.Lang }}<strong aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</strong>
+      {{- else }}<a href="{{ .RelPermalink }}" aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</a>
       {{- end }}
     {{ end }}
   {{ else }}
@@ -29,9 +48,10 @@
          language-switcher.html: never link to a missing translation.
          Unlike that partial, this one doesn't hide entirely, since the
          imprint half below can still legitimately render. */}}
-    <strong>{{ $page.Language.Label }}</strong>
+    {{ $langName := i18n (printf "language_name_%s" $page.Lang) }}
+    <strong aria-label="{{ $page.Language.Label }}, {{ $langName }}">{{ $page.Language.Label }}</strong>
   {{ end }}
   {{ if ne .showImprint false }}
-    {{ with site.GetPage "/imprint" }} · <a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
+    {{ with site.GetPage "/imprint" }}<span class="dot" aria-hidden="true">·</span><a href="{{ .RelPermalink }}">{{ .Title }}</a>{{ end }}
   {{ end }}
 </p>
