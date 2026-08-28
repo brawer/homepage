@@ -11,10 +11,10 @@ width_cm: 80
 image: "hardbrücke.webp"
 ---
 One evening I was walking from Zürich Hardbrücke station over to
-[Bitwäscherei](https://bitwaescherei.ch/), a hackerspace, for the
-regular [Swiss OpenStreetMap](https://sosm.ch/) get-together. I was a
-little early, so I stopped on the bridge itself and stood there for a
-while, watching the traffic go by and letting my eyes drift across the
+[Bitwäscherei](https://bitwaescherei.ch/), a hackerspace, for a
+[Swiss OpenStreetMap](https://sosm.ch/) get-together. I was a little
+early, so I stopped on the bridge itself and stood there for a while,
+watching the traffic go by and letting my eyes drift across the
 skyline.
 
 They snagged on the glass facade of [Prime
@@ -23,8 +23,8 @@ Switzerland’s tallest building, and about as tidy a symbol of Zürich’s
 prosperity as you could ask for. Its sleek, expensive panes were busy
 reflecting the red-and-white chimney of the waste-incineration plant
 next door, and somewhere behind the glass, the fluorescent tubes
-lighting the office floors burned through the whole picture in long
-horizontal streaks.
+lighting the office floors cut long bright lines through the whole
+picture.
 
 What I liked was the geometry of it: the mirrored grid of mullions
 tilting across the glass front, the striped stack chopped up and
