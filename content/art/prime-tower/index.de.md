@@ -1,5 +1,5 @@
 ---
-title: "Hardbrücke"
+title: "Prime Tower"
 date: 2025-01-22
 publishDate: 2026-08-28
 tags: ["Öl"]
