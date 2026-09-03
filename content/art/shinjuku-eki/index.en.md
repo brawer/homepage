@@ -2,7 +2,7 @@
 title: "Shinjuku-eki"
 date: 2020-10-07
 publishDate: 2026-08-24
-tags: ["People", "Oil"]
+tags: ["Cityscapes", "People", "Oil"]
 medium: "Oil on canvas"
 kind_label: "Oil Painting"
 teaser_is_document: false
