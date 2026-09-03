@@ -21,6 +21,14 @@
   art piece whose full/uncropped `image` doesn't have a good
   square-ish region to autocrop at all).
 
+  A `teaser` is rendered with anchor="center", NOT the default
+  "smart": it is a hand-curated square crop, so it should be scaled
+  down verbatim. Smart-crop would otherwise search crops at multiple
+  zoom levels and zoom in on the salient region, silently overriding
+  the manual framing (this bites even a perfectly square source — the
+  reason a `teaser` looked no different from the smart-cropped
+  `image` in practice). `image`-sourced thumbnails keep smart-crop.
+
   Tile anatomy ("Paper & Plum" design, ported 2026-08-26 — see
   static/css/main.css and CLAUDE.md's "Grid design pass" note for the
   full rationale, not repeated here):
@@ -46,8 +54,10 @@
   {{ range $pages }}
     {{ $page := . }}
     {{ $img := "" }}
+    {{ $thumbAnchor := "smart" }}
     {{ if $page.Params.teaser }}
       {{ $img = $page.Resources.GetMatch $page.Params.teaser }}
+      {{ $thumbAnchor = "center" }}
     {{ else if $page.Params.image }}
       {{ $img = $page.Resources.GetMatch $page.Params.image }}
     {{ end }}
@@ -55,7 +65,7 @@
     <a class="gallery-item" href="{{ $page.RelPermalink }}">
       <div class="tile-frame{{ if $isDoc }} tile-doc-filter{{ end }}">
         <div class="tile-image-clip">
-          {{ with $img }}{{ partial "picture-thumbnail.html" (dict "image" . "alt" $page.Title) }}{{ end }}
+          {{ with $img }}{{ partial "picture-thumbnail.html" (dict "image" . "alt" $page.Title "anchor" $thumbAnchor) }}{{ end }}
           {{ if $isDoc }}<div class="tile-scrim"></div>{{ end }}
         </div>
       </div>
