@@ -29,7 +29,7 @@ picture.
 What I liked was the geometry of it: the mirrored grid of mullions
 tilting across the glass front, the striped stack chopped up and
 nudged out of line from one pane to the next, the warm ochre blur of
-the old rooftops along the bottom edge, the cool grey-blue sky above.
+the old rooftops along the bottom edge, the cool gray-blue sky above.
 Before heading in to the hackerspace I took a photo. The painting came
 later and kept me busy for several months, but I’m rather fond of how
 it turned out.
