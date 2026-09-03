@@ -218,7 +218,7 @@ the physical top-to-bottom measurement regardless of orientation),
   almost no information for its ink. Replaced site-wide by a new
   `kind_label` field (see "Templates" below for the full rationale,
   shared across all three content types) — every art piece now has
-  `kind_label: "Oil Painting"` / `"Ölgemälde"`. Deliberately a new
+  `kind_label: "Oil Painting"` / `"Ölbild"`. Deliberately a new
   field, not a repurposing of `medium` (which stays exactly what it
   was: required, free text, shown on the detail page) — `kind_label`
   is purely the grid's own short display string, and the two are free
