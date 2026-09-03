@@ -9,6 +9,7 @@ teaser_is_document: false
 height_cm: 40
 width_cm: 40
 image: "paranoid-parrot.webp"
+teaser: "paranoid-parrot-teaser.webp"
 ---
 This one joins my [Memes](/tags/memes/) series — internet memes
 reimagined in oil.

@@ -9,6 +9,7 @@ teaser_is_document: false
 height_cm: 40
 width_cm: 50
 image: "fuse.webp"
+teaser: "fuse-teaser.webp"
 ---
 Ein paar Wochen nach der [Zange](/de/art/pliers/) malte ich ein
 ähnliches Motiv – eine Sicherung, wegen der Materialien Metall und

@@ -9,6 +9,7 @@ teaser_is_document: false
 height_cm: 40
 width_cm: 50
 image: "fuse.webp"
+teaser: "fuse-teaser.webp"
 ---
 A few weeks after [Pliers](/art/pliers/), I painted a similar subject
 — a fuse, because it gave me metal and glass in one image. I wanted

@@ -11,6 +11,14 @@
   Params (pass as a dict):
     image    (required) Page Resource, e.g. .Resources.GetMatch "foo.webp"
     alt      (required) alt text
+    anchor   (optional) Fill anchor: "smart" (default — smart-crop,
+                         which searches crops at multiple zoom levels
+                         and may zoom in on the salient region) or
+                         "center" (plain center crop, no zoom). Pass
+                         "center" for an already-square, hand-curated
+                         `teaser` so it renders verbatim rather than
+                         being re-cropped by the algorithm — see
+                         gallery-grid.html.
     widths   (optional) slice of target widths in px, ascending;
                          default (slice 400 800 1200). 400 is roughly
                          1/3 of a present-day phone's screen width —
@@ -24,18 +32,19 @@
 {{ $image := .image }}
 {{ $widths := .widths | default (slice 400 800 1200) }}
 {{ $sizes := .sizes | default "33vw" }}
+{{ $anchor := .anchor | default "smart" }}
 
 {{ $avifSet := slice }}
 {{ $webpSet := slice }}
 {{ range $w := $widths }}
-  {{ $avif := $image.Fill (printf "%dx%d avif" $w $w) }}
-  {{ $webp := $image.Fill (printf "%dx%d webp" $w $w) }}
+  {{ $avif := $image.Fill (printf "%dx%d avif %s" $w $w $anchor) }}
+  {{ $webp := $image.Fill (printf "%dx%d webp %s" $w $w $anchor) }}
   {{ $avifSet = $avifSet | append (printf "%s %dw" $avif.RelPermalink $w) }}
   {{ $webpSet = $webpSet | append (printf "%s %dw" $webp.RelPermalink $w) }}
 {{ end }}
 
 {{ $fallbackWidth := index $widths 0 }}
-{{ $fallback := $image.Fill (printf "%dx%d webp" $fallbackWidth $fallbackWidth) }}
+{{ $fallback := $image.Fill (printf "%dx%d webp %s" $fallbackWidth $fallbackWidth $anchor) }}
 
 <picture>
   <source type="image/avif" srcset="{{ delimit $avifSet ", " }}" sizes="{{ $sizes }}">
