@@ -2,7 +2,7 @@
 title: "Prime Tower"
 date: 2025-01-22
 publishDate: 2026-08-28
-tags: ["Öl"]
+tags: ["Stadtansichten", "Öl"]
 medium: "Öl auf Leinwand"
 kind_label: "Ölbild"
 teaser_is_document: false

@@ -2,7 +2,7 @@
 title: "Prime Tower"
 date: 2025-01-22
 publishDate: 2026-08-28
-tags: ["Oil"]
+tags: ["Cityscapes", "Oil"]
 medium: "Oil on canvas"
 kind_label: "Oil Painting"
 teaser_is_document: false

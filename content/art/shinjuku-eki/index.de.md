@@ -2,7 +2,7 @@
 title: "Shinjuku-eki"
 date: 2020-10-07
 publishDate: 2026-08-24
-tags: ["Menschen", "Öl"]
+tags: ["Stadtansichten", "Menschen", "Öl"]
 medium: "Öl auf Leinwand"
 kind_label: "Ölbild"
 teaser_is_document: false
