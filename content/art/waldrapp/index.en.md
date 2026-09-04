@@ -9,6 +9,7 @@ teaser_is_document: false
 height_cm: 12
 width_cm: 16
 image: "waldrapp.webp"
+teaser: "teaser.webp"
 ---
 I have a soft spot for strange-looking animals — the uglier the better
 — and the Waldrapp, or northern bald ibis, is a prize specimen: a bald,
