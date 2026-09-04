@@ -683,6 +683,20 @@ whether there's a layout to render them with:
 - `hugo build` (or `hugo config`) — fails loudly on YAML syntax errors
   or bad `hugo.toml`. A clean exit with only "found no layout file"
   warnings means content/config are structurally sound.
+- **The EN/DE "Pages" counts in `hugo build`/`hugo server`'s summary
+  table are not equal, and that's not a bilingual gap.** Verified
+  2026-09-04 by ranging over `hugo.Sites → .AllPages` for both
+  languages via a throwaway output-format template (not just `hugo
+  list all`, which only enumerates content-backed pages): every one
+  of the 96 pages per language has a real translation, `.Translations`
+  is never empty on a non-term page, and CI's bilingual-coverage check
+  (same `.Translations` mechanism) is green. The off-by-one in that
+  summary table is Hugo tallying something internal to its own stats
+  (most likely taxonomy/term-page bookkeeping) differently per
+  language, not a missing `content/` file. Don't re-investigate this
+  from scratch if it comes up again — the counts in that one table
+  just don't mean what they look like they mean; `hugo list all`
+  cross-checking (below) is the real signal.
 - `hugo list all` — the authoritative page inventory (path, kind,
   permalink; no built-in translation-count column, but the `path`
   column tells you which files Hugo actually turned into pages). Use
