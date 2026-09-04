@@ -9,6 +9,7 @@ teaser_is_document: false
 height_cm: 80
 width_cm: 80
 image: "prime-tower.webp"
+teaser: "prime-tower.webp"
 ---
 Eines Abends ging ich vom Bahnhof Zürich Hardbrücke hinüber zur
 [Bitwäscherei](https://bitwaescherei.ch/), einem Hackerspace, zu einem

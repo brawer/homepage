@@ -9,6 +9,7 @@ teaser_is_document: false
 height_cm: 80
 width_cm: 80
 image: "prime-tower.webp"
+teaser: "prime-tower.webp"
 ---
 One evening I was walking from Zürich Hardbrücke station over to
 [Bitwäscherei](https://bitwaescherei.ch/), a hackerspace, for a
