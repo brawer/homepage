@@ -121,8 +121,8 @@ templates/CSS via `/design` mode.
 
 - `[taxonomies] tag = "tags"` in `hugo.toml`.
 - Some tags share one term across both languages (e.g. `Memes`,
-  `Google`, `Unicode` — loanwords/proper nouns, deliberately not
-  translated). These need no dedicated tag page or `translationKey`
+  `Google`, `Unicode`, `OpenStreetMap` — loanwords/proper nouns,
+  deliberately not translated). These need no dedicated tag page or `translationKey`
   at all — verified via `hugo build` that Hugo auto-pairs
   auto-generated term pages across languages whenever the term string
   is identical, e.g. `Google` used on both an English and a German
@@ -262,11 +262,17 @@ the physical top-to-bottom measurement regardless of orientation),
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
-`"paper"`, `"patent"`, `"book"`, `"lecture"` — lowercase, same value
-in every language, since it's an internal value templates branch on,
-not display text; translate it for display via i18n strings, e.g.
-`{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the
-front matter value itself), `kind_label` (grid-badge display text, see
+`"paper"`, `"patent"`, `"book"`, `"lecture"`, `"disclosure"` —
+lowercase, same value in every language, since it's an internal value
+templates branch on, not display text; translate it for display via
+i18n strings, e.g. `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by
+changing the front matter value itself. `"disclosure"` added 2026-09-07
+for `osmviews-method`, a defensive disclosure / prior-art publication
+on Technical Disclosure Commons — not a peer-reviewed paper, not a
+patent; its i18n `kind_disclosure` is "Defensive Disclosure" /
+"Sperrveröffentlichung". No template branches on specific `kind`
+values, so a new one only needs the i18n pair in both files),
+`kind_label` (grid-badge display text, see
 "Templates" below — usually just the translated `kind`, e.g. `"Talk"`/
 `"Vortrag"`, but not always: `JP6511221B2` uses `"Japanese Patent"`/
 `"Japanisches Patent"` instead of plain "Patent", since the original
