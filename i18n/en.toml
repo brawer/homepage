@@ -13,7 +13,7 @@ other = "Talk"
 [kind_paper]
 other = "Paper"
 [kind_patent]
-other = "Patent"
+other = "Patent Family"
 [kind_book]
 other = "Book"
 [kind_lecture]
@@ -49,15 +49,37 @@ other = "Tags:"
 [assignee_label]
 other = "Assigned to:"
 
-[patent_number_label]
-other = "Patent number:"
-
-[patent_status_granted]
-other = "Granted"
-[patent_status_pending]
-other = "Pending"
-[patent_status_filed]
-other = "Filed"
+# Patent pages list one invention with its whole family (one grant per
+# jurisdiction), each with its own status — see CLAUDE.md's Publications
+# section. Superseded the old singular patent_number/patent_status keys.
+[patent_family_label]
+other = "Patent family:"
+# patent_family entries store a WIPO ST.3 office code (mostly ISO 3166
+# alpha-2: US, JP, KR, CN, DE, CA, BR; plus EP, WO). Add a
+# patent_office_<CODE> pair to BOTH i18n files whenever a new code
+# appears in content — same rule as language_name_<code>.
+[patent_office_US]
+other = "United States"
+[patent_office_JP]
+other = "Japan"
+[patent_office_KR]
+other = "South Korea"
+[patent_office_CN]
+other = "China"
+[patent_member_active]
+other = "in force until {{ .Year }}"
+[patent_member_expired]
+other = "expired {{ .Year }}"
+[patent_member_lapsed]
+other = "lapsed {{ .Year }}"
+[patent_member_abandoned]
+other = "application abandoned"
+# Headline: "since" when every family member is dead, "from" when at
+# least one is still in force (using the latest expiry among those).
+[patent_pd_since]
+other = "Free for public use since {{ .Year }}."
+[patent_pd_from]
+other = "Free for public use from {{ .Year }} onward."
 
 [open_source_label]
 other = "Open Source"
