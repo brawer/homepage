@@ -12,6 +12,9 @@ other = "Patent"
 other = "Buch"
 [kind_lecture]
 other = "Vorlesungsreihe"
+# siehe i18n/en.toml
+[kind_disclosure]
+other = "Sperrveröffentlichung"
 
 [download_pdf]
 other = "PDF herunterladen"

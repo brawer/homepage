@@ -18,6 +18,12 @@ other = "Patent"
 other = "Book"
 [kind_lecture]
 other = "Lecture Series"
+# A defensive disclosure / prior-art publication (e.g. on Technical
+# Disclosure Commons) — a written technical document, but not a
+# peer-reviewed paper and not a patent, so it gets its own kind.
+# kind_label usually mirrors this; JP-style overrides are still possible.
+[kind_disclosure]
+other = "Defensive Disclosure"
 
 [download_pdf]
 other = "Download PDF"
