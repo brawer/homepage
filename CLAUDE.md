@@ -316,18 +316,51 @@ verified against source for patents), `venue`, `abstract`.
   found) but it's worth rechecking whenever new content is added to a
   markdownified field.
 
-- Type-specific optional fields: `degree` (thesis), `patent_number` +
-  `patent_status` + `assignee` (patent — `assignee` is the entity the
-  patent was assigned to, typically the employer at the time of
-  invention, e.g. `"Google LLC"` — use the assignee's official current
-  name (check patents.google.com), not an informal shorthand; a
-  single string, same value in both
-  languages since it's a fact, not display text — don't translate it
-  the way `kind` gets translated for display).
+- Type-specific optional fields: `degree` (thesis); `assignee` +
+  `patent_family` (patent).
+  - `assignee` — the entity the patent was assigned to (the employer at
+    the time), e.g. `"Google LLC"` — official current name (check
+    patents.google.com), same string in both languages (a fact, not
+    display text) — shown on the detail page as "Assigned to: …".
+    Both the grid tile's `kind_label` and the detail page's badge read
+    **"Patent Family" / "Patentfamilie"** — the former from front
+    matter (`kind_label:` in every patent bundle), the latter from the
+    `kind_patent` i18n key (changed from "Patent" 2026-09-07 so the two
+    match, same as every other `kind`). An earlier 2026-09-07 draft
+    used the assignee short name ("Google", "Xerox PARC") for the
+    label — Sascha changed it once he saw it rendered.
+  - **`patent_family`** (added 2026-09-07, replacing the old singular
+    `patent_number` / `patent_status`) — **one publications page per
+    invention**, not per patent number. Most of Sascha's ~18 patent
+    numbers are foreign counterparts of the same 8 inventions. Each
+    page's `patent_family` is a list of `{office, number, status,
+    granted, expires}` — `office` is a **WIPO ST.3 office code**
+    (mostly ISO 3166 alpha-2: `US`, `JP`, `KR`, `CN`, `DE`, `CA`, `BR`;
+    plus `EP`, `WO`), localized for display via a
+    `patent_office_<CODE>` i18n pair that must be added to **both**
+    `i18n/*.toml` when a new code first appears — same rule as
+    `language_name_<code>`; `number` is the grant number in its
+    conventional written form (`"US 10,133,737 B2"`, `"KR 10-1890835
+    B1"`) — the template strips spaces/commas/hyphens to build the
+    Google Patents URL; `status` is one of `active` / `expired` (ran
+    full term) / `lapsed` (dropped early for unpaid fees) / `abandoned`
+    (application, never granted); `granted` / `expires` are quoted
+    ISO-date strings (`expires` estimated from Google Patents —
+    Sascha, who is patent-literate, verifies each). `date` (page-level)
+    is the **priority date** (when the work was done), not a grant
+    date. The template renders the family as a list plus one headline:
+    `patent_pd_since` ("Free for public use since {year}") when every
+    member is dead, else `patent_pd_from` ("… from {year}") using the
+    latest `expires` among the still-active members. Folder slug is the
+    invention name matching the English `title`
+    (`conversion-of-input-text-strings`, not `JP6511221B2` — that
+    bundle was renamed 2026-09-07). First page of the primary grant's
+    PDF (self-hosted, pulled from Google Patents — US/JP grants are
+    government publications) is the hero + `pdf` download; other family
+    members link out to Google Patents.
 - `original_title` + `original_language` (BCP-47 tag) — for when the
   source document's real title differs from the page's own working
-  `title` (e.g. the Japanese patent's actual title vs. its English
-  working title, or the spatial-data book's German original vs. its
+  `title` (e.g. the spatial-data book's German original vs. its
   English working title). In practice only ONE language file of the
   pair carries it — whichever file's own `title` differs from the
   real source title (e.g. `modellieren-raumbezogener-daten`'s EN file

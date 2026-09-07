@@ -1233,6 +1233,29 @@ body.drawer-open {
   margin: 0 0 .3rem 0;
 }
 
+/* Patent invention page: assignee + patent family list + the
+   public-domain headline. Pre-/design, kept as minimal as .fields /
+   .byline above. */
+.patent-block {
+  font-size: .9rem;
+  opacity: .85;
+  margin: 1rem 0 1.25rem;
+}
+.patent-block > p { margin: .2rem 0; }
+.patent-family {
+  list-style: none;
+  margin: .2rem 0 0;
+  padding: 0;
+}
+.patent-family li { margin: .15rem 0; }
+.patent-family a { font-variant-numeric: tabular-nums; }
+.patent-member-meta { color: var(--ink-faint); }
+.patent-pd {
+  font-weight: 700;
+  opacity: 1;
+  margin-top: .6rem !important;
+}
+
 /* Resume — timeline layout ("Paper & Plum Résumé"), ported 2026-09-07
    from a hand-tuned HTML/CSS mockup Artifact, the same mockup-first
    workflow as the grid and chrome design passes. See CLAUDE.md's

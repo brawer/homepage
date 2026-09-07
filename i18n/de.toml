@@ -7,7 +7,7 @@ other = "Vortrag"
 [kind_paper]
 other = "Aufsatz"
 [kind_patent]
-other = "Patent"
+other = "Patentfamilie"
 [kind_book]
 other = "Buch"
 [kind_lecture]
@@ -38,15 +38,30 @@ other = "Tags:"
 [assignee_label]
 other = "Zugewiesen an:"
 
-[patent_number_label]
-other = "Patentnummer:"
-
-[patent_status_granted]
-other = "Erteilt"
-[patent_status_pending]
-other = "Angemeldet"
-[patent_status_filed]
-other = "Eingereicht"
+# siehe i18n/en.toml
+[patent_family_label]
+other = "Patentfamilie:"
+# siehe i18n/en.toml
+[patent_office_US]
+other = "USA"
+[patent_office_JP]
+other = "Japan"
+[patent_office_KR]
+other = "Südkorea"
+[patent_office_CN]
+other = "China"
+[patent_member_active]
+other = "in Kraft bis {{ .Year }}"
+[patent_member_expired]
+other = "erloschen {{ .Year }}"
+[patent_member_lapsed]
+other = "verfallen {{ .Year }}"
+[patent_member_abandoned]
+other = "Anmeldung aufgegeben"
+[patent_pd_since]
+other = "Frei zur öffentlichen Nutzung seit {{ .Year }}."
+[patent_pd_from]
+other = "Ab {{ .Year }} frei zur öffentlichen Nutzung."
 
 [open_source_label]
 other = "Quelloffen"

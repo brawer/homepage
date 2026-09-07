@@ -1,18 +1,34 @@
 ---
 title: "Conversion of Input Text Strings"
-original_title: "入力テキスト文字列の変換"
-original_language: "ja"
-date: 2019-05-15
-publishDate: 2026-08-23
+date: 2010-08-26
+publishDate: 2026-09-07
 tags: ["Geo", "NLP", "i18n", "Google"]
 kind: "patent"
-kind_label: "Japanese Patent"
+kind_label: "Patent Family"
 teaser_is_document: true
 authors: ["Sascha Brawer", "Martin Jansche", "Richard Sproat", "Hiroshi Takenaka", "Yui Terashima"]
-venue: "Japan Patent Office"
-patent_number: "JP6511221B2"
-patent_status: "granted"
 assignee: "Google LLC"
+patent_family:
+  - office: "US"
+    number: "US 10,133,737 B2"
+    status: "active"
+    granted: "2018-11-20"
+    expires: "2032-01-01"
+  - office: "JP"
+    number: "JP 6511221 B2"
+    status: "active"
+    granted: "2019-05-15"
+    expires: "2031-08-26"
+  - office: "KR"
+    number: "KR 10-1890835 B1"
+    status: "active"
+    granted: "2018-09-28"
+    expires: "2031-08-26"
+  - office: "CN"
+    number: "CN 103189859 B"
+    status: "active"
+    granted: "2016-08-17"
+    expires: "2031-08-26"
 abstract: >
   A method for converting strings of geographic names from one script or
   language into another by combining two techniques: translating words
@@ -25,8 +41,8 @@ abstract: >
   language.
 image: "teaser.webp"
 pdf_preview: "pdf-preview.webp"
-pdf: "JP6511221B2.pdf"
+pdf: "us10133737.pdf"
 ---
-Japanese patent covering technology for converting place names and
-similar geographic strings between writing systems — part of the same
-line of work as the [ICU transforms talk](/publications/transliteration-with-icu/).
+Patented technology for converting place names and similar geographic
+strings between writing systems — part of the same line of work as the
+[ICU transforms talk](/publications/transliteration-with-icu/).
