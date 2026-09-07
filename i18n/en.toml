@@ -66,6 +66,10 @@ other = "Japan"
 other = "South Korea"
 [patent_office_CN]
 other = "China"
+[patent_office_CA]
+other = "Canada"
+[patent_office_BR]
+other = "Brazil"
 [patent_member_active]
 other = "in force until {{ .Year }}"
 [patent_member_expired]
