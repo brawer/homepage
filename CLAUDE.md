@@ -1392,6 +1392,38 @@ many rounds, then ported once settled. Ported files:
   steps there still fail loud. SVG minification of the inlined logos is
   a possible follow-up (skipped — files are already compact).
 
+### Gallery-grid resize, 2026-09-08
+
+A small pass on the shared `gallery-grid.html` / `.gallery-grid` CSS —
+mockup ("Paper & Plum Gallery"), Sascha's call on the numbers, deliberately
+a "do now, fine-tune once there's real publications content" pass (he's
+about to add many publications):
+
+- **Desktop: 4 columns, not ~5.** `@media (min-width: 768px)` min track
+  `minmax(9rem)` → `minmax(13rem)` — the old grid gave ~5 tight columns
+  (~170px) and cropped every title.
+- **Titles wrap to two lines.** `.tile-title` was `white-space: nowrap`
+  + ellipsis; now `-webkit-line-clamp: 2`. `.tile-caption` gets a
+  `min-height` reserving 2 lines + the kind label so a row's cards keep
+  a level text block. `.tile-kind` gains a hairline top margin (was
+  flush).
+- **Per-section mobile grid.** New `dense` bool param on
+  `gallery-grid.html`, passed by `list.html` as `(eq .Section "art")`:
+    - Art → `.gallery-grid--art`, 3-up on mobile (the "photos-app"
+      density Sascha wanted; tiles are self-explanatory images and the
+      caption auto-hides at that size).
+    - Publications / Projects / **tag pages** (which never pass `dense`)
+      → 2-up on mobile, caption kept — you can't tell a patent from a
+      talk on a phone without the title + kind label.
+    - Desktop is 4-up for both.
+- **Caption-hide container query `10rem` → `8rem`.** At 10rem the
+  caption vanished on every tile of the old 5-col desktop grid *and*
+  the 2-up mobile grid; 8rem hides it only on the genuinely tiny tiles
+  (art's 3-up mobile, landscape-phone many-column).
+- Still deferred: exact tile size / whether 4 is right once there are
+  ~15+ publications, the landscape-phone grid, whether Projects wants
+  its own treatment. Revisit after the publications content lands.
+
 ## Known open items (as of last content session)
 
 - **Search-engine indexing is blocked while this is a staging site**
