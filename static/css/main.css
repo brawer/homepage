@@ -1481,18 +1481,22 @@ body.drawer-open {
    is toggled by nav.js only once the page has scrolled -- a shadow
    implies floating above moving content, true only after the header
    detaches from the top; flush at the top it keeps just its hairline,
-   like every other page. */
-.resume-page header {
+   like every other page.
+
+   `> header` (direct child of <body>), never a bare `header` -- the
+   résumé's own identity block was a <header> too until 2026-09-07, and
+   an unscoped rule made it stick over the top bar on scroll. */
+.resume-page > header {
   position: sticky;
   top: 0;
   z-index: 50;
   transition: box-shadow .2s ease;
 }
-.resume-page.is-scrolled header {
+.resume-page.is-scrolled > header {
   box-shadow: 0 4px 16px rgba(var(--shadow-color), var(--shadow-op-card-2));
 }
 @media (prefers-reduced-motion: reduce) {
-  .resume-page header { transition: none; }
+  .resume-page > header { transition: none; }
 }
 
 /* Deliberately full-bleed --paper-dim, the same warm mat tone the grid
@@ -1543,7 +1547,7 @@ body.drawer-open {
     --line: rgba(0, 0, 0, .28); --accent: #7a3350;
     background: #fff;
   }
-  .resume-page header,
+  .resume-page > header,
   .resume-page .site-footer,
   .resume-page .drawer,
   .resume-page .skip-link { display: none; }

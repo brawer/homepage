@@ -8,7 +8,11 @@
 */}}
 <div class="resume">
 
-  <header class="identity">
+  {{/* A <div>, not <header> -- the site header is <body> > <header>, and
+       bare `header {}` / sticky rules in main.css would otherwise treat
+       this block as a second one (funky background, and it stuck over
+       the top bar on scroll). The <h1> is landmark enough. */}}
+  <div class="identity">
     <h1>{{ .Title }}</h1>
     {{/* Identity travels with the page when it is saved to PDF, so it
          names and locates its subject on its own. All public data
@@ -23,7 +27,7 @@
       {{ with site.Params.social.email }}<span class="sep" aria-hidden="true">·</span><a href="mailto:{{ . }}">{{ i18n "contact_email" }}</a>{{ end }}
     </p>
     {{ with .Content }}<div class="identity-note">{{ . }}</div>{{ end }}
-  </header>
+  </div>
 
   <section class="resume-section">
     <h2>{{ i18n "resume_experience" }}</h2>
