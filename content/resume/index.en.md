@@ -14,13 +14,10 @@ experience:
         Built [OSMViews](https://osmviews.toolforge.org/), ranking
         geographic locations based on OpenStreetMap tile logs.
       - >-
-        From March to May 2025, filled in on short notice at
-        [cradle.bio](https://cradle.bio/), a startup founded by former
-        Google colleagues, after their only infrastructure person
-        went on leave and the two backups lined up to cover weren’t
-        available for months either — was up and running within two
-        days, kept the systems running, brought machine costs down,
-        and wrote scripts to automate parts of their lab workflows.
+        In 2025, spent a few months helping former Google colleagues
+        at [cradle.bio](https://cradle.bio/) to keep their
+        infrastructure running, cut machine costs, and automate lab
+        workflows.
   - date_range: "Oct 2019 – Sep 2021"
     logo: "niantic.svg"
     location: "Zürich, Switzerland"
@@ -91,7 +88,7 @@ experience:
     marker: "company"
     location: "Zürich, Switzerland"
     organization: "Adasys"
-    organization_url: "http://www.adasys.ch/"
+    organization_url: "https://www.adasys.ch/"
     role: "Software Engineer"
     highlights:
       - >-
@@ -123,7 +120,7 @@ experience:
     marker: "company"
     location: "Zürich, Switzerland"
     organization: "Adasys"
-    organization_url: "http://www.adasys.ch/"
+    organization_url: "https://www.adasys.ch/"
     role: "Software Engineer"
     highlights:
       - >-

@@ -14,14 +14,10 @@ experience:
         Baute [OSMViews](https://osmviews.toolforge.org/), das
         geografische Orte anhand von OpenStreetMap-Tile-Logs einstuft.
       - >-
-        Sprang von März bis Mai 2025 kurzfristig bei
-        [cradle.bio](https://cradle.bio/) ein, dem Start-up
-        ehemaliger Google-Kollegen, nachdem die einzige
-        Infrastruktur-Fachperson ausfiel und auch deren beiden
-        Vertretungen über Monate nicht verfügbar waren – war
-        innerhalb von zwei Tagen startklar, hielt die Systeme am
-        Laufen, senkte die Rechnerkosten und schrieb Skripte zur
-        Automatisierung von Laborabläufen.
+        Half 2025 einige Monate lang ehemaligen Google-Kollegen bei
+        [cradle.bio](https://cradle.bio/), die Infrastruktur am Laufen
+        zu halten, Rechnerkosten zu senken und Laborabläufe zu
+        automatisieren.
   - date_range: "Okt. 2019 – Sept. 2021"
     logo: "niantic.svg"
     location: "Zürich, Schweiz"
@@ -95,7 +91,7 @@ experience:
     marker: "company"
     location: "Zürich, Schweiz"
     organization: "Adasys"
-    organization_url: "http://www.adasys.ch/"
+    organization_url: "https://www.adasys.ch/"
     role: "Software Engineer"
     highlights:
       - >-
@@ -128,7 +124,7 @@ experience:
     marker: "company"
     location: "Zürich, Schweiz"
     organization: "Adasys"
-    organization_url: "http://www.adasys.ch/"
+    organization_url: "https://www.adasys.ch/"
     role: "Software Engineer"
     highlights:
       - >-
