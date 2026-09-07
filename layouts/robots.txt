@@ -1,0 +1,11 @@
+{{- if site.Params.noindex -}}
+# Staging: keep this v2 site out of search engines entirely.
+# Flip params.noindex to false in hugo.toml at launch.
+User-agent: *
+Disallow: /
+{{- else -}}
+User-agent: *
+Disallow:
+
+Sitemap: {{ "sitemap.xml" | absURL }}
+{{- end }}

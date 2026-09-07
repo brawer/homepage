@@ -1390,6 +1390,17 @@ many rounds, then ported once settled. Ported files:
 
 ## Known open items (as of last content session)
 
+- **Search-engine indexing is blocked while this is a staging site**
+  (added 2026-09-07). One switch: `params.noindex` in `hugo.toml`.
+  While `true` it emits `<meta name="robots" content="noindex,
+  nofollow">` on every page (`layouts/partials/head.html`) and makes
+  `robots.txt` a blanket `Disallow: /` (`layouts/robots.txt`, with
+  `enableRobotsTXT = true`). **Launch step:** set `noindex = false` (or
+  delete the line) — that alone flips both the meta tag and robots.txt,
+  and robots.txt then also starts advertising the sitemap. No
+  `X-Robots-Tag` HTTP header is set (deploy target still undecided), so
+  the meta tag is the load-bearing signal.
+
 - **The "Paper & Plum" grid design is live, ported 2026-08-26**
   (`static/css/main.css` + `layouts/partials/gallery-grid.html`) —
   tokens (color, light+dark, self-hosted Karla via `@font-face`),
