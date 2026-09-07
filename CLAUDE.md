@@ -606,14 +606,18 @@ rather than parsing prose.
   here — don't re-add without asking first, this was an explicit call
   by Sascha, not an oversight.
 - The cradle.bio (2025) stint is folded into a `highlights` bullet on
-  the "Since 10/2021 – Independent" entry rather than its own
+  the "Since Oct 2021 – Independent" entry rather than its own
   `experience` entry, since it's a specific engagement within that
   ongoing independent period, not a separate role with its own dates
   — avoids a confusing overlapping date range next to an open-ended
-  "since" entry. Phrased as helping out friends in an emergency, not
-  as a formal role — deliberately never says "SRE", even though the
-  underlying work (kept systems running, optimized machine cost,
-  wrote lab-automation scripts) was exactly that.
+  "since" entry. Phrased as helping former colleagues, not as a formal
+  role — deliberately never says "SRE" even though that's what the work
+  was. **Shortened 2026-09-07** to one sentence, on Sascha's call:
+  the longer version drew too much attention to a minor gig and, by
+  explaining *why* they needed help (their only infra person out,
+  backups unavailable), painted their team as fragile. The trimmed
+  version keeps the three concrete contributions (infrastructure,
+  machine costs, lab-workflow automation) and drops the circumstances.
 
 ## Imprint bundle front matter
 

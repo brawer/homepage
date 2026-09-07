@@ -13,7 +13,11 @@
        this block as a second one (funky background, and it stuck over
        the top bar on scroll). The <h1> is landmark enough. */}}
   <div class="identity">
-    <h1>{{ .Title }}</h1>
+    {{/* The page's own <h1> is the subject's name, not "Résumé" -- a CV
+         is about a person, and the nav/title already say which page
+         this is. .Title ("Résumé"/"Lebenslauf") still drives the <title>
+         tag via head.html. */}}
+    <h1>{{ site.Params.fullName }}</h1>
     {{/* Identity travels with the page when it is saved to PDF, so it
          names and locates its subject on its own. All public data
          (hugo.toml params + the imprint page). Location first (context,
