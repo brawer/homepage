@@ -83,6 +83,10 @@ other = "Betriebssysteme"
 [resume_spoken_languages]
 other = "Sprachen"
 
+# siehe i18n/en.toml
+[contact_email]
+other = "E-Mail"
+
 [gallery_empty]
 other = "Hier gibt es noch nichts zu sehen – schau bald wieder vorbei."
 

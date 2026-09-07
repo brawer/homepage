@@ -512,16 +512,44 @@ rather than parsing prose.
   (Sascha's call) — update both together if this ever changes again,
   per the "matching the nav label" rule.
 - `experience` — list of jobs/roles, each with `date_range` (display
-  string, e.g. `"10/2019 – 9/2021"` or `"Since 10/2021"`/`"Seit
-  10/2021"` — not split into structured start/end fields, same
-  reasoning as `venue`: nothing here needs to compute on the date,
-  only display it), `location`, `organization` + `organization_url`
-  (both omitted, not empty-stringed, for entries with no employer —
-  independent work, the 2018–2019 sabbatical), `role`, and
+  string, e.g. `"Oct 2019 – Sep 2021"` / `"Okt. 2019 – Sept. 2021"` or
+  `"Since Oct 2021"` / `"Seit Okt. 2021"` — not split into structured
+  start/end fields, same reasoning as `venue`: nothing here needs to
+  compute on the date, only display it. **Month-name format since the
+  2026-09-07 design pass** — was `"10/2019 – 9/2021"` numeric before;
+  de-CH month abbreviations Jan./Feb./März/Apr./Mai/Juni/Juli/Aug./
+  Sept./Okt./Nov./Dez.), `location`, `organization` +
+  `organization_url` (both omitted, not empty-stringed, for entries
+  with no employer — independent work, the sabbatical), `role`,
   `highlights` (list of strings, may contain inline Markdown links —
-  render through `markdownify`, same as `venue`).
+  render through `markdownify`, same as `venue`), and the timeline
+  **marker fields** below.
+- **Marker fields** (`experience` and `education` entries alike), added
+  2026-09-07 for the timeline design — the small tile on the rail, one
+  of three things, resolved in `layouts/partials/resume-marker.html`:
+  - `logo` (optional) — an SVG filename in `assets/logos/` (a real
+    single-colour company/institution mark). Inlined via
+    `resources.Get … | safeHTML` so it picks up `currentColor`; a
+    missing file `errorf`s the build. `logo_scale` (optional float,
+    default `.58`, or `.86` when `logo_wide`) is the per-entry `--s`
+    knob — logos are sized to equal **visual weight**, not equal box.
+    `logo_wide: true` for wordmark lockups (ETH, Zürich) that can't
+    obey square sizing. `logo_nudge: true` is a one-off vertical
+    correction, apple only.
+  - `marker` (used only when no `logo`) — `"company"` → a generic
+    building glyph, `"academic"` → a mortarboard
+    (`assets/icons/*.svg`), `"none"` (or absent) → a hollow accent
+    node. "company"/"academic" carry a real distinction an initial
+    wouldn't; "none" is for roles with no organisation at all (the
+    sabbatical). All current universities have a `logo`, so
+    `mortarboard.svg` is wired but unused.
+  - Employer logos are third-party trademarks, used nominatively
+    (LinkedIn-style) — an explicit call by Sascha 2026-09-07,
+    reversing DESIGN_BRIEF's earlier "generic iconography only" line.
+    See `assets/logos/README.md`.
 - `education` — list with `date_range`, `location`, `institution` +
-  `institution_url`, `degree`, `details`. `location` added
+  `institution_url`, `degree`, `details`, plus the marker fields
+  above. `location` added
   2026-08-24 — originally missing, so the one education entry's
   location was jammed into the end of `details` as plain prose
   instead ("Passed with distinction. Saarbrücken, Germany."),
@@ -529,19 +557,19 @@ rather than parsing prose.
   `location` field. Split out for consistency: `details` is now just
   the achievement note, `location` renders in the same place
   `experience` puts it.
-- **The dash between `date_range` and `location` (and between
-  `degree` and `details`) is `i18n "dash_separator"`, never a
-  hardcoded character** — found and fixed 2026-08-24: it had been a
-  literal em dash baked into the template, which is wrong on the
-  German page (de-CH wants en dash) and was never caught by
-  `scripts/check_typography.py`, since that only scans *content*
-  files, not template chrome. `dash_separator` is em dash (—) in
-  `i18n/en.toml`, en dash (–) in `i18n/de.toml`, both spaced on both
-  sides regardless of language — not the same as the "no surrounding
-  spaces" em-dash rule for English prose in the Typography section,
-  since this is a compact listing separator, not a sentence aside.
-- `date_range` values with a real range (e.g. `"10/2019 – 9/2021"`)
-  get the em/en dash inside them wrapped in U+202F (narrow no-break
+- **Superseded 2026-09-07**: the résumé no longer joins `date_range`
+  and `location` on one line at all (`location` moved onto the
+  organisation line — both answer "where"; the date answers "when"),
+  and `education`'s `degree`/`details` are now separate lines too
+  (`details` renders as a highlight bullet). So `i18n "dash_separator"`
+  is no longer used anywhere on the résumé. The key stays in both
+  `i18n/*.toml` (documented, low churn, may be wanted again) — it's
+  just unused now. The original note, for reference: it had once been a
+  literal em dash baked into the template, wrong on the German page
+  (de-CH wants en dash) and invisible to `check_typography.py` (which
+  scans content, not template chrome).
+- `date_range` values with a real range (e.g. `"Oct 2019 – Sep 2021"`)
+  get the en dash inside them wrapped in U+202F (narrow no-break
   space) at render time, via `replace $exp.date_range " – " "…"` —
   same reasoning as the art page's "H × W cm" (see "Templates"
   below), but the implementation differs: this has to be the *raw*
@@ -1284,6 +1312,81 @@ Ported into real templates/CSS the same day, once settled.
   résumé page's own future design pass (the one page expected to be
   long enough for it to earn its keep); everything else stays
   non-sticky since short pages make the difference imperceptible.
+
+### Résumé design pass, 2026-09-07
+
+Same mockup-first workflow as the grid and chrome passes — a hand-tuned
+HTML/CSS Artifact ("Paper & Plum Résumé"), iterated with Sascha over
+many rounds, then ported once settled. Ported files:
+`layouts/resume/single.html` (rewritten), new
+`layouts/partials/resume-marker.html`, `static/css/main.css` (the
+`/* Resume */` block replaced wholesale + a print block at end),
+`layouts/_default/baseof.html` (`.resume-page` body class),
+`static/js/nav.js` (sticky-header shadow), `i18n/*.toml`
+(`contact_email`), `content/resume/index.*.md`, `assets/logos/*.svg` +
+`assets/icons/*.svg`. Load-bearing decisions:
+
+- **Reverse-chronological timeline**, single column at every width. A
+  hairline rail turns the entries into one continuous career line; each
+  entry is a grid of `[marker | body]`. Per entry: `date` (when, tight
+  on its own line, U+202F-bound) → `role` (the headline — it's what
+  differs and what a reader scans for) → `organisation · location`
+  (where — location moved off the date line) → em-dash highlight
+  bullets. The date/role/org triple is set tight (`line-height` ~1.28)
+  so it reads as one unit; the air is saved for the gap before the
+  bullets and the 2.25rem between entries. Kept single-column (no
+  desktop two-column split) for consistency with every other page.
+- **Markers**: see "Marker fields" under "Resume bundle front matter"
+  above — real logo / generic building-or-mortarboard glyph / hollow
+  node, one identical tile either way. No bare-initial monograms (a mix
+  of logos and letters looked unfinished). Per-logo `--s` optical
+  sizing (equal visual weight, not equal box), set inline from front
+  matter.
+- **Identity block** at the top (name + `location · GitHub · LinkedIn ·
+  Email`, middle-dot separators like the footer) — a résumé saved to
+  PDF travels without the site chrome, so it names/locates its subject
+  on its own. All public data. No globe emoji (a colour glyph drew too
+  much attention); "Email" is a label, the raw address is not shown.
+  No closing hairline under the block — the first section heading
+  carries its own, and two rules for one header→body transition reads
+  as clutter.
+- **Section headings** (`EXPERIENCE` etc.): small tracked uppercase in
+  `--ink`, with a short **plum rule on the hairline** — the accent as a
+  graphic mark, never as the label's text colour (plum text would read
+  as a link, since plum *is* the link colour here). The rule is exactly
+  one `--marker` wide and left-aligned with the tile column, so its
+  length is a real measure ("one node") and it lines up with every
+  marker down the rail. A second accent colour was considered for this
+  and rejected: a token has to recur to earn its place, and this is one
+  use on one page.
+- **Spoken languages** are a third row inside Skills (level with
+  Programming Languages / Operating Systems), a `<br>` stack with tight
+  leading — a section of their own left one short list floating under a
+  full-width heading.
+- **Sticky header, résumé only** — gated by the `.resume-page` body
+  class (keyed on `.File.ContentBaseName == "resume"`, since
+  `.Type`/`.Section` are both useless for this single-page bundle — see
+  hugo.toml's menu comment). `nav.js` toggles `.is-scrolled` on scroll;
+  the cast shadow appears only once scrolled (a shadow implies floating
+  above moving content — untrue while the header is flush at the top).
+  This is the sticky-header idea deferred from the 2026-08-27 chrome
+  pass. The lecture-series publication was floated as a possible second
+  sticky-header page — not done; decide from real content length.
+- **Print stylesheet** (`@media print`, scoped to `.resume-page` so
+  other pages keep browser defaults): B/W token overrides, chrome
+  hidden, rail + markers dropped (screen navigation, not information),
+  `break-inside: avoid` on entries, and org/contact link URLs spelled
+  out in parentheses (not every inline link).
+- **Content changes** shipped alongside: month-name `date_range` (both
+  langs), `role` "Human Being"/"Mensch" → "Sabbatical"/"Auszeit", ETH
+  entry's lab name trimmed + `organization_url` → `https://tik.ethz.ch/`,
+  education `degree` `~Master` → `~MSc`, education `date_range` a single
+  point in time again ("Jan 1998").
+- **Not covered by CI**: a broken `logo:` reference isn't checked by
+  `check-content.yml`'s resource step (that's `image`/`pdf` only), but
+  `resume-marker.html` `errorf`s on a missing file, so the `hugo build`
+  steps there still fail loud. SVG minification of the inlined logos is
+  a possible follow-up (skipped — files are already compact).
 
 ## Known open items (as of last content session)
 

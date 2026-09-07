@@ -1222,15 +1222,281 @@ body.drawer-open {
   margin: 0 0 .3rem 0;
 }
 
-/* Resume */
-.experience-item, .education-item {
-  margin-bottom: 1.5rem;
+/* Resume — timeline layout ("Paper & Plum Résumé"), ported 2026-09-07
+   from a hand-tuned HTML/CSS mockup Artifact, the same mockup-first
+   workflow as the grid and chrome design passes. See CLAUDE.md's
+   "Résumé" section for the reasoning behind every value here. Uses the
+   existing tokens only; adds three résumé-local custom properties and
+   no new colours. Markup: layouts/resume/single.html +
+   layouts/partials/resume-marker.html. */
+
+.resume {
+  /* Narrower than the 60rem grid pages -- highlights are prose, and
+     prose past ~70 characters a line tires the eye. The rail + marker
+     column live inside this measure so they track the text, not the
+     viewport. */
+  --measure: 42rem;
+  --rail: 20px;     /* x-offset of the timeline rail */
+  --marker: 42px;   /* marker-column width; also the h2 accent-rule width */
+  max-width: var(--measure);
+  margin: 0 auto;
+}
+/* Local box-sizing reset -- there's no sitewide one (see <main>'s
+   comment above), and the % sizing on .mark/.mark svg needs it. */
+.resume *, .resume *::before, .resume *::after { box-sizing: border-box; }
+
+/* Identity ---------------------------------------------------------- */
+/* A résumé is often saved to PDF and then travels without the site
+   around it, so it names and locates its subject on its own. All public
+   data (hugo.toml params + the imprint page). */
+.identity { margin-bottom: 3rem; }
+.identity h1 {
+  margin: 0;
+  font-size: 1.9rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  text-wrap: balance;
+}
+/* Tight .35rem below the name -- name + "where to find me" are one
+   identity unit; the daylight is saved for the 3rem below the block. */
+.identity-contact {
+  margin: .35rem 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: .15rem .5rem;
+  font-size: .85rem;
+  color: var(--ink-faint);
+}
+.identity-contact a {
+  color: var(--ink-faint);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 2px;
+}
+.identity-contact a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+/* The separator dot inherits the row's --ink-faint -- --line is a
+   hairline-border tone, far too faint to read as text. No globe emoji:
+   a full-colour glyph next to plain links drew far more attention than
+   a location line deserves. */
+.identity-note { margin-top: .6rem; }
+.identity-note p { margin: 0; font-size: .9rem; color: var(--ink-soft); }
+.identity-note a { color: var(--accent); }
+
+/* Section headings ------------------------------------------------- */
+/* Small, tracked, quiet -- the four section names are fixed context;
+   the entries carry the weight (same principle the grid uses for its
+   kind label vs. title). The accent appears as a short rule sitting on
+   the hairline, NOT as the label's text colour -- plum text would read
+   as a link, since plum IS the link colour on this page. The rule is
+   exactly one marker-tile wide (--marker) and left-aligned with the
+   tile column, so its length is a real measure -- "one node" -- and it
+   lines up vertically with every marker down the timeline. */
+.resume-section { margin-top: 2.75rem; }
+.resume-section > h2 {
+  position: relative;
+  margin: 0 0 1.75rem;
+  padding-bottom: .5rem;
+  border-bottom: 1px solid var(--line);
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.resume-section > h2::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -1px;
+  width: var(--marker);
+  height: 2px;
+  background: var(--accent);
 }
 
-.experience-item .date-range,
-.education-item .date-range {
-  font-size: .85rem;
-  opacity: .7;
+/* Timeline -------------------------------------------------------- */
+.timeline {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2.25rem;
+  position: relative;
+}
+/* Screen affordance only -- turns separate entries into one continuous
+   career line. Print drops it (the date column carries chronology on
+   paper). */
+.timeline::before {
+  content: "";
+  position: absolute;
+  left: var(--rail);
+  top: .4rem;
+  bottom: .4rem;
+  width: 2px;
+  background: var(--line);
+}
+.entry {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--marker) 1fr;
+  column-gap: 1rem;
+}
+.entry-marker {
+  grid-column: 1;
+  display: flex;
+  justify-content: center;
+  padding-top: .15rem;
+}
+/* One paper tile -- a company mark, a generic glyph, or (for org-less
+   roles) a hollow node instead; see resume-marker.html. */
+.mark {
+  width: var(--marker);
+  height: var(--marker);
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  color: var(--ink-soft);
+}
+/* --s is a per-entry scale knob, set inline from front matter: marks
+   are sized to equal VISUAL weight, not equal bounding box, so a dense
+   crest and a thin letterform can share the rail without one looking
+   bigger. Marks draw in the tile's own text colour, never their brand
+   colour -- keeps the timeline monochrome and readable in dark mode. */
+.mark svg {
+  width: calc(100% * var(--s, .58));
+  height: calc(100% * var(--s, .58));
+  display: block;
+  fill: currentColor;
+}
+/* Wordmark (ETH, Zürich): --s drives width, height follows the logo's
+   own aspect ratio. */
+.mark--wide svg { width: calc(100% * var(--s, .86)); height: auto; }
+/* One-off: the apple glyph is bottom-heavy in its own box, so centred
+   it reads as sitting low -- nudge its optical centre onto the tile's. */
+.mark--nudge svg { transform: translateY(-7%); }
+/* Roles with no employer -- the sabbatical -- get a hollow accent node
+   instead of a tile: they're chapters of their own, not jobs, and the
+   shape says so without a caption. */
+.node {
+  width: 14px;
+  height: 14px;
+  margin-top: .35rem;
+  border-radius: 50%;
+  background: var(--paper);
+  border: 2px solid var(--accent);
+}
+
+/* Entry body ---------------------------------------------------- */
+.entry-body { grid-column: 2; min-width: 0; }
+/* Date / role / organisation are one identity block -- set tight
+   (line-height ~1.28 vs. the page's 1.5, hairline margins) so the three
+   lines read as one unit, with the daylight saved for the gap before
+   the highlights. Proximity: what belongs together sits closer than it
+   sits to the next group. */
+.entry-meta {
+  margin: 0;
+  font-size: .78rem;
+  line-height: 1.3;
+  color: var(--ink-faint);
+  font-variant-numeric: tabular-nums;
+}
+.entry-role {
+  margin: .1rem 0 0;
+  font-size: 1.05rem;
+  line-height: 1.28;
+  font-weight: 600;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.entry-org {
+  margin: .05rem 0 0;
+  font-size: .9rem;
+  line-height: 1.3;
+  color: var(--ink-soft);
+}
+.entry-org a {
+  color: var(--ink-soft);
+  text-decoration: underline;
+  text-decoration-color: var(--line);
+  text-underline-offset: 2px;
+}
+.entry-org a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+/* Location rides on the org line (both answer "where"; the date answers
+   "when"), one tier quieter than the org name. On org-less roles it's
+   the whole third line on its own -- which also gives those entries the
+   same three-line shape as the rest. */
+.entry-loc { color: var(--ink-faint); }
+.entry-highlights {
+  list-style: none;
+  margin: .85rem 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: .45rem;
+  font-size: .93rem;
+  color: var(--ink-soft);
+  line-height: 1.55;
+}
+/* Hanging em-dash bullets so the list reads as prose fragments, not a
+   checklist. This is CSS chrome, not content -- the de-CH spaced en
+   dash for the German page is a follow-up if it ever matters. */
+.entry-highlights li { position: relative; padding-left: 1.2rem; }
+.entry-highlights li::before {
+  content: "\2014";
+  position: absolute;
+  left: 0;
+  color: var(--accent);
+}
+.entry-highlights a {
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-soft);
+  text-underline-offset: 2px;
+}
+.entry-highlights a:hover { text-decoration-color: var(--accent); }
+.entry-highlights em { font-style: italic; }
+
+/* Skills -------------------------------------------------------- */
+.skills { margin: 0; display: flex; flex-direction: column; gap: 1.25rem; }
+.skills dt {
+  font-size: .74rem;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+  margin-bottom: .3rem;
+}
+.skills dd { margin: 0; font-size: .93rem; color: var(--ink-soft); max-width: 60ch; }
+/* Spoken languages: a <br> stack with tight leading so the four lines
+   read as one block, not four items. */
+.skills dd.dd-lines { line-height: 1.4; }
+
+/* Sticky header -- résumé only. The résumé is the one page long enough
+   for a pinned header to earn its keep (see CLAUDE.md). The cast shadow
+   is toggled by nav.js only once the page has scrolled -- a shadow
+   implies floating above moving content, true only after the header
+   detaches from the top; flush at the top it keeps just its hairline,
+   like every other page.
+
+   `> header` (direct child of <body>), never a bare `header` -- the
+   résumé's own identity block was a <header> too until 2026-09-07, and
+   an unscoped rule made it stick over the top bar on scroll. */
+.resume-page > header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  transition: box-shadow .2s ease;
+}
+.resume-page.is-scrolled > header {
+  box-shadow: 0 4px 16px rgba(var(--shadow-color), var(--shadow-op-card-2));
+}
+@media (prefers-reduced-motion: reduce) {
+  .resume-page > header { transition: none; }
 }
 
 /* Deliberately full-bleed --paper-dim, the same warm mat tone the grid
@@ -1269,4 +1535,41 @@ body.drawer-open {
   margin: 0;
   font-size: .85rem;
   color: var(--ink-faint);
+}
+
+/* Print -- strip the site, keep the document. Scoped to .resume-page:
+   the résumé is the one page anyone actually prints or saves to PDF, so
+   the other pages keep the browser's own print defaults untouched. */
+@media print {
+  .resume-page {
+    --paper: #fff; --paper-dim: #fff; --paper-raised: #fff;
+    --ink: #000; --ink-soft: #1c1c1c; --ink-faint: #444;
+    --line: rgba(0, 0, 0, .28); --accent: #7a3350;
+    background: #fff;
+  }
+  .resume-page > header,
+  .resume-page .site-footer,
+  .resume-page .drawer,
+  .resume-page .skip-link { display: none; }
+  .resume-page main { max-width: none; padding: 0; }
+  .resume-page .resume { max-width: none; }
+  /* Rail + markers are screen navigation, not information -- a printed
+     CV gets a clean left edge instead. */
+  .resume-page .timeline::before { display: none; }
+  .resume-page .entry { grid-template-columns: 1fr; }
+  .resume-page .entry-marker { display: none; }
+  .resume-page .entry,
+  .resume-page .resume-section { break-inside: avoid; }
+  .resume-page .identity { break-after: avoid; }
+  .resume-page a { color: #000; }
+  /* Spell out destinations a reader of the paper copy can't click --
+     organisation and contact links only, not every inline reference, or
+     the bullets drown in URLs. */
+  .resume-page .identity-contact a[href^="http"]::after,
+  .resume-page .entry-org a[href^="http"]::after {
+    content: " (" attr(href) ")";
+    font-size: .82em;
+    color: #555;
+    word-break: break-all;
+  }
 }

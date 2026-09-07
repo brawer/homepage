@@ -1,60 +1,110 @@
 {{ define "main" }}
-<h1>{{ .Title }}</h1>
-{{ .Content }}
+{{/*
+  Résumé — timeline layout, ported 2026-09-07 from the hand-tuned
+  "Paper & Plum Résumé" mockup. See CLAUDE.md's "Résumé" section for the
+  design decisions behind every part of this. Structure per entry:
+  date (when) / role / organisation · location (where) / highlights.
+  The marker tile is layouts/partials/resume-marker.html.
+*/}}
+<div class="resume">
 
-<h2>{{ i18n "resume_experience" }}</h2>
-{{ range .Params.experience }}
-  {{ $exp := . }}
-  <div class="experience-item">
-    {{/* U+202F (narrow no-break space) around the en dash inside a
-         range like "10/2019 – 9/2021" -- non-breaking and narrower
-         than a plain space, same reasoning as the art page's "H × W
-         cm" (see CLAUDE.md's Templates section). Unlike that case,
-         this has to be the raw character, not the &#x202f; entity:
-         the entity approach only works for static template source
-         text outside any {{ }} action -- replace's *result* is a
-         dynamic string returned from an action, so html/template's
-         auto-escaper would mangle a literal "&#x202f;" into
-         "&amp;#x202f;". The raw character itself isn't escaped
-         (auto-escaping only touches <>&"'), so it survives fine. */}}
-    <p class="date-range">{{ replace $exp.date_range " – " " – " }} {{ i18n "dash_separator" }} {{ $exp.location }}</p>
-    <h3>
-      {{ if $exp.organization }}
-        {{ if $exp.organization_url }}<a href="{{ $exp.organization_url }}">{{ $exp.organization }}</a>{{ else }}{{ $exp.organization }}{{ end }},
+  {{/* A <div>, not <header> -- the site header is <body> > <header>, and
+       bare `header {}` / sticky rules in main.css would otherwise treat
+       this block as a second one (funky background, and it stuck over
+       the top bar on scroll). The <h1> is landmark enough. */}}
+  <div class="identity">
+    <h1>{{ .Title }}</h1>
+    {{/* Identity travels with the page when it is saved to PDF, so it
+         names and locates its subject on its own. All public data
+         (hugo.toml params + the imprint page). Location first (context,
+         an unlinked fact), then GitHub ahead of LinkedIn (the more
+         substantive presence for an engineer, matching the site's
+         Projects emphasis), then Email as the closing reach-me. */}}
+    <p class="identity-contact">
+      {{ with site.Params.location }}<span>{{ . }}</span>{{ end }}
+      {{ with site.Params.social.github }}<span class="sep" aria-hidden="true">·</span><a href="{{ . }}">GitHub</a>{{ end }}
+      {{ with site.Params.social.linkedin }}<span class="sep" aria-hidden="true">·</span><a href="{{ . }}">LinkedIn</a>{{ end }}
+      {{ with site.Params.social.email }}<span class="sep" aria-hidden="true">·</span><a href="mailto:{{ . }}">{{ i18n "contact_email" }}</a>{{ end }}
+    </p>
+    {{ with .Content }}<div class="identity-note">{{ . }}</div>{{ end }}
+  </div>
+
+  <section class="resume-section">
+    <h2>{{ i18n "resume_experience" }}</h2>
+    <ol class="timeline">
+      {{ range .Params.experience }}
+        {{ $e := . }}
+        <li class="entry">
+          <div class="entry-marker">{{ partial "resume-marker.html" $e }}</div>
+          <div class="entry-body">
+            {{/* Narrow no-break spaces bind the date range into one unit
+                 (U+202F, raw char in template source per CLAUDE.md's
+                 Typography note). Location is NOT on this line any more
+                 — it moved to the org line below. */}}
+            <p class="entry-meta">{{ replace $e.date_range " – " " – " }}</p>
+            <h3 class="entry-role">{{ $e.role }}</h3>
+            {{ if or $e.organization $e.location }}
+            <p class="entry-org">
+              {{- with $e.organization }}{{ with $e.organization_url }}<a href="{{ . }}">{{ $e.organization }}</a>{{ else }}{{ $e.organization }}{{ end }}{{ end -}}
+              {{- if and $e.organization $e.location }} · {{ end -}}
+              {{- with $e.location }}<span class="entry-loc">{{ . }}</span>{{ end -}}
+            </p>
+            {{ end }}
+            {{ with $e.highlights }}
+            <ul class="entry-highlights">
+              {{ range . }}<li>{{ . | markdownify }}</li>{{ end }}
+            </ul>
+            {{ end }}
+          </div>
+        </li>
       {{ end }}
-      {{ $exp.role }}
-    </h3>
-    <ul>
-      {{/* highlights may contain inline Markdown links — markdownify,
-           not raw output. */}}
-      {{ range $exp.highlights }}<li>{{ . | markdownify }}</li>{{ end }}
-    </ul>
-  </div>
-{{ end }}
+    </ol>
+  </section>
 
-<h2>{{ i18n "resume_education" }}</h2>
-{{ range .Params.education }}
-  {{ $edu := . }}
-  <div class="education-item">
-    {{/* Same treatment as experience's date-range above, for
-         consistency if a future entry ever has a real range like
-         "2015 – 2019" rather than a single date. */}}
-    <p class="date-range">{{ replace $edu.date_range " – " " – " }} {{ i18n "dash_separator" }} {{ $edu.location }}</p>
-    <h3>{{ if $edu.institution_url }}<a href="{{ $edu.institution_url }}">{{ $edu.institution }}</a>{{ else }}{{ $edu.institution }}{{ end }}</h3>
-    <p>{{ $edu.degree }}{{ with $edu.details }} {{ i18n "dash_separator" }} {{ . }}{{ end }}</p>
-  </div>
-{{ end }}
+  <section class="resume-section">
+    <h2>{{ i18n "resume_education" }}</h2>
+    <ol class="timeline">
+      {{ range .Params.education }}
+        {{ $ed := . }}
+        <li class="entry">
+          <div class="entry-marker">{{ partial "resume-marker.html" $ed }}</div>
+          <div class="entry-body">
+            <p class="entry-meta">{{ replace $ed.date_range " – " " – " }}</p>
+            <h3 class="entry-role">{{ $ed.degree }}</h3>
+            <p class="entry-org">
+              {{- with $ed.institution_url }}<a href="{{ . }}">{{ $ed.institution }}</a>{{ else }}{{ $ed.institution }}{{ end -}}
+              {{- with $ed.location }} · <span class="entry-loc">{{ . }}</span>{{ end -}}
+            </p>
+            {{ with $ed.details }}
+            <ul class="entry-highlights"><li>{{ . | markdownify }}</li></ul>
+            {{ end }}
+          </div>
+        </li>
+      {{ end }}
+    </ol>
+  </section>
 
-<h2>{{ i18n "resume_skills" }}</h2>
-<dl>
-  <dt>{{ i18n "resume_programming_languages" }}</dt>
-  <dd>{{ .Params.skills.programming_languages | markdownify }}</dd>
-  <dt>{{ i18n "resume_operating_systems" }}</dt>
-  <dd>{{ .Params.skills.operating_systems | markdownify }}</dd>
-</dl>
+  <section class="resume-section">
+    <h2>{{ i18n "resume_skills" }}</h2>
+    <dl class="skills">
+      <div>
+        <dt>{{ i18n "resume_programming_languages" }}</dt>
+        <dd>{{ .Params.skills.programming_languages | markdownify }}</dd>
+      </div>
+      <div>
+        <dt>{{ i18n "resume_operating_systems" }}</dt>
+        <dd>{{ .Params.skills.operating_systems | markdownify }}</dd>
+      </div>
+      <div>
+        {{/* Spoken languages are a third row here, level with the two
+             technical rows — a section of their own left one short list
+             floating under a full-width heading. <br> stack + tight
+             leading so the four lines read as one block. */}}
+        <dt>{{ i18n "resume_spoken_languages" }}</dt>
+        <dd class="dd-lines">{{ delimit .Params.spoken_languages "<br>" | safeHTML }}</dd>
+      </div>
+    </dl>
+  </section>
 
-<h2>{{ i18n "resume_spoken_languages" }}</h2>
-<ul>
-  {{ range .Params.spoken_languages }}<li>{{ . }}</li>{{ end }}
-</ul>
+</div>
 {{ end }}

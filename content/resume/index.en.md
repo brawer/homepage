@@ -1,7 +1,8 @@
 ---
 title: "Résumé"
 experience:
-  - date_range: "Since 10/2021"
+  - date_range: "Since Oct 2021"
+    marker: "company"
     location: "Bern, Switzerland"
     role: "Independent"
     highlights:
@@ -20,7 +21,8 @@ experience:
         available for months either — was up and running within two
         days, kept the systems running, brought machine costs down,
         and wrote scripts to automate parts of their lab workflows.
-  - date_range: "10/2019 – 9/2021"
+  - date_range: "Oct 2019 – Sep 2021"
+    logo: "niantic.svg"
     location: "Zürich, Switzerland"
     organization: "Niantic Labs"
     organization_url: "https://careers.nianticlabs.com/"
@@ -35,12 +37,14 @@ experience:
         technology for non-gaming applications. Worked with potential
         customers in retail and transportation to clarify product
         needs. Drove the prototype to demo stage.
-  - date_range: "9/2018 – 9/2019"
+  - date_range: "Sep 2018 – Sep 2019"
+    marker: "none"
     location: "Rapperswil, Switzerland"
-    role: "Human Being"
+    role: "Sabbatical"
     highlights:
       - "Dabbled in oil painting. Read a lot. Enjoyed life."
-  - date_range: "5/2004 – 8/2018"
+  - date_range: "May 2004 – Aug 2018"
+    logo: "google.svg"
     location: "Zürich, Switzerland"
     organization: "Google"
     organization_url: "https://careers.google.com/"
@@ -66,7 +70,8 @@ experience:
         “Engineering Ambassador” in Tokyo, connecting Google Japan to
         other sites while leading a Japanese team.
       - "Took a 5-month break in 2012."
-  - date_range: "4/2003 – 4/2004"
+  - date_range: "Apr 2003 – Apr 2004"
+    marker: "company"
     location: "Bern, Switzerland"
     organization: "Dandelis"
     role: "Founder"
@@ -82,7 +87,8 @@ experience:
       - >-
         Contributed several frameworks to the [GNU implementation of
         the Java libraries](http://www.gnu.org/software/classpath/home.html).
-  - date_range: "4/2002 – 3/2003"
+  - date_range: "Apr 2002 – Mar 2003"
+    marker: "company"
     location: "Zürich, Switzerland"
     organization: "Adasys"
     organization_url: "http://www.adasys.ch/"
@@ -97,7 +103,9 @@ experience:
       - >-
         Implemented threading, exception handling, and GUI modules for
         a proprietary cross-platform development platform.
-  - date_range: "3/2000 – 1/2002"
+  - date_range: "Mar 2000 – Jan 2002"
+    logo: "xerox.svg"
+    logo_scale: 0.52
     location: "Palo Alto, CA, USA"
     organization: "Xerox PARC"
     organization_url: "https://www.parc.com/"
@@ -111,7 +119,8 @@ experience:
         Implemented a prototype client/server application for
         assisting “knowledge workers.”
       - "Developed the statistical engine for an interactive classification program."
-  - date_range: "4/1998 – 2/2000"
+  - date_range: "Apr 1998 – Feb 2000"
+    marker: "company"
     location: "Zürich, Switzerland"
     organization: "Adasys"
     organization_url: "http://www.adasys.ch/"
@@ -126,7 +135,10 @@ experience:
       - >-
         Consulted clients on data modeling issues, color management,
         and client/server architectures.
-  - date_range: "10/1997 – 7/1999"
+  - date_range: "Oct 1997 – Jul 1999"
+    logo: "zurich_university.svg"
+    logo_wide: true
+    logo_scale: 0.78
     location: "Zürich, Switzerland"
     organization: "University of Zürich, Department of Informatics"
     organization_url: "https://www.ifi.uzh.ch/"
@@ -136,7 +148,9 @@ experience:
         Taught a lecture (Lehrauftrag) on [Programming Techniques in
         Computational Linguistics](/publications/programming-techniques-in-cl/),
         2h/week.
-  - date_range: "3/1997 – 9/1997"
+  - date_range: "Mar 1997 – Sep 1997"
+    logo: "apple.svg"
+    logo_nudge: true
     location: "Cupertino, CA, USA"
     organization: "Apple Computer, Advanced Technology Group"
     organization_url: "https://en.wikipedia.org/wiki/Apple_Advanced_Technology_Group"
@@ -145,7 +159,9 @@ experience:
       - >-
         Built an optimizing compiler that transformed linguistic
         grammars for information extraction into PowerPC machine code.
-  - date_range: "4/1994 – 10/1996"
+  - date_range: "Apr 1994 – Oct 1996"
+    logo: "saarland_university.svg"
+    logo_scale: 0.6
     location: "Saarbrücken, Germany"
     organization: "Saarland University, Computational Linguistics"
     organization_url: "https://www.coli.uni-saarland.de/index.php?lang=en"
@@ -156,20 +172,24 @@ experience:
         Implemented a component for visualizing the semantic
         construction process in the “Verbmobil” machine translation
         system (in Prolog, under X11).
-  - date_range: "7/1993 – 10/1993"
+  - date_range: "Jul 1993 – Oct 1993"
+    logo: "eth.svg"
+    logo_wide: true
     location: "Zürich, Switzerland"
-    organization: "ETH Zürich, Computer Engineering and Networks Lab, Speech Processing Group"
-    organization_url: "https://people.ee.ethz.ch/~spr/SPGinfo/SPGinfo.html"
+    organization: "ETH Zürich, Computer Engineering and Networks Lab"
+    organization_url: "https://tik.ethz.ch/"
     role: "Intern"
     highlights:
       - "Improved the phrase structure grammar of a German text-to-speech synthesis system."
       - "Implemented Earley’s *O*(*n*³) chart parsing algorithm in Modula-2."
 education:
-  - date_range: "1/1998"
+  - date_range: "Jan 1998"
+    logo: "saarland_university.svg"
+    logo_scale: 0.6
     location: "Saarbrücken, Germany"
     institution: "Saarland University"
     institution_url: "https://www.uni-saarland.de/en/"
-    degree: "Diploma (~Master) in Computational Linguistics, Minor: Computer Science"
+    degree: "Diploma (~MSc) in Computational Linguistics, Minor: Computer Science"
     details: "Passed with distinction."
 skills:
   programming_languages: >-
