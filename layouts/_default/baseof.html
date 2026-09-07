@@ -3,7 +3,7 @@
 <head>
 {{ partial "head.html" . }}
 </head>
-<body>
+<body{{ if and .File (eq .File.ContentBaseName "resume") }} class="resume-page"{{ end }}>
 <a class="skip-link" href="#main">{{ i18n "skip_to_content" }}</a>
 <header>
   {{ partial "header.html" . }}

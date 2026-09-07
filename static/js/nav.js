@@ -68,4 +68,17 @@
     if (viewer) viewer.showModal();
     history.replaceState(null, "", location.pathname + location.hash);
   }
+
+  // Résumé: the header is position:sticky there (the one page long
+  // enough for a pinned header to matter — see CLAUDE.md). Cast a shadow
+  // under it only once the page has scrolled: a shadow implies floating
+  // above moving content, which is only true after it detaches from the
+  // top. CSS does the rest (.resume-page.is-scrolled header).
+  if (document.body.classList.contains("resume-page")) {
+    var setStuck = function () {
+      document.body.classList.toggle("is-scrolled", window.scrollY > 4);
+    };
+    setStuck();
+    window.addEventListener("scroll", setStuck, { passive: true });
+  }
 })();

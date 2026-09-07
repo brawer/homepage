@@ -1,7 +1,8 @@
 ---
 title: "Lebenslauf"
 experience:
-  - date_range: "Seit 10/2021"
+  - date_range: "Seit Okt. 2021"
+    marker: "company"
     location: "Bern, Schweiz"
     role: "Selbstständig"
     highlights:
@@ -21,7 +22,8 @@ experience:
         innerhalb von zwei Tagen startklar, hielt die Systeme am
         Laufen, senkte die Rechnerkosten und schrieb Skripte zur
         Automatisierung von Laborabläufen.
-  - date_range: "10/2019 – 9/2021"
+  - date_range: "Okt. 2019 – Sept. 2021"
+    logo: "niantic.svg"
     location: "Zürich, Schweiz"
     organization: "Niantic Labs"
     organization_url: "https://careers.nianticlabs.com/"
@@ -37,12 +39,14 @@ experience:
         mit potenziellen Kunden aus Handel und Transportwesen
         zusammen, um den Produktbedarf zu klären. Brachte den
         Prototyp bis zur Demo-Reife.
-  - date_range: "9/2018 – 9/2019"
+  - date_range: "Sept. 2018 – Sept. 2019"
+    marker: "none"
     location: "Rapperswil, Schweiz"
-    role: "Mensch"
+    role: "Auszeit"
     highlights:
       - "Widmete sich der Ölmalerei, las viel und genoss das Leben."
-  - date_range: "5/2004 – 8/2018"
+  - date_range: "Mai 2004 – Aug. 2018"
+    logo: "google.svg"
     location: "Zürich, Schweiz"
     organization: "Google"
     organization_url: "https://careers.google.com/"
@@ -70,7 +74,8 @@ experience:
         «Engineering Ambassador» in Tokio, verband Google Japan mit
         anderen Standorten und leitete dabei ein japanisches Team.
       - "Legte 2012 eine fünfmonatige Pause ein."
-  - date_range: "4/2003 – 4/2004"
+  - date_range: "Apr. 2003 – Apr. 2004"
+    marker: "company"
     location: "Bern, Schweiz"
     organization: "Dandelis"
     role: "Gründer"
@@ -86,7 +91,8 @@ experience:
         Steuerte mehrere Frameworks zur [GNU-Implementierung der
         Java-Bibliotheken](http://www.gnu.org/software/classpath/home.html)
         bei.
-  - date_range: "4/2002 – 3/2003"
+  - date_range: "Apr. 2002 – März 2003"
+    marker: "company"
     location: "Zürich, Schweiz"
     organization: "Adasys"
     organization_url: "http://www.adasys.ch/"
@@ -102,7 +108,9 @@ experience:
         Implementierte Threading-, Exception-Handling- und
         GUI-Module für eine proprietäre plattformübergreifende
         Entwicklungsplattform.
-  - date_range: "3/2000 – 1/2002"
+  - date_range: "März 2000 – Jan. 2002"
+    logo: "xerox.svg"
+    logo_scale: 0.52
     location: "Palo Alto, CA, USA"
     organization: "Xerox PARC"
     organization_url: "https://www.parc.com/"
@@ -116,7 +124,8 @@ experience:
         Implementierte eine Prototyp-Client/Server-Anwendung zur
         Unterstützung von «Wissensarbeitern».
       - "Entwickelte die statistische Engine für ein interaktives Klassifikationsprogramm."
-  - date_range: "4/1998 – 2/2000"
+  - date_range: "Apr. 1998 – Feb. 2000"
+    marker: "company"
     location: "Zürich, Schweiz"
     organization: "Adasys"
     organization_url: "http://www.adasys.ch/"
@@ -131,7 +140,10 @@ experience:
       - >-
         Beriet Kunden zu Fragen der Datenmodellierung, des
         Farbmanagements und von Client/Server-Architekturen.
-  - date_range: "10/1997 – 7/1999"
+  - date_range: "Okt. 1997 – Juli 1999"
+    logo: "zurich_university.svg"
+    logo_wide: true
+    logo_scale: 0.78
     location: "Zürich, Schweiz"
     organization: "Universität Zürich, Institut für Informatik"
     organization_url: "https://www.ifi.uzh.ch/"
@@ -141,7 +153,9 @@ experience:
         Hielt einen Lehrauftrag zu [Programmiertechniken der
         Computerlinguistik](/de/publications/programming-techniques-in-cl/),
         2 Std./Woche.
-  - date_range: "3/1997 – 9/1997"
+  - date_range: "März 1997 – Sept. 1997"
+    logo: "apple.svg"
+    logo_nudge: true
     location: "Cupertino, CA, USA"
     organization: "Apple Computer, Advanced Technology Group"
     organization_url: "https://en.wikipedia.org/wiki/Apple_Advanced_Technology_Group"
@@ -151,7 +165,9 @@ experience:
         Baute einen optimierenden Compiler, der linguistische
         Grammatiken zur Informationsextraktion in PowerPC-Maschinencode
         übersetzte.
-  - date_range: "4/1994 – 10/1996"
+  - date_range: "Apr. 1994 – Okt. 1996"
+    logo: "saarland_university.svg"
+    logo_scale: 0.6
     location: "Saarbrücken, Deutschland"
     organization: "Universität des Saarlandes, Computerlinguistik"
     organization_url: "https://www.coli.uni-saarland.de/index.php?lang=en"
@@ -162,20 +178,24 @@ experience:
         Implementierte eine Komponente zur Visualisierung des
         semantischen Aufbauprozesses im Maschinenübersetzungssystem
         «Verbmobil» (in Prolog, unter X11).
-  - date_range: "7/1993 – 10/1993"
+  - date_range: "Juli 1993 – Okt. 1993"
+    logo: "eth.svg"
+    logo_wide: true
     location: "Zürich, Schweiz"
-    organization: "ETH Zürich, Computer Engineering and Networks Lab, Speech Processing Group"
-    organization_url: "https://people.ee.ethz.ch/~spr/SPGinfo/SPGinfo.html"
+    organization: "ETH Zürich, Computer Engineering and Networks Lab"
+    organization_url: "https://tik.ethz.ch/"
     role: "Praktikant"
     highlights:
       - "Verbesserte die Phrasenstrukturgrammatik eines deutschen Sprachsynthesesystems (Text-to-Speech)."
       - "Implementierte Earleys Chart-Parsing-Algorithmus mit *O*(*n*³) in Modula-2."
 education:
-  - date_range: "1/1998"
+  - date_range: "Jan. 1998"
+    logo: "saarland_university.svg"
+    logo_scale: 0.6
     location: "Saarbrücken, Deutschland"
     institution: "Universität des Saarlandes"
     institution_url: "https://www.uni-saarland.de/en/"
-    degree: "Diplom (~Master) in Computerlinguistik, Nebenfach Informatik"
+    degree: "Diplom (~MSc) in Computerlinguistik, Nebenfach Informatik"
     details: "Mit Auszeichnung bestanden."
 skills:
   programming_languages: >-

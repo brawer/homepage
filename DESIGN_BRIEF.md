@@ -8,13 +8,13 @@ bilingual (English/German). Content already exists in the repo as Markdown +
 images/PDFs; this brief is for designing the CSS/templates only — the content
 model is fixed.
 
-**Status as of 2026-08-24**: a bare-bones, near-zero-CSS template pass
-already exists (`layouts/`, `static/css/main.css`) — home, list/detail
-pages for each section, tag pages, resume, the shared gallery grid,
-the language switcher, responsive `<picture>` images. It proves the
-data model renders correctly but makes no real visual-design
-decisions; that's still entirely this brief's job. See CLAUDE.md's
-"Templates" section for exactly what exists and what was verified.
+**Status**: real visual design is now live for the shared gallery grid
+(2026-08-26), the header/drawer/footer chrome (2026-08-27), and the
+résumé page (2026-09-07) — all "Paper & Plum", ported from hand-tuned
+mockup Artifacts. See CLAUDE.md's design-pass sections. Still on
+near-zero CSS / awaiting a `/design` pass: the home page, section
+list/detail pages (hero images, metadata layout), tag pages, and the
+lecture-series publication's list treatment.
 
 **Known rough edge to pick up here**: gallery grid thumbnails don't
 actually render square in Safari/Chrome, despite the underlying image
@@ -111,19 +111,16 @@ known gaps.
   per-section styling logic even when it mixes items from different
   sections. Some tag pages (e.g. `/tags/memes/`) have their own intro
   paragraph in front — render that above the grid, not as a separate page.
-- **Résumé page**: should read as a 2026-appropriate CV, not the old
-  `brawer.ch/cv/` page's plain HTML table (still viewable there for
-  reference) — a timeline/card layout rather than a literal table.
-  Sascha suggested small icons per organization; if pursued, use
-  generic/neutral iconography (initials, a monogram, a generic
-  building/institution glyph) rather than employers' actual logos —
-  those are trademarks and this site isn't licensed to display them.
-  The front matter already separates `organization` from
-  `organization_url`, so an icon slot could key off the org name
-  without a new content field, if a small fixed icon set covers the
-  ~10 organizations involved. Some entries (independent work, a
-  sabbatical) have no `organization` at all — the layout needs to
-  degrade gracefully for those, not assume every row has a company.
+- **Résumé page** — **done, ported 2026-09-07** (see CLAUDE.md's
+  "Résumé design pass"). A reverse-chronological timeline with a marker
+  tile per entry. **Employer logos:** the earlier line here said
+  "generic/neutral iconography only, not employers' actual logos" —
+  Sascha reversed that 2026-09-07: real single-colour company marks are
+  used nominatively (LinkedIn-style), sourced by him, with generic
+  glyphs (building / mortarboard) only where no usable mark exists. See
+  `assets/logos/README.md`. Org-less entries (independent work, the
+  sabbatical) degrade to a generic company glyph or a hollow node via
+  the `marker` front-matter field.
 - **Typography preference**: use proper typographic quotes throughout, in
   both languages — but note each language has its own convention, not one
   shared glyph set. English uses “curly double” and ‘curly single’ quotes.

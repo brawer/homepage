@@ -1,0 +1,44 @@
+{{/*
+  Timeline marker for one résumé experience/education entry — see
+  CLAUDE.md's "Résumé" section. One paper tile (.mark), three possible
+  contents, no bare initials (a mix of logos and letters looked
+  unfinished):
+
+    1. a single-colour company/institution mark, when the entry sets
+       `logo` (a file in assets/logos/) — nominative use, identifying a
+       real past employer, not implying endorsement (see the logos
+       README and DESIGN_BRIEF). Inlined, not <img>, so the mark picks
+       up `currentColor` and works in dark mode.
+    2. a generic glyph otherwise, keyed on `marker`: "company" → a
+       building, "academic" → a mortarboard. Encodes something true
+       (company vs. academia) an initial wouldn't.
+    3. a hollow accent node for `marker: "none"` (or unset) — the roles
+       with no organisation at all (the sabbatical).
+
+  Optical sizing: logos are scaled to equal VISUAL weight, not equal
+  bounding box, via a per-entry `logo_scale` (--s). `logo_wide` is for
+  wordmarks (ETH, Zürich), which can't obey square sizing — --s drives
+  width, height follows the logo's own ratio. `logo_nudge` is a one-off
+  vertical correction for the apple glyph (bottom-heavy in its own box).
+
+  Param: the entry dict (one item of .Params.experience / .education).
+*/}}
+{{- $e := . -}}
+{{- with $e.logo -}}
+  {{- $res := resources.Get (printf "logos/%s" .) -}}
+  {{- if not $res }}{{ errorf "résumé: logo %q not found in assets/logos/" . }}{{ end -}}
+  {{- $wide := $e.logo_wide | default false -}}
+  {{- $scale := $e.logo_scale | default (cond $wide 0.86 0.58) -}}
+  {{- printf "<span class=\"mark%s%s\" style=\"--s:%v\" aria-hidden=\"true\">" (cond $wide " mark--wide" "") (cond ($e.logo_nudge | default false) " mark--nudge" "") $scale | safeHTML -}}
+  {{- $res.Content | safeHTML -}}
+  {{- "</span>" | safeHTML -}}
+{{- else -}}
+  {{- $m := $e.marker | default "none" -}}
+  {{- if eq $m "company" -}}
+    <span class="mark" style="--s:.7" aria-hidden="true">{{ (resources.Get "icons/building.svg").Content | safeHTML }}</span>
+  {{- else if eq $m "academic" -}}
+    <span class="mark" style="--s:.7" aria-hidden="true">{{ (resources.Get "icons/mortarboard.svg").Content | safeHTML }}</span>
+  {{- else -}}
+    <span class="node" aria-hidden="true"></span>
+  {{- end -}}
+{{- end -}}
