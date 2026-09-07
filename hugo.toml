@@ -4,6 +4,10 @@ title = "Sascha Brawer"
 defaultContentLanguage = "en"
 defaultContentLanguageInSubdir = false   # English at /, German at /de/
 
+# Hugo emits a robots.txt from layouts/robots.txt (gated on the
+# params.noindex switch below).
+enableRobotsTXT = true
+
 # Menu entries below use `pageRef` (a content path Hugo resolves to the
 # actual per-language page), not a literal `url` string. Found and fixed
 # 2026-08-25: with `url`, the exact same literal string ("/art/" etc.)
@@ -118,6 +122,13 @@ uglyURLs = false
 # (each language’s own [params] block can still override individual keys).
 [params]
   fullName = "Sascha Brawer"
+
+  # Staging switch: while true, every page gets
+  # <meta name="robots" content="noindex, nofollow"> (head.html) AND
+  # robots.txt becomes a blanket Disallow (layouts/robots.txt). Set to
+  # false — or delete this line — to open the site to search engines at
+  # launch. See CLAUDE.md's "Known open items".
+  noindex = true
 
   [params.social]
     github = "https://github.com/brawer/"

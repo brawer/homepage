@@ -1,5 +1,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{{ if site.Params.noindex }}<meta name="robots" content="noindex, nofollow">
+{{ end -}}
 <title>{{ if .IsHome }}{{ .Site.Params.fullName }}{{ else }}{{ .Title }} — {{ .Site.Params.fullName }}{{ end }}</title>
 <link rel="stylesheet" href="/css/main.css">
 {{ with .OutputFormats.Get "rss" }}
