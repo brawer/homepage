@@ -970,30 +970,31 @@ body.drawer-open {
    exact "1fr tracks not staying equal" Grid gotcha. */
 .gallery-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1.2rem;
 }
+/* Art keeps the denser "photos-app" mobile grid (3-up) Sascha asked
+   for -- its tiles are self-explanatory images, and the caption
+   auto-hides at that tile size (see the @container rule below).
+   Publications / projects / tag pages use the 2-up default so their
+   title + kind label stay visible on a phone, where you genuinely
+   can't tell a patent from a talk without them. Both variants go to
+   the same 4-column desktop grid below. Set by list.html via the grid
+   partial's `dense` param (eq .Section "art"); tag pages never pass it. */
+.gallery-grid--art {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
 
-/* Responsive column count, added 2026-08-25 alongside the equal-width
-   fix above -- the grid was previously a hard-coded 3 columns at
-   every viewport width (fine for mobile portrait, the original
-   target -- picture-thumbnail.html's default widths are explicitly
-   sized for that -- but cramped-vs-sparse everywhere else). Uses
-   auto-fill/minmax per NAVIGATION_DESIGN_SPEC.md §9, at the same
-   768px breakpoint already used elsewhere (header.html's nav-bar/
-   drawer-trigger split) rather than inventing a new one:
-     - Landscape phone (roughly 568-767px, spec's own range) -> ~4-5
-       columns instead of 3 ("bump... rather than keeping the portrait
-       column count and getting oversized tiles").
-     - Tablet/desktop (>=768px) -> ~4-6 columns, per spec's explicit
-       "via auto-fill/minmax" wording.
-   auto-fill naturally grows the column count with available width
-   instead of jumping at fixed counts, so tiles stay reasonably sized
-   across the whole range rather than just at specific breakpoints.
-   The exact minmax() floors below are a first approximation (chosen
-   to land in-range against this site's 60rem body max-width, not
-   measured against a real device) -- exact tile size/rhythm is a
-   /design-mode decision like the rest of this file's spacing. */
+/* Responsive column count. Uses auto-fill/minmax per
+   NAVIGATION_DESIGN_SPEC.md §9, at the same 768px breakpoint used
+   elsewhere (header.html's nav-bar/drawer-trigger split).
+     - Landscape phone (roughly 568-767px) -> ~4-5 small columns.
+     - Tablet/desktop (>=768px) -> 4 columns against the 60rem body
+       max-width. Was minmax(9rem) (~5 tight columns, titles cropped
+       to one line); widened to minmax(13rem) 2026-09-08 on Sascha's
+       call so the titles have room to wrap (see .tile-title below).
+   Both apply to the .gallery-grid--art variant too -- the per-section
+   difference is only in the mobile-portrait base rules above. */
 @media (orientation: landscape) and (max-width: 767px) {
   .gallery-grid {
     grid-template-columns: repeat(auto-fill, minmax(7.5rem, 1fr));
@@ -1002,7 +1003,7 @@ body.drawer-open {
 
 @media (min-width: 768px) {
   .gallery-grid {
-    grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
   }
 }
 
@@ -1129,22 +1130,26 @@ body.drawer-open {
    same grid row. */
 .tile-caption {
   position: relative;
-  min-height: 1.6rem;
-  padding: 0 .95rem .75rem;
+  /* Reserve ~2 title lines + the kind label, so cards in a row keep a
+     level text block even when their own titles differ in length. */
+  min-height: 3.6rem;
+  padding: 0 .95rem .8rem;
 }
 
 .tile-title {
   position: relative;
   font-size: 1rem;
   font-weight: 600;
-  /* The gap above the title, separating it from the image -- .tile-kind
-     below sits flush against the title with no gap of its own. */
-  margin: .4em 0 0;
-  /* Long titles crop with an ellipsis rather than wrapping or
-     widening the tile. */
-  white-space: nowrap;
+  line-height: 1.3;
+  /* The gap above the title, separating it from the image. */
+  margin: .45em 0 0;
+  /* Wrap to two lines, then ellipsis -- long titles (publications
+     especially) were hard-cropped to a single line before 2026-09-08. */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
   overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: break-word;
 }
 
 /* The grid-badge replacement -- see gallery-grid.html and CLAUDE.md's
@@ -1160,9 +1165,9 @@ body.drawer-open {
    screen reader gets the real words rather than risking an all-caps
    string being read as an acronym letter by letter. */
 .tile-kind {
-  /* Sits flush against the title above it -- no gap of its own; see
-     .tile-title's own margin comment. */
-  margin: 0;
+  /* A hairline gap under the title -- it can now be two lines, so
+     flush-against looked cramped. */
+  margin: .15rem 0 0;
   line-height: 1.2;
   font-size: .7rem;
   letter-spacing: .06em;
@@ -1179,8 +1184,14 @@ body.drawer-open {
    either way, unlike a viewport media query. Below that width, the
    whole caption disappears -- never a middle state with an empty bar
    and no text. .gallery-item (container-type set above) is the
-   nearest container its own descendants query against. */
-@container (max-width: 10rem) {
+   nearest container its own descendants query against.
+
+   8rem, not the original 10rem: at 10rem the caption vanished on every
+   desktop tile of the old 5-column grid AND on the 2-up mobile grid.
+   8rem hides it only on the genuinely tiny tiles -- art's 3-up mobile
+   grid (~6rem) and the landscape-phone many-column grid -- while the
+   2-up mobile grid (~8-10rem) and the 4-up desktop grid keep it. */
+@container (max-width: 8rem) {
   .tile-caption {
     display: none;
   }
