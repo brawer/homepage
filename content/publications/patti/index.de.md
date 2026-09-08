@@ -5,7 +5,7 @@ original_title: "Patti: Compiling Unification-Based Finite-State Automata into M
 original_language: "en"
 date: 1998-01-01
 publishDate: 2026-09-08
-tags: ["NLP"]
+tags: ["NLP", "Apple"]
 kind: "thesis"
 kind_label: "Diplomarbeit"
 teaser_is_document: true
