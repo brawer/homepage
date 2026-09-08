@@ -24,6 +24,11 @@ other = "Lecture Series"
 # kind_label usually mirrors this; JP-style overrides are still possible.
 [kind_disclosure]
 other = "Defensive Disclosure"
+# A patent APPLICATION that published but was never granted (kind:
+# "patent_application"). Distinct from kind: "patent" (a granted
+# family) and kind: "disclosure" (a deliberate defensive publication).
+[kind_patent_application]
+other = "Patent Application"
 
 [download_pdf]
 other = "Download PDF"
@@ -54,6 +59,8 @@ other = "Assigned to:"
 # section. Superseded the old singular patent_number/patent_status keys.
 [patent_family_label]
 other = "Patent family:"
+[patent_application_label]
+other = "Application:"
 # patent_family entries store a WIPO ST.3 office code (mostly ISO 3166
 # alpha-2: US, JP, KR, CN, DE, CA, BR; plus EP, WO). Add a
 # patent_office_<CODE> pair to BOTH i18n files whenever a new code
