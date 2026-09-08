@@ -334,13 +334,19 @@ verified against source for patents), `venue`, `abstract`.
     the time), e.g. `"Google LLC"` — official current name (check
     patents.google.com), same string in both languages (a fact, not
     display text) — shown on the detail page as "Assigned to: …".
-    Both the grid tile's `kind_label` and the detail page's badge read
-    **"Patent Family" / "Patentfamilie"** — the former from front
-    matter (`kind_label:` in every patent bundle), the latter from the
-    `kind_patent` i18n key (changed from "Patent" 2026-09-07 so the two
-    match, same as every other `kind`). An earlier 2026-09-07 draft
-    used the assignee short name ("Google", "Xerox PARC") for the
-    label — Sascha changed it once he saw it rendered.
+  - **`kind_label` follows the family size** (2026-09-08): a
+    single-member family is **`"Patent"` / `"Patent"`** (yes, "Patent"
+    in German too), multiple members are **`"Patent Family"` /
+    `"Patentfamilie"`**. Set per file in front matter — keep it in
+    sync if a family gains/loses a member. Unlike every other `kind`,
+    `"patent"` and `"patent_application"` have **no `kind_<kind>` i18n
+    key**: the detail-page badge reads `.Params.kind_label` directly
+    (so badge == grid tile), and the detail metadata block's heading is
+    template-driven off `len .Params.patent_family` — `patent_one_label`
+    ("Patent:"), `patent_family_label` ("Patent family:"),
+    `patent_application_label` ("Application:"). Earlier 2026-09-07
+    drafts used the assignee short name, then a flat "Patent Family"
+    for every patent — Sascha refined both once rendered.
   - **`patent_family`** (added 2026-09-07, replacing the old singular
     `patent_number` / `patent_status`) — **one publications page per
     invention**, not per patent number. Most of Sascha's ~18 patent

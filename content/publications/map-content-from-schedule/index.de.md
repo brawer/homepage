@@ -4,7 +4,7 @@ date: 2013-01-08
 publishDate: 2026-09-08
 tags: ["Geo", "Google"]
 kind: "patent"
-kind_label: "Patent Family"
+kind_label: "Patentfamilie"
 teaser_is_document: true
 authors: ["Zhou Bailiang", "Sascha Brawer"]
 assignee: "Google LLC"

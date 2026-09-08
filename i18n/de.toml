@@ -2,12 +2,12 @@
 [dash_separator]
 other = "–"
 
+# siehe i18n/en.toml -- "patent" und "patent_application" bewusst ohne
+# Schlüssel (Badge kommt aus dem per-Datei-`kind_label`).
 [kind_talk]
 other = "Vortrag"
 [kind_paper]
 other = "Aufsatz"
-[kind_patent]
-other = "Patentfamilie"
 [kind_book]
 other = "Buch"
 [kind_lecture]
@@ -15,9 +15,6 @@ other = "Vorlesungsreihe"
 # siehe i18n/en.toml
 [kind_disclosure]
 other = "Sperrveröffentlichung"
-# siehe i18n/en.toml
-[kind_patent_application]
-other = "Patentanmeldung"
 
 [download_pdf]
 other = "PDF herunterladen"
@@ -44,6 +41,8 @@ other = "Zugewiesen an:"
 # siehe i18n/en.toml
 [patent_family_label]
 other = "Patentfamilie:"
+[patent_one_label]
+other = "Patent:"
 [patent_application_label]
 other = "Anmeldung:"
 # siehe i18n/en.toml

@@ -4,7 +4,7 @@ date: 2003-12-18
 publishDate: 2026-09-07
 tags: ["Xerox PARC"]
 kind: "patent"
-kind_label: "Patent Family"
+kind_label: "Patent"
 teaser_is_document: true
 authors: ["Mark Stefik", "Sascha Brawer"]
 assignee: "Xerox Corporation"

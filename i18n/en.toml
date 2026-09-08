@@ -8,12 +8,15 @@
 [dash_separator]
 other = "—"
 
+# kind_<kind> for the byline badge / grid tile. NOTE: kind "patent"
+# and kind "patent_application" have NO key here — their badge is the
+# per-file `kind_label` instead ("Patent" for a single-member family,
+# "Patent Family" for multiple, "Patent Application" for an unpursued
+# one). See CLAUDE.md's Publications section.
 [kind_talk]
 other = "Talk"
 [kind_paper]
 other = "Paper"
-[kind_patent]
-other = "Patent Family"
 [kind_book]
 other = "Book"
 [kind_lecture]
@@ -24,11 +27,6 @@ other = "Lecture Series"
 # kind_label usually mirrors this; JP-style overrides are still possible.
 [kind_disclosure]
 other = "Defensive Disclosure"
-# A patent APPLICATION that published but was never granted (kind:
-# "patent_application"). Distinct from kind: "patent" (a granted
-# family) and kind: "disclosure" (a deliberate defensive publication).
-[kind_patent_application]
-other = "Patent Application"
 
 [download_pdf]
 other = "Download PDF"
@@ -59,6 +57,8 @@ other = "Assigned to:"
 # section. Superseded the old singular patent_number/patent_status keys.
 [patent_family_label]
 other = "Patent family:"
+[patent_one_label]
+other = "Patent:"
 [patent_application_label]
 other = "Application:"
 # patent_family entries store a WIPO ST.3 office code (mostly ISO 3166

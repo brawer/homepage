@@ -4,7 +4,7 @@ date: 2013-07-09
 publishDate: 2026-09-08
 tags: ["Geo", "Google"]
 kind: "patent"
-kind_label: "Patent Family"
+kind_label: "Patent"
 teaser_is_document: true
 authors: ["Seth Pensack-Rinehart", "Gavin Reaney", "Yatin Chawathe", "Nicholas Lee", "Sascha Brawer", "Paul Messmer"]
 assignee: "Google LLC"
