@@ -45,6 +45,10 @@
     </div>
   {{ end }}
   <h1>{{ .Title }}</h1>
+  {{/* Optional second, explanatory half of a long paper title, kept as
+       its own field so it renders smaller than the h1 — see CLAUDE.md's
+       Publications section. */}}
+  {{ with .Params.subtitle }}<p class="subtitle">{{ . }}</p>{{ end }}
 
   {{/* Fixed page order per NAVIGATION_DESIGN_SPEC.md §6: tag chips
        come right after the title, before the rest of the metadata

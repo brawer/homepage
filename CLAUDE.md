@@ -398,6 +398,32 @@ verified against source for patents), `venue`, `abstract`.
   is wrapped in `<span lang="{{original_language}}">` — correct
   per-span language tagging for assistive tech/browsers, independent
   of which name is shown in the label.
+- `subtitle` (optional, added 2026-09-08 for
+  `context-free-grammar-for-german`) — the explanatory second half of a
+  long paper title, kept out of `title` so it can render smaller (a
+  `<p class="subtitle">` under the `<h1>` in
+  `layouts/publications/single.html`; minimal pre-/design CSS, real
+  treatment deferred). Output as plain text, not `markdownify` — it's
+  title-like, same as `.Title`/`degree`. Per-language like `title`: in
+  practice only the file whose paper actually has a subtitle carries it
+  (the EN TaCoS paper does; the DE KI-94 original doesn't).
+- **One page per *work*, not per published version** (2026-09-08,
+  `context-free-grammar-for-german`) — same principle as patents' "one
+  page per invention". That paper exists twice: the German original
+  (`Mechanismen einer kontextfreien Grammatik für das Deutsche`, KI-94
+  student track, 1994) and a condensed English version (`Treating
+  German with a Provably Context-Free Grammar`, TaCoS 5, 1995 — the
+  English PDF itself says it "is principally an abbreviated version of
+  the German original"). One bundle, both PDFs as resources. Each
+  language page **leads with the paper written in that language** — its
+  own `title`, `abstract` (verbatim from that paper), `venue`, `pdf`,
+  and `pdf_preview`. So `venue`/`pdf`/`pdf_preview` deliberately differ
+  between the two language files here, unlike the "same filename both
+  languages" convention below. `date` is the first publication (1994,
+  KI-94) regardless of which page leads with which paper. The EN file
+  still carries `original_title`/`original_language: de` (the work was
+  first published in German); the DE file doesn't need it. Each body
+  states the relationship and links the other PDF as a bundle resource.
 - Single-PDF items use a `pdf` field. Multi-resource items (e.g. the
   `programming-techniques-in-cl` lecture series with dozens of PDFs)
   have no `pdf` field — links go directly in the Markdown body as
@@ -425,7 +451,10 @@ verified against source for patents), `venue`, `abstract`.
   at build time, and there's no Hugo-native way to rasterize a PDF
   page even if it were (Hugo's image pipeline only processes
   already-raster formats). Same filename in both language front-matter
-  files, like `image`/`pdf`.
+  files, like `image`/`pdf` — *except* when the two language pages
+  genuinely lead with different documents (see the "one page per work"
+  note above: `context-free-grammar-for-german` uses
+  `pdf-preview-en.webp` / `pdf-preview-de.webp`).
 
 ## Projects bundle front matter
 
