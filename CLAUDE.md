@@ -262,12 +262,20 @@ the physical top-to-bottom measurement regardless of orientation),
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
-`"paper"`, `"patent"`, `"textbook"`, `"lecture"`, `"disclosure"`,
-`"patent_application"` — lowercase, same value in every language,
+`"paper"`, `"patent"`, `"textbook"`, `"lecture"`, `"thesis"`,
+`"disclosure"`, `"patent_application"` — lowercase, same value in
+every language,
 since it's an internal value templates branch on, not display text;
 translate it for display via i18n strings, e.g.
 `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the front
 matter value itself.
+  - `"thesis"` (2026-09-08, `patti`) — a Diplomarbeit. i18n
+    `kind_thesis` = "Diploma Thesis" / "Diplomarbeit" (deliberately not
+    "Thesis", which reads as a PhD, nor "Master's Thesis", since the
+    German Diplom isn't literally an MSc/MA). No extra fields: the
+    badge + `venue` (institution) carry it. A `degree` field was tried
+    (2026-09-08) and removed same day — spelling out "Diplom-Linguist …
+    minor Computer Science" read as CV boilerplate; don't re-add it.
   - `"disclosure"` (2026-09-07, `osmviews-method`) — a **deliberate**
     defensive disclosure / prior-art publication (Technical Disclosure
     Commons); i18n `kind_disclosure` = "Defensive Disclosure" /
@@ -328,8 +336,7 @@ verified against source for patents), `venue`, `abstract`.
   found) but it's worth rechecking whenever new content is added to a
   markdownified field.
 
-- Type-specific optional fields: `degree` (thesis); `assignee` +
-  `patent_family` (patent).
+- Type-specific optional fields: `assignee` + `patent_family` (patent).
   - `assignee` — the entity the patent was assigned to (the employer at
     the time), e.g. `"Google LLC"` — official current name (check
     patents.google.com), same string in both languages (a fact, not
@@ -404,9 +411,11 @@ verified against source for patents), `venue`, `abstract`.
   `<p class="subtitle">` under the `<h1>` in
   `layouts/publications/single.html`; minimal pre-/design CSS, real
   treatment deferred). Output as plain text, not `markdownify` — it's
-  title-like, same as `.Title`/`degree`. Per-language like `title`: in
-  practice only the file whose paper actually has a subtitle carries it
-  (the EN TaCoS paper does; the DE KI-94 original doesn't).
+  title-like, same as `.Title`. Per-language like `title`: carried by
+  whichever language file the underlying document actually gives a
+  subtitle in — `context-free-grammar-for-german` only on the EN file
+  (the TaCoS paper has one, the KI-94 original doesn't); `patti` on
+  both (its English subtitle, translated for the DE page).
 - **One page per *work*, not per published version** (2026-09-08,
   `context-free-grammar-for-german`) — same principle as patents' "one
   page per invention". That paper exists twice: the German original

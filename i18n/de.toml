@@ -14,6 +14,9 @@ other = "Paper"
 other = "Lehrbuch"
 [kind_lecture]
 other = "Vorlesungsreihe"
+# siehe i18n/en.toml -- "Diplomarbeit" ist der exakte deutsche Begriff.
+[kind_thesis]
+other = "Diplomarbeit"
 # siehe i18n/en.toml
 [kind_disclosure]
 other = "Sperrveröffentlichung"

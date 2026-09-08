@@ -21,6 +21,11 @@ other = "Paper"
 other = "Textbook"
 [kind_lecture]
 other = "Lecture Series"
+# A Diplomarbeit (German "Diplom" degree, roughly Master's-level) —
+# "Diploma Thesis", not plain "Thesis" (reads as PhD) and not
+# "Master's Thesis" (the Diplom isn't literally an MSc/MA).
+[kind_thesis]
+other = "Diploma Thesis"
 # A defensive disclosure / prior-art publication (e.g. on Technical
 # Disclosure Commons) — a written technical document, but not a
 # peer-reviewed paper and not a patent, so it gets its own kind.

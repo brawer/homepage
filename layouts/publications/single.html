@@ -140,10 +140,6 @@
         {{ end }}
       {{ end }}
     </div>
-  {{ else if .Params.degree }}
-  <dl class="fields">
-    <dt>{{ .Params.degree }}</dt><dd></dd>
-  </dl>
   {{ end }}
 
   {{ with .Params.abstract }}<p>{{ . | markdownify }}</p>{{ end }}
