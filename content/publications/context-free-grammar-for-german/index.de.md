@@ -4,7 +4,7 @@ date: 1994-09-18
 publishDate: 2026-09-08
 tags: ["NLP", "Prolog"]
 kind: "paper"
-kind_label: "Aufsatz"
+kind_label: "Paper"
 teaser_is_document: true
 authors: ["Sascha Brawer"]
 venue: '18\. Deutsche Jahrestagung für Künstliche Intelligenz (KI-94), studentischer Beitrag'

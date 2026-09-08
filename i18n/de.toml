@@ -7,7 +7,9 @@ other = "–"
 [kind_talk]
 other = "Vortrag"
 [kind_paper]
-other = "Aufsatz"
+# "Paper" -- the idiomatic term for a conference paper in German CS;
+# "Aufsatz" reads as a school essay / humanities article.
+other = "Paper"
 [kind_textbook]
 other = "Lehrbuch"
 [kind_lecture]
