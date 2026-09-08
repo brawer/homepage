@@ -25,12 +25,17 @@ abstract: >
   Subkategorisierung, Fernabhängigkeiten und freie Wortstellung
   bewältigt.
 image: "teaser.webp"
-pdf_preview: "pdf-preview.webp"
-pdf: "context-free-grammar-for-german.pdf"
+pdf_preview: "pdf-preview-de.webp"
+pdf: "mechanismen-kontextfreie-grammatik.pdf"
 ---
-Entstanden aus einer dreimonatigen Mitarbeit 1993 am
-Text-to-Speech-System SVOX, das von der Gruppe für Sprachverarbeitung
-an der ETH Zürich entwickelt wurde; meine Aufgabe war es, dessen
-Grammatik und Parser zu überarbeiten. Vorgestellt im studentischen
-Programm der 18. Deutschen Jahrestagung für Künstliche Intelligenz
-(KI-94) in Saarbrücken, wo ich damals studierte.
+Ursprünglich als studentischer Beitrag zur 18. Deutschen Jahrestagung
+für Künstliche Intelligenz (KI-94) in Saarbrücken erschienen. Eine
+gekürzte englische Fassung,
+[*Treating German with a Provably Context-Free Grammar*](treating-german-context-free-grammar.pdf),
+wurde 1995 an der 5. Tagung der Computerlinguistik-Studenten (TaCoS)
+vorgestellt.
+
+Beschrieben werden die Grammatik und der Parser des
+Text-to-Speech-Systems SVOX, das von der Gruppe für Sprachverarbeitung
+an der ETH Zürich entwickelt wurde; meine Aufgabe war es, während
+dreier Monate 1993 beide zu überarbeiten.

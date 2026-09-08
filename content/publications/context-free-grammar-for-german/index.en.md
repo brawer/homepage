@@ -1,5 +1,6 @@
 ---
-title: "Mechanisms of a Context-Free Grammar for German"
+title: "Treating German with a Provably Context-Free Grammar"
+subtitle: "Coping with Subcategorization, Unbounded Dependencies and Partially Free Word Order"
 original_title: "Mechanismen einer kontextfreien Grammatik für das Deutsche"
 original_language: "de"
 date: 1994-09-18
@@ -9,27 +10,28 @@ kind: "paper"
 kind_label: "Paper"
 teaser_is_document: true
 authors: ["Sascha Brawer"]
-venue: "18th German Conference on Artificial Intelligence (KI-94), student track"
+venue: "5th Conference of Computational Linguistics Students (TaCoS), Saarbrücken (1995)"
 abstract: >
-  This paper presents a grammar for a German-language text-to-speech
-  system. Speech synthesis puts a premium on short processing times,
-  yet an overly shallow linguistic analysis cannot produce a
-  high-quality speech signal — at least some syntactic processing pays
-  off. Computational linguistics mostly relies on unification grammars;
-  to save computation time, the system discussed here restricts
-  unification to atomic terms. It is shown informally that this
-  restriction immediately confines the grammar to the class of
-  context-free languages. Contrary to a widespread view, a context-free
-  grammar can nonetheless handle more complex linguistic phenomena. The
-  main part of the paper shows mechanisms by which even a grammar
-  limited to atomic unification can treat coordination,
-  subcategorization, long-distance dependencies, and free word order.
+  Several applications of natural language processing need short
+  processing times while retaining a certain degree of linguistic
+  adequacy. This article describes some techniques employed in a
+  text-to-speech synthesis system for German which allow for the
+  parsing of sentences containing linguistic phenomena such as
+  unbounded dependencies, subcategorization, and free word order in the
+  German Mittelfeld. The grammar is restricted to the unification of
+  atomic terms only, and it is shown that every grammar using such a
+  formalism is equivalent to a context-free grammar.
 image: "teaser.webp"
-pdf_preview: "pdf-preview.webp"
-pdf: "context-free-grammar-for-german.pdf"
+pdf_preview: "pdf-preview-en.webp"
+pdf: "treating-german-context-free-grammar.pdf"
 ---
-Written about work on the SVOX text-to-speech system, developed by the
-Speech Processing Group at ETH Zürich, where I spent three months in
-1993 reworking its grammar and parser. Presented in the student track
-of the 18th German Conference on Artificial Intelligence (KI-94) in
-Saarbrücken, where I was a student at the time.
+A condensed English version of the German original,
+[*Mechanismen einer kontextfreien Grammatik für das Deutsche*](mechanismen-kontextfreie-grammatik.pdf),
+which first appeared in the student track of the 18th German Conference
+on Artificial Intelligence (KI-94). This version was presented at the
+5th Conference of Computational Linguistics Students (TaCoS) in
+Saarbrücken.
+
+The work describes the grammar and parser of the SVOX text-to-speech
+system, developed by the Speech Processing Group at ETH Zürich, where I
+spent three months in 1993 reworking both.
