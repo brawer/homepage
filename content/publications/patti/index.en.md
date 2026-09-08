@@ -28,7 +28,9 @@ pdf_preview: "pdf-preview.webp"
 pdf: "patti.pdf"
 ---
 My diploma thesis at Saarland University, supervised by Hans Uszkoreit
-and Manfred Pinkal.
+and Manfred Pinkal. It describes work I did during an internship at
+[Apple’s Advanced Technology Group](https://en.wikipedia.org/wiki/Apple_Advanced_Technology_Group)
+in Cupertino.
 
 I presented the core ideas as a talk in September 1999 — at the IBM
 T. J. Watson Research Center, Lucent Bell Labs, Xerox PARC, Saarland

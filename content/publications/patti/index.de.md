@@ -33,7 +33,9 @@ pdf_preview: "pdf-preview.webp"
 pdf: "patti.pdf"
 ---
 Meine Diplomarbeit an der Universität des Saarlandes, betreut von Hans
-Uszkoreit und Manfred Pinkal.
+Uszkoreit und Manfred Pinkal. Sie beschreibt die Arbeit, die ich
+während eines Praktikums bei [Apples Advanced Technology Group](https://en.wikipedia.org/wiki/Apple_Advanced_Technology_Group)
+in Cupertino geleistet habe.
 
 Die Kernideen habe ich im September 1999 als Vortrag vorgestellt – am
 IBM T. J. Watson Research Center, bei den Lucent Bell Labs, am Xerox
