@@ -68,7 +68,12 @@
     <p class="original-title">{{ i18n "original_title_label" (dict "Language" $langName) }} <span lang="{{ $.Params.original_language }}">{{ . }}</span></p>
   {{ end }}
   <p class="byline">
-    <span class="kind-badge">{{ i18n (printf "kind_%s" .Params.kind) }}</span>
+    {{/* Patents/applications: the badge is the per-file kind_label
+         ("Patent" for a single-member family, "Patent Family" /
+         "Patentfamilie" for multiple, "Patent Application" for an
+         unpursued one) — same string the grid tile shows. Other kinds
+         come from the kind_<kind> i18n key. */}}
+    <span class="kind-badge">{{ if in (slice "patent" "patent_application") .Params.kind }}{{ .Params.kind_label }}{{ else }}{{ i18n (printf "kind_%s" .Params.kind) }}{{ end }}</span>
     {{ with .Params.authors }}· {{ delimit . ", " }}{{ end }}
     {{/* venue may contain inline Markdown links (e.g. KOGIS/swisstopo) —
          must go through markdownify, not be output as a raw string. */}}
@@ -88,9 +93,11 @@
     {{ $fam := .Params.patent_family }}
     {{ $active := where $fam "status" "active" }}
     {{ $isApp := eq .Params.kind "patent_application" }}
+    {{ $blockLabel := "patent_family_label" }}
+    {{ if $isApp }}{{ $blockLabel = "patent_application_label" }}{{ else if eq (len $fam) 1 }}{{ $blockLabel = "patent_one_label" }}{{ end }}
     <div class="patent-block">
       {{ with .Params.assignee }}<p><strong>{{ i18n "assignee_label" }}</strong> {{ . }}</p>{{ end }}
-      <p><strong>{{ i18n (cond $isApp "patent_application_label" "patent_family_label") }}</strong></p>
+      <p><strong>{{ i18n $blockLabel }}</strong></p>
       <ul class="patent-family">
         {{ range $fam }}
           {{/* "US 10,133,737 B2" / "KR 10-1890835 B1" /

@@ -4,7 +4,7 @@ date: 2012-10-17
 publishDate: 2026-09-08
 tags: ["Geo", "Google"]
 kind: "patent"
-kind_label: "Patent Family"
+kind_label: "Patent"
 teaser_is_document: true
 authors: ["Sascha Brawer", "Andrew Lookingbill", "Brian Brewington", "Michael Goss"]
 assignee: "Google LLC"

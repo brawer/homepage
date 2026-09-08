@@ -84,7 +84,11 @@
       {{ $curPage := $ }}
       {{ range . }}
         {{ with $curPage.Site.GetPage (printf "/publications/%s" .) }}
-          <li><a href="{{ .RelPermalink }}">{{ i18n (printf "kind_%s" .Params.kind) }}: {{ .Title }}</a></li>
+          {{/* Patents/applications use their per-file kind_label (see
+               publications/single.html's byline); other kinds the
+               kind_<kind> i18n key. */}}
+          {{ $k := cond (in (slice "patent" "patent_application") .Params.kind) .Params.kind_label (i18n (printf "kind_%s" .Params.kind)) }}
+          <li><a href="{{ .RelPermalink }}">{{ $k }}: {{ .Title }}</a></li>
         {{ end }}
       {{ end }}
     </ul>

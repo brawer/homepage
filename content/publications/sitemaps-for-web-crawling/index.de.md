@@ -4,7 +4,7 @@ date: 2005-05-31
 publishDate: 2026-09-07
 tags: ["Google", "Quelloffen"]
 kind: "patent"
-kind_label: "Patent Family"
+kind_label: "Patentfamilie"
 teaser_is_document: true
 authors: ["Sascha Brawer", "Maximilian Ibel", "Ralph M. Keller", "Narayanan Shivakumar"]
 assignee: "Google LLC"
