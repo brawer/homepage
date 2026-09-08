@@ -5,8 +5,8 @@ original_language: "de"
 date: 2003-10-01
 publishDate: 2026-08-23
 tags: ["Geo"]
-kind: "book"
-kind_label: "Book"
+kind: "textbook"
+kind_label: "Textbook"
 teaser_is_document: true
 authors: ["Joseph Dorfschmid", "Sascha Brawer"]
 venue: "[COGIS](https://www.swisstopo.admin.ch/en/coordination-geo-information-and-services-cogis), [swisstopo](https://www.swisstopo.admin.ch/en/)"

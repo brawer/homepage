@@ -167,7 +167,7 @@ WebP, manually curated near-square crop for the grid, when the
 
 **Publications bundle** (`content/publications/<slug>/index.<lang>.md`):
 `title`, `date`, `publishDate`, `tags`, `kind` (`talk` / `paper` / `patent`
-/ `book` / `lecture` — lowercase, needs an i18n-translated display label,
+/ `textbook` / `lecture` — lowercase, needs an i18n-translated display label,
 see `CLAUDE.md`), `authors` (list), `venue` (may contain inline
 Markdown links — render through `markdownify`, don't output as a raw
 string), `abstract`, `image` (WebP
