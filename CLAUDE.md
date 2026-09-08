@@ -262,12 +262,18 @@ the physical top-to-bottom measurement regardless of orientation),
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
-`"paper"`, `"patent"`, `"textbook"`, `"lecture"`, `"disclosure"`,
-`"patent_application"` — lowercase, same value in every language,
+`"paper"`, `"patent"`, `"textbook"`, `"lecture"`, `"thesis"`,
+`"disclosure"`, `"patent_application"` — lowercase, same value in
+every language,
 since it's an internal value templates branch on, not display text;
 translate it for display via i18n strings, e.g.
 `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the front
 matter value itself.
+  - `"thesis"` (2026-09-08, `patti`) — a Diplomarbeit. i18n
+    `kind_thesis` = "Diploma Thesis" / "Diplomarbeit" (deliberately not
+    "Thesis", which reads as a PhD, nor "Master's Thesis", since the
+    German Diplom isn't literally an MSc/MA). Uses the `degree`
+    type-specific field.
   - `"disclosure"` (2026-09-07, `osmviews-method`) — a **deliberate**
     defensive disclosure / prior-art publication (Technical Disclosure
     Commons); i18n `kind_disclosure` = "Defensive Disclosure" /
