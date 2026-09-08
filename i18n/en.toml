@@ -17,8 +17,8 @@ other = "—"
 other = "Talk"
 [kind_paper]
 other = "Paper"
-[kind_book]
-other = "Book"
+[kind_textbook]
+other = "Textbook"
 [kind_lecture]
 other = "Lecture Series"
 # A defensive disclosure / prior-art publication (e.g. on Technical

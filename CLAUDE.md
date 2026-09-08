@@ -262,7 +262,7 @@ the physical top-to-bottom measurement regardless of orientation),
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
-`"paper"`, `"patent"`, `"book"`, `"lecture"`, `"disclosure"`,
+`"paper"`, `"patent"`, `"textbook"`, `"lecture"`, `"disclosure"`,
 `"patent_application"` — lowercase, same value in every language,
 since it's an internal value templates branch on, not display text;
 translate it for display via i18n strings, e.g.

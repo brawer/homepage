@@ -8,8 +8,8 @@ other = "–"
 other = "Vortrag"
 [kind_paper]
 other = "Aufsatz"
-[kind_book]
-other = "Buch"
+[kind_textbook]
+other = "Lehrbuch"
 [kind_lecture]
 other = "Vorlesungsreihe"
 # siehe i18n/en.toml

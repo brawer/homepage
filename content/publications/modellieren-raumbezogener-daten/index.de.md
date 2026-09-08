@@ -3,8 +3,8 @@ title: "Modellieren raumbezogener Daten: Eine Einführung unter Berücksichtigun
 date: 2003-10-01
 publishDate: 2026-08-23
 tags: ["Geo"]
-kind: "book"
-kind_label: "Buch"
+kind: "textbook"
+kind_label: "Lehrbuch"
 teaser_is_document: true
 authors: ["Joseph Dorfschmid", "Sascha Brawer"]
 venue: "[KOGIS](https://www.swisstopo.admin.ch/de/koordination-geo-information-und-services-kogis), [swisstopo](https://www.swisstopo.admin.ch/de)"
