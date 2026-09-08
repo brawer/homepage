@@ -87,14 +87,16 @@
          expiry among the still-active members. */}}
     {{ $fam := .Params.patent_family }}
     {{ $active := where $fam "status" "active" }}
+    {{ $isApp := eq .Params.kind "patent_application" }}
     <div class="patent-block">
       {{ with .Params.assignee }}<p><strong>{{ i18n "assignee_label" }}</strong> {{ . }}</p>{{ end }}
-      <p><strong>{{ i18n "patent_family_label" }}</strong></p>
+      <p><strong>{{ i18n (cond $isApp "patent_application_label" "patent_family_label") }}</strong></p>
       <ul class="patent-family">
         {{ range $fam }}
-          {{/* "US 10,133,737 B2" / "KR 10-1890835 B1" -> the compact form
-               Google Patents uses in its URLs. */}}
-          {{ $pn := .number | replaceRE `[ ,\-]` "" }}
+          {{/* "US 10,133,737 B2" / "KR 10-1890835 B1" /
+               "US 2015/0088997 A1" -> the compact form Google Patents
+               uses in its URLs. */}}
+          {{ $pn := .number | replaceRE `[ ,/-]` "" }}
           {{ $meta := "" }}
           {{ if .expires }}{{ $meta = (time .expires).Format "2006" }}{{ end }}
           <li>
@@ -107,11 +109,24 @@
           </li>
         {{ end }}
       </ul>
-      {{ $pdYear := "" }}
-      {{ $pool := cond (gt (len $active) 0) $active $fam }}
-      {{ range $pool }}{{ with .expires }}{{ $y := (time .).Format "2006" }}{{ if gt $y $pdYear }}{{ $pdYear = $y }}{{ end }}{{ end }}{{ end }}
-      {{ with $pdYear }}
-      <p class="patent-pd">{{ i18n (cond (gt (len $active) 0) "patent_pd_from" "patent_pd_since") (dict "Year" .) }}</p>
+      {{/* Headline: an abandoned application has been free to use since
+           it published (never granted, nothing to expire) -- same
+           "since {year}" line as an expired patent; the badge and the
+           "application abandoned" member line already say it never
+           granted. A granted family uses "since {latest expiry}" if all
+           dead, else "from {latest expiry among the still-active
+           members}". */}}
+      {{ if $isApp }}
+        {{ $pubYear := "" }}
+        {{ range $fam }}{{ with .published }}{{ $pubYear = (time .).Format "2006" }}{{ end }}{{ end }}
+        {{ with $pubYear }}<p class="patent-pd">{{ i18n "patent_pd_since" (dict "Year" .) }}</p>{{ end }}
+      {{ else }}
+        {{ $pdYear := "" }}
+        {{ $pool := cond (gt (len $active) 0) $active $fam }}
+        {{ range $pool }}{{ with .expires }}{{ $y := (time .).Format "2006" }}{{ if gt $y $pdYear }}{{ $pdYear = $y }}{{ end }}{{ end }}{{ end }}
+        {{ with $pdYear }}
+        <p class="patent-pd">{{ i18n (cond (gt (len $active) 0) "patent_pd_from" "patent_pd_since") (dict "Year" .) }}</p>
+        {{ end }}
       {{ end }}
     </div>
   {{ else if .Params.degree }}

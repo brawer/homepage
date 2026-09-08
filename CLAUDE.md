@@ -262,16 +262,28 @@ the physical top-to-bottom measurement regardless of orientation),
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
-`"paper"`, `"patent"`, `"book"`, `"lecture"`, `"disclosure"` —
-lowercase, same value in every language, since it's an internal value
-templates branch on, not display text; translate it for display via
-i18n strings, e.g. `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by
-changing the front matter value itself. `"disclosure"` added 2026-09-07
-for `osmviews-method`, a defensive disclosure / prior-art publication
-on Technical Disclosure Commons — not a peer-reviewed paper, not a
-patent; its i18n `kind_disclosure` is "Defensive Disclosure" /
-"Sperrveröffentlichung". No template branches on specific `kind`
-values, so a new one only needs the i18n pair in both files),
+`"paper"`, `"patent"`, `"book"`, `"lecture"`, `"disclosure"`,
+`"patent_application"` — lowercase, same value in every language,
+since it's an internal value templates branch on, not display text;
+translate it for display via i18n strings, e.g.
+`{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the front
+matter value itself.
+  - `"disclosure"` (2026-09-07, `osmviews-method`) — a **deliberate**
+    defensive disclosure / prior-art publication (Technical Disclosure
+    Commons); i18n `kind_disclosure` = "Defensive Disclosure" /
+    "Sperrveröffentlichung".
+  - `"patent_application"` (2026-09-08,
+    `cost-of-workplace-activities`) — a patent **application** that
+    published but was **never granted** (filed, published, not pursued
+    to grant — distinct from a deliberate disclosure). Uses the
+    `patent_family` schema with a single member `{status: "abandoned",
+    published: "<date>"}` (no `granted`/`expires`); the template's
+    `$isApp` branch swaps the "Patent family:" label for "Application:"
+    / "Anmeldung:" and drives the headline off `published` instead of
+    an expiry — reusing `patent_pd_since` ("Free for public use since
+    {published year}."), since the badge and the "application
+    abandoned" member line already say it never granted. i18n
+    `kind_patent_application` = "Patent Application" / "Patentanmeldung".),
 `kind_label` (grid-badge display text, see
 "Templates" below — usually just the translated `kind`, e.g. `"Talk"`/
 `"Vortrag"`, but not always: `JP6511221B2` uses `"Japanese Patent"`/
