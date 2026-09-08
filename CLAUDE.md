@@ -272,8 +272,11 @@ matter value itself.
   - `"thesis"` (2026-09-08, `patti`) — a Diplomarbeit. i18n
     `kind_thesis` = "Diploma Thesis" / "Diplomarbeit" (deliberately not
     "Thesis", which reads as a PhD, nor "Master's Thesis", since the
-    German Diplom isn't literally an MSc/MA). Uses the `degree`
-    type-specific field.
+    German Diplom isn't literally an MSc/MA). The `degree` field is
+    available but `patti` deliberately doesn't set it — the badge +
+    `venue` (institution) already carry it, and spelling out
+    "Diplom-Linguist … minor Computer Science" read as CV boilerplate
+    on Sascha's call.
   - `"disclosure"` (2026-09-07, `osmviews-method`) — a **deliberate**
     defensive disclosure / prior-art publication (Technical Disclosure
     Commons); i18n `kind_disclosure` = "Defensive Disclosure" /

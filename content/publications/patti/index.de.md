@@ -11,7 +11,6 @@ kind_label: "Diplomarbeit"
 teaser_is_document: true
 authors: ["Sascha Brawer"]
 venue: "[Universität des Saarlandes](https://www.coli.uni-saarland.de/index.php?lang=en), Computerlinguistik"
-degree: "Diplom-Linguist (Computerlinguistik), Nebenfach Informatik"
 abstract: >
   Ein Compiler, der einen unifikationsbasierten linguistischen
   Formalismus – nichtdeterministische endliche Automaten, deren

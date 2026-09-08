@@ -9,7 +9,6 @@ kind_label: "Diploma Thesis"
 teaser_is_document: true
 authors: ["Sascha Brawer"]
 venue: "[Saarland University](https://www.coli.uni-saarland.de/index.php?lang=en), Computational Linguistics"
-degree: "Diploma (Diplom-Linguist) in Computational Linguistics, minor Computer Science"
 abstract: >
   A compiler that turns a unification-based linguistic formalism —
   non-deterministic finite-state automata whose transitions are labeled
