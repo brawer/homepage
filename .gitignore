@@ -5,3 +5,8 @@
 /public/
 /resources/
 .hugo_build.lock
+
+# Commercial Lucida Bright TTFs (B&H), kept locally only to embed into
+# the KI-94/TaCoS paper PDF (the font's own fsType permits embedding) —
+# never redistribute the standalone files. See that bundle's history.
+/lucida/
