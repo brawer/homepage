@@ -1220,7 +1220,7 @@ body.drawer-open {
 /* Publication subtitle — the explanatory second half of a long paper
    title, its own field so it can sit below the h1 at a smaller size
    (see CLAUDE.md's Publications section). Minimal pre-/design baseline,
-   like .byline / .fields; real treatment is /design mode's call. */
+   like .byline; real treatment is /design mode's call. */
 .subtitle {
   margin: .15rem 0 .6rem;
   font-size: 1.2rem;
@@ -1229,25 +1229,9 @@ body.drawer-open {
   opacity: .85;
 }
 
-.fields {
-  font-size: .9rem;
-  opacity: .8;
-}
-
-.fields dt {
-  font-weight: bold;
-  float: left;
-  clear: left;
-  margin-right: .5rem;
-}
-
-.fields dd {
-  margin: 0 0 .3rem 0;
-}
-
 /* Patent invention page: assignee + patent family list + the
-   public-domain headline. Pre-/design, kept as minimal as .fields /
-   .byline above. */
+   public-domain headline. Pre-/design, kept as minimal as .byline
+   above. */
 .patent-block {
   font-size: .9rem;
   opacity: .85;
