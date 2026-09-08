@@ -4,7 +4,7 @@ original_title: "Mechanismen einer kontextfreien Grammatik für das Deutsche"
 original_language: "de"
 date: 1994-09-18
 publishDate: 2026-09-08
-tags: ["NLP", "Prolog"]
+tags: ["NLP"]
 kind: "paper"
 kind_label: "Paper"
 teaser_is_document: true
