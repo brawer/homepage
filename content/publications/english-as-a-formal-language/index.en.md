@@ -6,7 +6,7 @@ date: 1995-06-20
 publishDate: 2026-09-09
 tags: ["NLP"]
 kind: "seminar_paper"
-kind_label: "Seminar Paper"
+kind_label: "Term Paper"
 teaser_is_document: true
 authors: ["Sascha Brawer"]
 venue: "[Saarland University](https://www.coli.uni-saarland.de/index.php?lang=en), Computational Linguistics"
