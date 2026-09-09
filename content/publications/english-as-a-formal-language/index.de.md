@@ -1,5 +1,5 @@
 ---
-title: "R. Montagues Semantikmodellierung in »English as a Formal Language«"
+title: "R. Montagues Semantikmodellierung in «English as a Formal Language»"
 date: 1995-06-20
 publishDate: 2026-09-09
 tags: ["NLP"]
@@ -18,5 +18,5 @@ pdf_preview: "pdf-preview.webp"
 pdf: "english-as-a-formal-language.pdf"
 ---
 Ausarbeitung eines Vortrags, den ich am 18. Januar 1995 im
-Hauptseminar »Montague-Grammatik« von Werner Saurer an der Universität
+Hauptseminar «Montague-Grammatik» von Werner Saurer an der Universität
 des Saarlandes gehalten habe. [Folien](slides.pdf).

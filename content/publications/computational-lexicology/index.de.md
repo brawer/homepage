@@ -17,5 +17,5 @@ image: "teaser.webp"
 pdf_preview: "pdf-preview.webp"
 pdf: "computational-lexicology.pdf"
 ---
-Ausarbeitung eines Referats aus dem Proseminar »Lexikon« von
+Ausarbeitung eines Referats aus dem Proseminar «Lexikon» von
 B. Zimmermann an der Universität des Saarlandes.
