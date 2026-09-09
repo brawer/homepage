@@ -31,6 +31,4 @@ and Manfred Pinkal. It describes work I did during an internship at
 [Apple’s Advanced Technology Group](https://en.wikipedia.org/wiki/Apple_Advanced_Technology_Group)
 in Cupertino.
 
-I presented the core ideas as a talk in September 1999 — at the IBM
-T. J. Watson Research Center, Lucent Bell Labs, Xerox PARC, Saarland
-University, and the University of Zürich. [Slides](patti-talk.pdf).
+A [talk on the core ideas](/publications/patti-talk/) followed in 1999.
