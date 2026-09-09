@@ -18,6 +18,9 @@ other = "Vorlesungsreihe"
 [kind_thesis]
 other = "Diplomarbeit"
 # siehe i18n/en.toml
+[kind_seminar_paper]
+other = "Seminararbeit"
+# siehe i18n/en.toml
 [kind_disclosure]
 other = "Sperrveröffentlichung"
 

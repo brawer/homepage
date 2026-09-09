@@ -263,8 +263,8 @@ the physical top-to-bottom measurement regardless of orientation),
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
 `"paper"`, `"patent"`, `"textbook"`, `"lecture"`, `"thesis"`,
-`"disclosure"`, `"patent_application"` — lowercase, same value in
-every language,
+`"seminar_paper"`, `"disclosure"`, `"patent_application"` — lowercase,
+same value in every language,
 since it's an internal value templates branch on, not display text;
 translate it for display via i18n strings, e.g.
 `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the front
@@ -276,6 +276,10 @@ matter value itself.
     badge + `venue` (institution) carry it. A `degree` field was tried
     (2026-09-08) and removed same day — spelling out "Diplom-Linguist …
     minor Computer Science" read as CV boilerplate; don't re-add it.
+  - `"seminar_paper"` (2026-09-09, `english-as-a-formal-language`) — a
+    Seminararbeit, i.e. a written paper for a seminar *course*, a rung
+    below a degree thesis. i18n `kind_seminar_paper` = "Seminar Paper" /
+    "Seminararbeit".
   - `"disclosure"` (2026-09-07, `osmviews-method`) — a **deliberate**
     defensive disclosure / prior-art publication (Technical Disclosure
     Commons); i18n `kind_disclosure` = "Defensive Disclosure" /
@@ -799,6 +803,40 @@ localized) `.Title`, no separate i18n key.
   PDFs/images silently come through as broken LFS pointer files
   instead of actual content — easy to miss since the build won't
   error, it'll just produce a broken site.
+
+## Legacy PDF fonts
+
+Several of Sascha's 1990s papers are Acrobat PDFWriter / early Distiller
+output that **references fonts without embedding them**, so viewers
+substitute badly (usually a sans for a serif, uneven justified
+spacing). `pdffonts the.pdf` shows `emb no` on the offenders. Fixed in
+place per paper as they're added to the site:
+
+- **Embed surgically with `pikepdf`**, not `gs -sDEVICE=pdfwrite`:
+  add `/FontFile2` (TrueType) to each unembedded font's
+  `FontDescriptor` and touch nothing else. Ghostscript's pdfwrite
+  rewrites the whole file — it corrupts the non-embedded `Symbol` font
+  (∈ → ⌊) and mojibakes the text layer (ü, «», — all break in
+  `pdftotext`). pikepdf leaves content streams, encodings, and the
+  standard-14 fonts (`Symbol`, `Courier`, `Helvetica`) untouched, so
+  copy/paste/search still work. Verify with a `pdftotext` diff
+  (old vs. fixed) — it must be identical.
+- **Which font to embed:** the real font if Sascha can supply it and
+  its `fsType` permits embedding (`fonttools`: `OS/2`.fsType — 0, 4 or
+  8 are fine; 2 = no). Lucida Bright for the CFG / KI-94 paper was his
+  own file. For a **standard-35** face (New Century Schoolbook,
+  Palatino, …) a metric-compatible free clone is enough and needs no
+  original — New Century Schoolbook → **TeX Gyre Schola**
+  (`texlive`'s `texgyreschola-*.otf`), `otf2ttf` then `pyftsubset`
+  down to the ~200 glyphs the PDF uses (keeps each ~40 KB). Metric
+  compatibility matters: a non-matching substitute reintroduces the
+  spacing gaps, since PDFWriter baked the original `/Widths` into the
+  page.
+- Substitute TTFs / originals are **not committed** — embed, verify,
+  discard. So far: `context-free-grammar-for-german` (Lucida Bright),
+  `english-as-a-formal-language` (New Century Schoolbook → TeX Gyre
+  Schola). `patti` and the various talk decks were Distiller output
+  with fonts already embedded — check before assuming.
 
 ## Verifying content structure
 
