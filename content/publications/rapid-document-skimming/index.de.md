@@ -1,5 +1,5 @@
 ---
-title: "Dynamische Darstellung von Dokumentinhalten für schnelles Überfliegen"
+title: "Dynamische Darstellung von Dokumentinhalten zum schnellen Überfliegen"
 original_title: "Dynamic Presentation of Document Content for Rapid On-Line Skimming"
 original_language: "en"
 date: 1998-03-23
@@ -9,7 +9,7 @@ kind: "paper"
 kind_label: "Paper"
 teaser_is_document: true
 authors: ["Branimir Boguraev", "Christopher Kennedy", "Rachel Bellamy", "Sascha Brawer", "Yin Yin Wong", "Jason Swartz"]
-venue: "AAAI Spring Symposium on Intelligent Text Summarization (1998)"
+venue: "AAAI Spring Symposium on Intelligent Text Summarization"
 abstract: >
   Auszugsbasierte Zusammenfassungen nützen nur, wenn die Leserschaft
   erkennen kann, wie sie sich zum Ausgangstext verhalten. Der Beitrag
@@ -19,7 +19,7 @@ abstract: >
   prägnante Phrasen zeitlich nacheinander erscheinen.
 image: "teaser.webp"
 pdf_preview: "pdf-preview.webp"
-pdf: "dynamic-document-presentation.pdf"
+pdf: "rapid-document-skimming.pdf"
 ---
 Aus dem Projekt SeeFacts der [Advanced Technology Group von
 Apple](https://en.wikipedia.org/wiki/Apple_Advanced_Technology_Group)
