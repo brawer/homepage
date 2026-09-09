@@ -262,10 +262,10 @@ the physical top-to-bottom measurement regardless of orientation),
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
-`"paper"`, `"article"`, `"study"`, `"patent"`, `"textbook"`,
-`"lecture"`, `"thesis"`, `"seminar_paper"`, `"proseminar_paper"`,
-`"disclosure"`, `"patent_application"` — lowercase, same value in
-every language,
+`"paper"`, `"article"`, `"study"`, `"standard"`, `"patent"`,
+`"textbook"`, `"lecture"`, `"thesis"`, `"seminar_paper"`,
+`"proseminar_paper"`, `"disclosure"`, `"patent_application"` —
+lowercase, same value in every language,
 since it's an internal value templates branch on, not display text;
 translate it for display via i18n strings, e.g.
 `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the front
@@ -279,6 +279,14 @@ matter value itself.
     "Commissioned Study" / "Auftragsstudie". The commissioning body is
     named in the body prose ("Written at … for …" / "im Auftrag …"),
     not `venue` — its full formal name is too long for the byline.
+  - `"standard"` (2026-09-09, `iso-19137`) — a published standard
+    (here an ISO standard). i18n `kind_standard` = "Standard" / "Norm"
+    ("Norm" is the precise German term for a standards document). **No
+    hosted PDF** — the body links the ISO catalogue and names Sascha's
+    role (editor / principal author). This is the pattern for any
+    publication we can't self-host: no `pdf` / `pdf_preview`; `image`
+    is a cover/typographic card, `teaser` a square crop of it (see
+    below). `date` is the publication year.
   - `"thesis"` (2026-09-08, `patti`) — a Diplomarbeit. i18n
     `kind_thesis` = "Diploma Thesis" / "Diplomarbeit" (deliberately not
     "Thesis", which reads as a PhD, nor "Master's Thesis", since the
@@ -500,6 +508,12 @@ verified against source for patents), `venue`, `abstract`.
   genuinely lead with different documents (see the "one page per work"
   note above: `context-free-grammar-for-german` uses
   `pdf-preview-en.webp` / `pdf-preview-de.webp`).
+- `teaser` (optional) — same escape hatch as art's `teaser`: a
+  hand-cropped square image for the **grid tile**, used when `image`
+  isn't square-croppable. `gallery-grid.html` already prefers `teaser`
+  over `image` for any content type. Used by `iso-19137` (no PDF): its
+  `image` is the full portrait ISO cover (the detail-page hero, since
+  there's no `pdf_preview`), and `teaser` is a square top-crop of it.
 
 ## Projects bundle front matter
 

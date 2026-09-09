@@ -24,6 +24,10 @@ other = "Article"
 # A commissioned study / consultancy report (Auftragsstudie).
 [kind_study]
 other = "Commissioned Study"
+# A published standard (e.g. an ISO standard). DE "Norm" is the precise
+# term for a standards document.
+[kind_standard]
+other = "Standard"
 [kind_textbook]
 other = "Textbook"
 [kind_lecture]
