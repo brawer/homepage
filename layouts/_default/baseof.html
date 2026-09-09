@@ -13,6 +13,8 @@
 {{ block "main" . }}{{ end }}
 </main>
 {{ partial "footer.html" . }}
-<script src="/js/nav.js" defer></script>
+{{- /* Content-hashed, same rationale as main.css in head.html (issue #81). */ -}}
+{{ $js := resources.Get "js/nav.js" | minify | fingerprint }}
+<script src="{{ $js.RelPermalink }}" integrity="{{ $js.Data.Integrity }}" defer></script>
 </body>
 </html>

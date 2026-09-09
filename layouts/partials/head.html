@@ -3,7 +3,13 @@
 {{ if site.Params.noindex }}<meta name="robots" content="noindex, nofollow">
 {{ end -}}
 <title>{{ if .IsHome }}{{ .Site.Params.fullName }}{{ else }}{{ .Title }} — {{ .Site.Params.fullName }}{{ end }}</title>
-<link rel="stylesheet" href="/css/main.css">
+{{- /* Content-hashed URL so the Bunny edge can cache it forever (issue
+   #81, Stage 1). Bare reference, not `with`: a missing main.css must
+   fail the build, never ship a naked page. `minify` here — not only the
+   deploy `hugo --minify` — keeps `hugo server` byte-identical to prod
+   and makes the hash the hash of the shipped bytes. */ -}}
+{{ $css := resources.Get "css/main.css" | minify | fingerprint }}
+<link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 {{ with .OutputFormats.Get "rss" }}
 <link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}">
 {{ end }}
