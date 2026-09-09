@@ -9,6 +9,9 @@ other = "Vortrag"
 # siehe i18n/en.toml
 [kind_article]
 other = "Artikel"
+# siehe i18n/en.toml
+[kind_study]
+other = "Auftragsstudie"
 [kind_paper]
 # "Paper" -- the idiomatic term for a conference paper in German CS;
 # "Aufsatz" reads as a school essay / humanities article.

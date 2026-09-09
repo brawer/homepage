@@ -262,9 +262,10 @@ the physical top-to-bottom measurement regardless of orientation),
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
-`"paper"`, `"article"`, `"patent"`, `"textbook"`, `"lecture"`,
-`"thesis"`, `"seminar_paper"`, `"proseminar_paper"`, `"disclosure"`,
-`"patent_application"` — lowercase, same value in every language,
+`"paper"`, `"article"`, `"study"`, `"patent"`, `"textbook"`,
+`"lecture"`, `"thesis"`, `"seminar_paper"`, `"proseminar_paper"`,
+`"disclosure"`, `"patent_application"` — lowercase, same value in
+every language,
 since it's an internal value templates branch on, not display text;
 translate it for display via i18n strings, e.g.
 `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the front
@@ -273,6 +274,11 @@ matter value itself.
     magazine / society-bulletin article (here the ACM SIGCHI Bulletin),
     distinct from a peer-reviewed conference/journal `"paper"`. i18n
     `kind_article` = "Article" / "Artikel".
+  - `"study"` (2026-09-09, `colors-in-interlis`) — a commissioned
+    study / consultancy report (Auftragsstudie). i18n `kind_study` =
+    "Commissioned Study" / "Auftragsstudie". The commissioning body is
+    named in the body prose ("Written at … for …" / "im Auftrag …"),
+    not `venue` — its full formal name is too long for the byline.
   - `"thesis"` (2026-09-08, `patti`) — a Diplomarbeit. i18n
     `kind_thesis` = "Diploma Thesis" / "Diplomarbeit" (deliberately not
     "Thesis", which reads as a PhD, nor "Master's Thesis", since the
@@ -876,6 +882,18 @@ place per paper as they're added to the site:
   title here; plain tesseract got it. Figure-heavy pages still OCR to
   noise — that's fine, the body prose is what matters. Add `/Title` +
   `/Author` with pikepdf afterwards.
+- **Born-digital PDF whose text is real but unextractable** (renders
+  perfectly, all fonts embedded, but `pdftotext` gives mojibake —
+  Distiller 3 subset fonts with `/G<n>` glyph names and no
+  `/ToUnicode`). Don't OCR — **rebuild the `/ToUnicode` CMaps**.
+  `colors-in-interlis` (`Farben in INTERLIS 2`, 2000): the subset code
+  is `winansi − 29` for ASCII (so `G41` = code 41 = `F`); umlauts /
+  accents / quotes sit at scattered low codes you identify from the
+  `−29`-decoded German (`0x6C`→ä `0x81`→ü `0x7C`→ö `0x68`→Ü `0x62`→Ä
+  `0x70`/`0x65`→é `0x83`→° `0xC4`→„ `0xB3`→"). Build one bfchar CMap,
+  attach it to every Arial/Times/Courier font object with pikepdf,
+  keep everything else. 732 KB → 734 KB, visuals untouched, German
+  prose now searchable (rare formula glyphs stay approximate — fine).
 
 ## Verifying content structure
 

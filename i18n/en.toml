@@ -21,6 +21,9 @@ other = "Paper"
 # peer-reviewed conference/journal paper — hence its own kind.
 [kind_article]
 other = "Article"
+# A commissioned study / consultancy report (Auftragsstudie).
+[kind_study]
+other = "Commissioned Study"
 [kind_textbook]
 other = "Textbook"
 [kind_lecture]
