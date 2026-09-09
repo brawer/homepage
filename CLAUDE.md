@@ -832,17 +832,27 @@ place per paper as they're added to the site:
   8 are fine; 2 = no). Lucida Bright for the CFG / KI-94 paper was his
   own file. For a **standard-35** face (New Century Schoolbook,
   Palatino, …) a metric-compatible free clone is enough and needs no
-  original — New Century Schoolbook → **TeX Gyre Schola**
-  (`texlive`'s `texgyreschola-*.otf`), `otf2ttf` then `pyftsubset`
-  down to the ~200 glyphs the PDF uses (keeps each ~40 KB). Metric
-  compatibility matters: a non-matching substitute reintroduces the
-  spacing gaps, since PDFWriter baked the original `/Widths` into the
-  page.
+  original. Metric compatibility matters: a non-matching substitute
+  reintroduces the spacing gaps, since PDFWriter / dvips baked the
+  original `/Widths` and glyph positions into the page. Two routes:
+  - **TrueType** clone → `/FontFile2`: New Century Schoolbook → TeX
+    Gyre Schola (`texgyreschola-*.otf`), `otf2ttf` then `pyftsubset`.
+  - **Type 1** clone → `/FontFile` (with `/Length1/2/3` = the pfb's
+    ASCII / binary / trailer segment lengths): Palatino → URW Palladio L
+    (`texlive`'s `type1/urw/palatino/uplr8a.pfb` etc.). Use this when
+    the TeX Gyre OTF lacks the exact glyph *names* the PDF's `/Encoding`
+    `/Differences` reference (TeX Gyre has no `/fi` `/fl` `/ff…` — it
+    does ligatures via GSUB; URW Palladio L keeps the classic names).
+    First extract which names are actually used from the content
+    streams — the declared-but-unused ones (`/ff /ffi /ffl`) don't
+    matter.
 - Substitute TTFs / originals are **not committed** — embed, verify,
-  discard. So far: `context-free-grammar-for-german` (Lucida Bright),
-  `english-as-a-formal-language` (New Century Schoolbook → TeX Gyre
-  Schola). `patti` and the various talk decks were Distiller output
-  with fonts already embedded — check before assuming.
+  discard. So far: `context-free-grammar-for-german` (Lucida Bright,
+  real), `english-as-a-formal-language` (New Century Schoolbook → TeX
+  Gyre Schola TTF), `dynamic-document-presentation` (Palatino → URW
+  Palladio L pfb). `patti`, `computational-lexicology` (2022 re-export)
+  and the talk decks had fonts already embedded — check before
+  assuming.
 
 ## Verifying content structure
 
