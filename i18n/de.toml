@@ -6,6 +6,9 @@ other = "–"
 # Schlüssel (Badge kommt aus dem per-Datei-`kind_label`).
 [kind_talk]
 other = "Vortrag"
+# siehe i18n/en.toml
+[kind_article]
+other = "Artikel"
 [kind_paper]
 # "Paper" -- the idiomatic term for a conference paper in German CS;
 # "Aufsatz" reads as a school essay / humanities article.

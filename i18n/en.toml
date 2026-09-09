@@ -17,6 +17,10 @@ other = "—"
 other = "Talk"
 [kind_paper]
 other = "Paper"
+# A magazine / bulletin article (e.g. ACM SIGCHI Bulletin), not a
+# peer-reviewed conference/journal paper — hence its own kind.
+[kind_article]
+other = "Article"
 [kind_textbook]
 other = "Textbook"
 [kind_lecture]
