@@ -459,6 +459,16 @@ verified against source for patents), `venue`, `abstract`.
   still carries `original_title`/`original_language: de` (the work was
   first published in German); the DE file doesn't need it. Each body
   states the relationship and links the other PDF as a bundle resource.
+- **…but a talk *about* a paper/thesis is its own item** (2026-09-09,
+  `patti` + `patti-talk`) — the CFG "one page per work" call is for the
+  *same* work published twice. A conference talk and its written-up
+  thesis are different artifacts (different depth, audience, often
+  years apart), so they get separate bundles that cross-link in their
+  bodies. `patti` (thesis, `kind: thesis`) and `patti-talk` (the 1999
+  lab tour, `kind: talk`) both use `title: "Patti"` + a `subtitle` —
+  two "Patti" tiles in the grid, told apart by the kind badge and the
+  year. `java-security` / `gnu-classpath` are a similar pair of
+  companion talks (same authors, same event) kept separate.
 - Single-PDF items use a `pdf` field. Multi-resource items (e.g. the
   `programming-techniques-in-cl` lecture series with dozens of PDFs)
   have no `pdf` field — links go directly in the Markdown body as
