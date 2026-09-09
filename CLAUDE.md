@@ -262,13 +262,17 @@ the physical top-to-bottom measurement regardless of orientation),
 ## Publications bundle front matter
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
-`"paper"`, `"patent"`, `"textbook"`, `"lecture"`, `"thesis"`,
-`"seminar_paper"`, `"proseminar_paper"`, `"disclosure"`,
+`"paper"`, `"article"`, `"patent"`, `"textbook"`, `"lecture"`,
+`"thesis"`, `"seminar_paper"`, `"proseminar_paper"`, `"disclosure"`,
 `"patent_application"` — lowercase, same value in every language,
 since it's an internal value templates branch on, not display text;
 translate it for display via i18n strings, e.g.
 `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the front
 matter value itself.
+  - `"article"` (2026-09-09, `content-analysis-architecture`) — a
+    magazine / society-bulletin article (here the ACM SIGCHI Bulletin),
+    distinct from a peer-reviewed conference/journal `"paper"`. i18n
+    `kind_article` = "Article" / "Artikel".
   - `"thesis"` (2026-09-08, `patti`) — a Diplomarbeit. i18n
     `kind_thesis` = "Diploma Thesis" / "Diplomarbeit" (deliberately not
     "Thesis", which reads as a PhD, nor "Master's Thesis", since the
@@ -855,10 +859,23 @@ place per paper as they're added to the site:
 - Substitute TTFs / originals are **not committed** — embed, verify,
   discard. So far: `context-free-grammar-for-german` (Lucida Bright,
   real), `english-as-a-formal-language` (New Century Schoolbook → TeX
-  Gyre Schola TTF), `dynamic-document-presentation` (Palatino → URW
+  Gyre Schola TTF), `rapid-document-skimming` (Palatino → URW
   Palladio L pfb). `patti`, `computational-lexicology` (2022 re-export)
   and the talk decks had fonts already embedded — check before
   assuming.
+- **Scanned PDFs with a bad OCR layer** (`pdffonts` shows embedded
+  `Times New Roman` / `Arial` you never see — that's an invisible
+  Acrobat-Capture text layer, not the document's fonts, so there is
+  *nothing to fix font-wise*): re-OCR for search. `content-analysis-architecture`
+  (SIGCHI Bulletin scan) — the 2002 layer had every space dropped
+  (`Architecturefor`). `pdfimages -tiff`, then
+  `tesseract <list.txt> out -l eng --psm 1 --dpi 300 pdf` (feed it the
+  1-bit TIFFs, not `-png`, so the output keeps CCITT G4 — 932 KB
+  stayed 896 KB; `--dpi 300` or the page box comes out 2550×3300 pt).
+  `ocrmypdf --redo-ocr` also works and makes PDF/A but misread the
+  title here; plain tesseract got it. Figure-heavy pages still OCR to
+  noise — that's fine, the body prose is what matters. Add `/Title` +
+  `/Author` with pikepdf afterwards.
 
 ## Verifying content structure
 
