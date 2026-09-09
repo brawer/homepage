@@ -263,8 +263,8 @@ the physical top-to-bottom measurement regardless of orientation),
 
 `title`, `date`, `publishDate`, `tags`, `kind` (one of `"talk"`,
 `"paper"`, `"patent"`, `"textbook"`, `"lecture"`, `"thesis"`,
-`"seminar_paper"`, `"disclosure"`, `"patent_application"` — lowercase,
-same value in every language,
+`"seminar_paper"`, `"proseminar_paper"`, `"disclosure"`,
+`"patent_application"` — lowercase, same value in every language,
 since it's an internal value templates branch on, not display text;
 translate it for display via i18n strings, e.g.
 `{{ i18n (printf "kind_%s" .Params.kind) }}`, not by changing the front
@@ -276,10 +276,16 @@ matter value itself.
     badge + `venue` (institution) carry it. A `degree` field was tried
     (2026-09-08) and removed same day — spelling out "Diplom-Linguist …
     minor Computer Science" read as CV boilerplate; don't re-add it.
-  - `"seminar_paper"` (2026-09-09, `english-as-a-formal-language`) — a
-    Seminararbeit, i.e. a written paper for a seminar *course*, a rung
-    below a degree thesis. i18n `kind_seminar_paper` = "Seminar Paper" /
-    "Seminararbeit".
+  - `"seminar_paper"` / `"proseminar_paper"` (2026-09-09,
+    `english-as-a-formal-language` and `computational-lexicology`) — a
+    written paper for a seminar *course*, a rung below a degree thesis;
+    the second is for an introductory (Pro)seminar. **English: both are
+    "Term Paper"** — the German pair has no distinct English terms, and
+    "Seminar Paper" back-translates to "Seminararbeit" specifically, so
+    it oversells a Proseminararbeit. **German keeps the distinction:**
+    `kind_seminar_paper` = "Seminararbeit", `kind_proseminar_paper` =
+    "Proseminararbeit". So `kind_label` reads "Term Paper" on both EN
+    files, "Seminararbeit" / "Proseminararbeit" on the DE files.
   - `"disclosure"` (2026-09-07, `osmviews-method`) — a **deliberate**
     defensive disclosure / prior-art publication (Technical Disclosure
     Commons); i18n `kind_disclosure` = "Defensive Disclosure" /

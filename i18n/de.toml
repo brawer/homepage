@@ -17,9 +17,12 @@ other = "Vorlesungsreihe"
 # siehe i18n/en.toml -- "Diplomarbeit" ist der exakte deutsche Begriff.
 [kind_thesis]
 other = "Diplomarbeit"
-# siehe i18n/en.toml
+# siehe i18n/en.toml -- DE hält die Unterscheidung, EN nicht (beide
+# "Term Paper").
 [kind_seminar_paper]
 other = "Seminararbeit"
+[kind_proseminar_paper]
+other = "Proseminararbeit"
 # siehe i18n/en.toml
 [kind_disclosure]
 other = "Sperrveröffentlichung"

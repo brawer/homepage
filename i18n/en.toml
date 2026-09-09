@@ -26,10 +26,17 @@ other = "Lecture Series"
 # "Master's Thesis" (the Diplom isn't literally an MSc/MA).
 [kind_thesis]
 other = "Diploma Thesis"
-# A Seminararbeit — a written paper for a university seminar course,
-# not a degree thesis. "Seminar Paper" is the standard rendering.
+# A Seminararbeit / Proseminararbeit — a written paper for a
+# university seminar course, not a degree thesis. Both render as
+# "Term Paper": the German pair (Haupt-)Seminararbeit vs.
+# Proseminararbeit has no distinct English terms, and "Seminar Paper"
+# back-translates to "Seminararbeit" specifically, so it reads as
+# inflation when applied to a Proseminararbeit. German keeps the
+# distinction (see i18n/de.toml).
 [kind_seminar_paper]
-other = "Seminar Paper"
+other = "Term Paper"
+[kind_proseminar_paper]
+other = "Term Paper"
 # A defensive disclosure / prior-art publication (e.g. on Technical
 # Disclosure Commons) — a written technical document, but not a
 # peer-reviewed paper and not a patent, so it gets its own kind.
