@@ -9,7 +9,7 @@ kind: "talk"
 kind_label: "Vortrag"
 teaser_is_document: false
 authors: ["Sascha Brawer", "Martin Jansche", "Hiroshi Takenaka", "Yui Terashima"]
-venue: '34\. Internationalization & Unicode Conference (2010)'
+venue: '34\. Internationalization & Unicode Conference'
 abstract: >
   Wir schildern unsere Erfahrungen mit einer tiefgreifenden Lokalisierung
   von Google Maps, bei der Millionen geografischer Namen unterschiedlichster
