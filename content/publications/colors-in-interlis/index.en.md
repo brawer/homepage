@@ -9,7 +9,6 @@ kind: "study"
 kind_label: "Commissioned Study"
 teaser_is_document: true
 authors: ["Sascha Brawer"]
-venue: "[swisstopo](https://www.swisstopo.admin.ch/en) (Federal Directorate for Cadastral Surveying)"
 abstract: >
   How to specify colors as text in an INTERLIS 2 model: color spaces,
   the precision needed, and a concrete proposal.
@@ -17,4 +16,4 @@ image: "teaser.webp"
 pdf_preview: "pdf-preview.webp"
 pdf: "colors-in-interlis.pdf"
 ---
-Written at Adasys AG, Zürich.
+Written at Adasys AG, Zürich, for the Swiss Federal Office of Topography, Directorate of Cadastral Surveying.

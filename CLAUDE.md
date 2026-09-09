@@ -276,8 +276,9 @@ matter value itself.
     `kind_article` = "Article" / "Artikel".
   - `"study"` (2026-09-09, `colors-in-interlis`) — a commissioned
     study / consultancy report (Auftragsstudie). i18n `kind_study` =
-    "Commissioned Study" / "Auftragsstudie". `venue` carries the
-    commissioning body.
+    "Commissioned Study" / "Auftragsstudie". The commissioning body is
+    named in the body prose ("Written at … for …" / "im Auftrag …"),
+    not `venue` — its full formal name is too long for the byline.
   - `"thesis"` (2026-09-08, `patti`) — a Diplomarbeit. i18n
     `kind_thesis` = "Diploma Thesis" / "Diplomarbeit" (deliberately not
     "Thesis", which reads as a PhD, nor "Master's Thesis", since the

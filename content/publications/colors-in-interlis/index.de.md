@@ -7,7 +7,6 @@ kind: "study"
 kind_label: "Auftragsstudie"
 teaser_is_document: true
 authors: ["Sascha Brawer"]
-venue: "[Eidgenössische Vermessungsdirektion](https://www.swisstopo.admin.ch/de), Bundesamt für Landestopographie"
 abstract: >
   Wie sich Farben in einem INTERLIS-2-Modell als Text angeben lassen:
   Farbräume, nötige Genauigkeit und ein konkreter Vorschlag.
@@ -15,4 +14,4 @@ image: "teaser.webp"
 pdf_preview: "pdf-preview.webp"
 pdf: "colors-in-interlis.pdf"
 ---
-Verfasst bei der Adasys AG, Zürich.
+Verfasst bei der Adasys AG, Zürich, im Auftrag des Bundesamts für Landestopographie, Eidgenössische Vermessungsdirektion.
