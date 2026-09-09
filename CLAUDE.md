@@ -826,6 +826,31 @@ localized) `.Title`, no separate i18n key.
   instead of actual content — easy to miss since the build won't
   error, it'll just produce a broken site.
 
+## Static assets & fingerprinting
+
+Deploy target is Bunny CDN (issue #81); cache correctness comes from
+content-hashed URLs, not edge purges.
+
+- **CSS and JS live in `assets/`, not `static/`** (`assets/css/main.css`,
+  `assets/js/nav.js` — moved 2026-09-09, issue #81 Stage 1). `head.html`
+  and `baseof.html` pull them through `resources.Get … | minify |
+  fingerprint`, so the published URL is `/css/main.min.<hash>.css` etc.
+  and changes name whenever the bytes change — safe to cache forever at
+  the edge. Older notes in this file that say `static/css/main.css` /
+  `static/js/nav.js` mean the `assets/` files now. Anything new that
+  must be hashable goes in `assets/`; truly-static files (the font,
+  its licence) stay in `static/`.
+- The reference is bare, not `{{ with }}` — a missing `main.css` /
+  `nav.js` must fail the build, never ship a page with no styles.
+- `minify` is in the template (not only the deploy `hugo --minify`) so
+  `hugo server` serves the same bytes as production and the hash is the
+  hash of what ships.
+- **`/fonts/*` is cached immutably at the edge** — `main.css` still
+  references `url("/fonts/karla-latin-variable.woff2")` by a stable
+  name. If a font file ever changes, give it a **new filename in the
+  same commit** (making `main.css` a Hugo template just to rewrite one
+  `url()` isn't worth it for a file that changes ~never).
+
 ## Legacy PDF fonts
 
 Several of Sascha's 1990s papers are Acrobat PDFWriter / early Distiller
