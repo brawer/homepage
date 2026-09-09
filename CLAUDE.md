@@ -324,9 +324,15 @@ verified against source for patents), `venue`, `abstract`.
   its own link). Templates must render `venue` through `markdownify`
   rather than outputting it as a raw string, or these links won't
   render.
+- **Don't put the year in `venue`** — the byline template already
+  appends `.Date.Format "2006"` right after it. The one place a
+  parenthetical year is still correct is when the leading paper's year
+  differs from `date`: `context-free-grammar-for-german`'s EN `venue`
+  keeps "(1995)" (the TaCoS version) because `date` is 1994 (the KI-94
+  first publication) — see the "one page per work" note below.
 - **Markdownify footgun, found and fixed 2026-08-25**:
-  `transliteration-with-icu`'s German `venue`, `"34. Internationalization
-  & Unicode Conference (2010)"`, silently rendered as an HTML `<ol
+  `transliteration-with-icu`'s German `venue` (then `"34. Internationalization
+  & Unicode Conference (2010)"`; the year was later dropped) silently rendered as an HTML `<ol
   start="34">` instead of plain text — `markdownify` parses a string
   starting with `<number>. ` as the start of a Markdown ordered list,
   block-level, with no visual warning at build time (byline just grew
@@ -334,7 +340,7 @@ verified against source for patents), `venue`, `abstract`.
   Internationalization..."`) didn't trigger this, since `th` breaks
   the ordered-list pattern — the bug is specific to German ordinal
   style (`34.`, not `34th`). Fixed by escaping the period:
-  `venue: '34\. Internationalization & Unicode Conference (2010)'` —
+  `venue: '34\. Internationalization & Unicode Conference'` —
   note the **single-quoted** YAML string, not double-quoted: YAML's
   double-quote form treats `\.` as an invalid escape sequence and
   fails to parse, while single-quoted YAML strings pass the backslash
