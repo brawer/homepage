@@ -16,5 +16,5 @@ image: "teaser.webp"
 pdf_preview: "pdf-preview.webp"
 pdf: "computational-lexicology.pdf"
 ---
-A German-language proseminar paper, written up from a talk in
-B. Zimmermann’s *Lexikon* seminar at Saarland University.
+A German-language write-up of a talk from B. Zimmermann’s introductory
+*Lexikon* seminar at Saarland University.
