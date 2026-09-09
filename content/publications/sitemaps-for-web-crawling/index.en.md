@@ -9,6 +9,22 @@ teaser_is_document: true
 authors: ["Sascha Brawer", "Maximilian Ibel", "Ralph M. Keller", "Narayanan Shivakumar"]
 assignee: "Google LLC"
 patent_family:
+  # Two US threads, priority 2005-05-31: a "sitemap generating client"
+  # (US 7,801,881 -> US 8,037,055) and a "web crawler scheduler"
+  # (US 7,769,742 -> US 9,355,177).
+  # TODO(review): the `expires` dates on the two lapsed 2010 patents
+  # are conservative estimates — both lapsed ~2018–2019 for unpaid
+  # maintenance fees; exact lapse dates not verified.
+  - office: "US"
+    number: "US 7,769,742 B1"
+    status: "lapsed"
+    granted: "2010-08-03"
+    expires: "2019-02-03"
+  - office: "US"
+    number: "US 7,801,881 B1"
+    status: "lapsed"
+    granted: "2010-09-21"
+    expires: "2019-03-21"
   - office: "US"
     number: "US 8,037,055 B2"
     status: "expired"
@@ -33,4 +49,5 @@ pdf: "us9355177.pdf"
 ---
 The patents behind the [Sitemaps protocol](https://www.sitemaps.org/),
 co-developed at Google in 2005 and published openly as an industry
-standard. US 9,355,177 B2 continues the earlier US 7,769,742 B1.
+standard — two US continuation threads, one for the website side and
+one for the crawler side.
