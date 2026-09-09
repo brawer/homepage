@@ -26,6 +26,10 @@ other = "Lecture Series"
 # "Master's Thesis" (the Diplom isn't literally an MSc/MA).
 [kind_thesis]
 other = "Diploma Thesis"
+# A Seminararbeit — a written paper for a university seminar course,
+# not a degree thesis. "Seminar Paper" is the standard rendering.
+[kind_seminar_paper]
+other = "Seminar Paper"
 # A defensive disclosure / prior-art publication (e.g. on Technical
 # Disclosure Commons) — a written technical document, but not a
 # peer-reviewed paper and not a patent, so it gets its own kind.
