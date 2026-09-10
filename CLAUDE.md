@@ -7,14 +7,20 @@ templates/CSS via `/design` mode.
 
 ## Site structure
 
-- Sections: Art (`/art/`), Projects (`/projects/`, no entries yet —
-  renamed from "Programming" partway through; if you see "Programming"
-  or `/programming/` anywhere it's stale and should be fixed),
+- Sections: Art (`/art/`), Projects (`/projects/`, one real entry so
+  far + a placeholder note — renamed from "Programming" partway
+  through; if you see "Programming" or `/programming/` anywhere it's
+  stale and should be fixed),
   Publications (`/publications/` — renamed from "papers" partway
   through; if you see "papers" anywhere it's stale and should be
   fixed), Résumé (`/resume/`).
 - Menu order (see `hugo.toml` weights): Résumé, Projects,
-  Publications, Art.
+  Publications, Art. **Projects is temporarily out of the menu**
+  (2026-09-10) while `/projects` is a placeholder — the page still
+  builds and works by URL, but it's absent from the nav bar, the
+  drawer, and the homepage section tiles (all three `range
+  site.Menus.main`). Restore = re-add the `[[menu.main]]` block in
+  `hugo.toml` (both languages); see the comment there.
 - Imprint (`/imprint/`, legal notice — titled "Impressum" on the
   German page) is not a section and not in the main nav — a single
   standalone page, linked only from the per-page footer. See "Imprint
@@ -1676,6 +1682,13 @@ about to add many publications):
   and robots.txt then also starts advertising the sitemap. No
   `X-Robots-Tag` HTTP header is set (deploy target still undecided), so
   the meta tag is the load-bearing signal.
+  - **`/projects` and everything under it stay `noindex` even after
+    launch** (2026-09-10): `head.html` emits the robots meta when
+    `site.Params.noindex` **or** `eq .Section "projects"`. It's a
+    work-in-progress section, out of the nav. `robots.txt` is left
+    permissive for `/projects` on purpose — a `Disallow` there would
+    stop crawlers seeing the `noindex`. Remove the `.Section` clause
+    when Projects is ready.
 
 - **The "Paper & Plum" grid design is live, ported 2026-08-26**
   (`static/css/main.css` + `layouts/partials/gallery-grid.html`) —
@@ -1758,15 +1771,16 @@ about to add many publications):
   all. Different mechanism, not hit by the same failure mode.
 - `content/resume/` still has no icons/timeline layout — see the
   "Resume bundle front matter" section above.
-- Section list pages (`content/art/_index.*.md`,
-  `content/publications/_index.*.md`,
-  `content/projects/_index.*.md`) don't exist yet. Optional —
-  Hugo auto-generates a bare list page without them — but worth
-  adding for section-level intro copy, same pattern as the tag pages.
-  (List-page `<h1>` titles are already correctly translated without
-  these, by borrowing the label from `hugo.toml`'s nav menu — see
-  `layouts/_default/list.html` — so that's not a reason to add them;
-  section-level intro copy is.)
+- Section list pages: `content/projects/_index.{en,de}.md` exist
+  (added 2026-09-10 — a "this list is a placeholder" note, and to give
+  `/projects` its own `<h1>` now that Projects is out of the nav menu,
+  see "Site structure" above). `content/art/_index.*.md` and
+  `content/publications/_index.*.md` still don't — optional (Hugo
+  auto-generates a bare list page), worth adding for section-level
+  intro copy. Their `<h1>` titles are borrowed from `hugo.toml`'s nav
+  menu by `grid-header.html` (menu entry `identifier` == section
+  slug); an `_index.md` with its own `title` overrides that (which is
+  how `projects` still gets a heading with no menu entry).
 - `content/projects/` has one entry (`text-rendering-tests`, added
   2026-08-25) — fully reviewed and edited by Sascha (role, status,
   body prose, teaser image all real/final; the schema itself picked
