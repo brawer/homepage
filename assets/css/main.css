@@ -790,6 +790,18 @@ body.drawer-open {
   padding: 0 0 .3rem;
 }
 
+/* Detail pages call chip-row.html with wrap=true: only a handful of
+   tags, no parent scope to scroll back to, and it sits on the page
+   background like body text (NAVIGATION_DESIGN_SPEC.md §6.3) -- so it
+   wraps instead of clipping at the right edge the way the grid/tag
+   header's scrolling chip row does. */
+.chip-row-wrap {
+  flex-wrap: wrap;
+  overflow: visible;
+  padding-bottom: 0;
+  margin-bottom: 1rem;
+}
+
 .chip {
   display: inline-block;
   white-space: nowrap;
@@ -823,53 +835,110 @@ body.drawer-open {
   color: var(--paper);
 }
 
-/* Hero image container — a genuinely FIXED-height box (not min-height:
-   a flex-centered min-height, tried first, left the box's real height
-   undetermined whenever the hero-zoom button inside it was taken out
-   of flow by position:absolute, so the <img>'s own max-height/
-   height:auto sizing had nothing reliable to size against and could
-   render distorted -- found and fixed 2026-08-25, reported as
-   "pillarbox filled on both dimensions, stretching the image").
-   Image sits inside at its native aspect ratio via object-fit: contain
-   on the <img> itself (see below), not by relying on the browser's
-   implicit width/height-attribute aspect-ratio computation -- matches
-   NAVIGATION_DESIGN_SPEC.md §7 exactly ("image sits inside at its
-   native aspect ratio (object-fit: contain), centered"). Matte color
-   is a two-bucket rule, not per-image, per the same section's table. */
-.hero {
-  position: relative;
-  height: 24rem;
-  overflow: hidden;
-  margin-bottom: 1rem;
+/* ================= Detail pages ("Paper & Plum", ported 2026-09-10)
+   Design pass on the per-item detail pages (art / publications /
+   projects single.html), same mockup-first workflow as the grid, the
+   chrome and the résumé passes -- mockup "Detail Page Design" Artifact.
+   See CLAUDE.md's "Detail page design pass" note for the reasoning
+   behind every value. Load-bearing decisions:
+     - hero image FRAME reduced 24rem -> 18rem;
+     - the light matte is now --paper-dim (the warm grid-card tint),
+       not near-white `Canvas` -- a white scan on an almost-white matte
+       glared;
+     - the CTA ("Download PDF" / "View on GitHub") is a full-width shelf
+       ATTACHED BELOW the frame, not an overlay -- it never covers or
+       crops the document, and a flat opaque panel stays legible where a
+       gradient (which assumes a dark image to fade into) would not;
+     - Prev/Next are circular buttons on the hero (inset over the image
+       on a phone, half over the edge at >=768px so they clear artwork)
+       PLUS a named footer pager; nav.js adds left/right arrow keys.
+   Art keeps the fixed dark matte and its tap-to-zoom hero -- no CTA,
+   no shelf. */
+
+/* Back-link above the hero -- to the section list. Label text is the
+   localized section name (partials/section-name.html); the arrow is
+   decorative. */
+.backlink {
+  display: inline-flex;
+  align-items: center;
+  gap: .35rem;
+  font-size: .82rem;
+  color: var(--ink-faint);
+  text-decoration: none;
+  margin-bottom: .7rem;
+}
+.backlink:hover { color: var(--accent); }
+.backlink svg { width: .95rem; height: .95rem; }
+.backlink:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
-.hero .detail-image,
-.hero .detail-image picture {
+/* Detail-page title -- browser-default before this pass. Matches the
+   résumé identity h1 (1.9rem / 700 / -.01em / balance). Scoped to a
+   direct child of <article> so it never touches the résumé (.resume)
+   or the grid header (.grid-title-row h1). */
+article > h1 {
+  font-size: 1.9rem;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  margin: 1rem 0 .35rem;
+  text-wrap: balance;
+}
+
+/* Hero -- a genuinely FIXED-height image FRAME (see the 2026-08-25
+   distortion-fix history that used to live here: a flex-centered
+   min-height left the box's real height undetermined once the absolute
+   hero-zoom button was taken out of flow, so object-fit had nothing
+   reliable to size against). Now 18rem, not 24rem. The <picture> sits
+   inside at its native aspect ratio via object-fit: contain -- matches
+   NAVIGATION_DESIGN_SPEC.md §7 ("image sits inside at its native aspect
+   ratio, centered"). Matte colour is a two-bucket rule, not per-image,
+   per the same section's table. */
+.hero { position: relative; margin-bottom: 1rem; }
+.hero-media { position: relative; }
+.hero-frame {
+  position: relative;
+  height: 18rem;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* A following CTA shelf squares off the frame's bottom so the two read
+   as one unit (modifier class set by the template). */
+.hero-with-cta .hero-frame { border-radius: 14px 14px 0 0; }
+
+.hero-frame .detail-image,
+.hero-frame .detail-image picture {
   display: block;
   width: 100%;
   height: 100%;
 }
-
-.hero .detail-image img {
+.hero-frame .detail-image img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
 /* Fixed dark neutral regardless of system theme — DELIBERATE exception
-   to theme-following, per NAVIGATION_DESIGN_SPEC.md §7: gallery/
-   framing convention for showing color accurately. Do not "fix" this
-   by making it theme-aware. */
-.hero-matte-dark {
-  background: #2c2c2a;
-}
+   to theme-following, per NAVIGATION_DESIGN_SPEC.md §7: gallery/framing
+   convention for showing colour accurately. Do not "fix" this by
+   making it theme-aware. */
+.hero-matte-dark .hero-frame { background: #2c2c2a; }
 
-/* Standard theme-following surface — reads like paper/a screenshot.
-   Uses the CSS system color keyword, so it already follows light/dark
-   mode with zero new custom properties. */
-.hero-matte-light {
-  background: Canvas;
+/* Light bucket (publications + projects): the warm grid-card tint, with
+   a hairline so a near-white scan still has a visible edge. Was
+   `background: Canvas` (near-white) until 2026-09-10 -- white paper on
+   an almost-white matte glared. */
+.hero-matte-light .hero-frame {
+  background: var(--paper-dim);
+  border: 1px solid var(--line);
 }
+.hero-with-cta.hero-matte-light .hero-frame { border-bottom: none; }
 
 .hero-zoom {
   position: absolute;
@@ -891,10 +960,116 @@ body.drawer-open {
   font-size: .9rem;
 }
 
+/* CTA shelf -- flat opaque panel (a gradient would assume a dark image
+   to fade into and break on a near-white scan), attached under the
+   frame, full width, its own bottom corners rounded to match. */
 .hero-cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: .9rem;
+  font-weight: 600;
+  padding: .75rem 1rem;
+  text-decoration: none;
+  border-radius: 0 0 14px 14px;
+  transition: background .15s ease;
+}
+.hero-cta:hover { background: var(--accent); }
+.hero-cta:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.hero-cta svg { width: 1.05rem; height: 1.05rem; flex-shrink: 0; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-cta { transition: none; }
+}
+
+/* Standalone CTA -- the rare project with a github_url but no teaser
+   image yet: a normal button where the hero would have been, rather
+   than a floating shelf with nothing above it. */
+.cta-standalone {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--ink);
+  color: var(--paper);
+  font-size: .9rem;
+  font-weight: 600;
+  padding: .6rem 1rem;
+  border-radius: 9px;
+  text-decoration: none;
+  margin-bottom: 1rem;
+}
+.cta-standalone:hover { background: var(--accent); }
+.cta-standalone svg { width: 1.05rem; height: 1.05rem; }
+
+/* Circular Prev/Next on the hero (partials/hero-nav.html). Same
+   paper-raised fill / hairline / soft shadow as a grid tile; the accent
+   wash on hover matches the chips and the drawer trigger. Inset over
+   the image on a phone; half over the edge at >=768px so they clear
+   the artwork (NAVIGATION_DESIGN_SPEC.md §9). Positioned against
+   .hero-media, whose height is exactly the 18rem frame. */
+.hero-nav {
   position: absolute;
-  bottom: .8rem;
-  right: .8rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--paper-raised);
+  border: 1px solid var(--line);
+  box-shadow: 0 1px 2px rgba(var(--shadow-color), var(--shadow-op-card-1)),
+              0 4px 14px rgba(var(--shadow-color), var(--shadow-op-card-2));
+  color: var(--ink);
+  transition: border-color .15s ease, background .15s ease, color .15s ease;
+}
+.hero-nav:hover {
+  border-color: var(--accent);
+  background: var(--accent-soft);
+  color: var(--accent);
+}
+.hero-nav:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
+.hero-nav svg { width: 1.35rem; height: 1.35rem; }
+.hero-nav.is-disabled { opacity: .35; box-shadow: none; pointer-events: none; }
+.hero-nav-prev { left: .625rem; }
+.hero-nav-next { right: .625rem; }
+@media (prefers-reduced-motion: reduce) {
+  .hero-nav { transition: none; }
+}
+@media (min-width: 768px) {
+  .hero-nav-prev { left: -1.375rem; }
+  .hero-nav-next { right: -1.375rem; }
+}
+
+/* Keyboard hint under the hero -- desktop only: arrow keys work at any
+   width, but a physical keyboard is a desktop assumption (matches
+   NAVIGATION_DESIGN_SPEC.md §9's "desktop visitors are more likely to
+   use a keyboard"). */
+.kbd-hint { display: none; }
+@media (min-width: 768px) {
+  .kbd-hint {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: .35rem;
+    margin: .5rem 0 0;
+    font-size: .72rem;
+    color: var(--ink-faint);
+  }
+}
+.kbd-hint kbd {
+  font: inherit;
+  font-size: .7rem;
+  line-height: 1;
+  border: 1px solid var(--line);
+  border-bottom-width: 2px;
+  border-radius: 4px;
+  padding: 2px 5px;
+  background: var(--paper-raised);
+  color: var(--ink-soft);
 }
 
 /* Grid-tile badges (gallery-grid.html) and the matching entry-page
@@ -915,11 +1090,60 @@ body.drawer-open {
   border: 1px solid currentColor;
 }
 
-.prev-next {
+/* Footer pager (partials/prev-next.html) -- names the neighbour rather
+   than a bare "‹ Prev / Next ›". Art carries a small square thumbnail
+   (it has a curated `teaser`); publications and projects get a chevron.
+   Two equal columns: `next` is pinned to column 2 so it stays right
+   even at a section boundary where there is no `prev`. */
+.pager {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: .6rem;
+  margin-top: 2.4rem;
+  border-top: 1px solid var(--line);
+  padding-top: 1rem;
+}
+.pager a {
   display: flex;
-  justify-content: space-between;
-  margin-top: 2rem;
-  font-size: .9rem;
+  gap: .6rem;
+  align-items: center;
+  text-decoration: none;
+  color: inherit;
+  padding: .55rem;
+  border-radius: 10px;
+  transition: background .15s ease;
+}
+.pager a:hover { background: var(--accent-soft); }
+.pager a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .pager a { transition: none; }
+}
+.pager-prev { grid-column: 1; }
+.pager-next { grid-column: 2; flex-direction: row-reverse; text-align: right; }
+.pager-chevron { width: 1.1rem; height: 1.1rem; color: var(--ink-faint); flex-shrink: 0; }
+.pager-thumb { flex-shrink: 0; line-height: 0; }
+.pager-thumb picture,
+.pager-thumb img {
+  display: block;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 8px;
+  object-fit: cover;
+  border: 1px solid var(--line);
+}
+.pager-dir {
+  display: block;
+  font-size: .68rem;
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  color: var(--ink-faint);
+}
+.pager-title {
+  display: block;
+  font-size: .88rem;
+  font-weight: 600;
+  color: var(--ink);
+  line-height: 1.25;
 }
 
 /* Entry-page section tiles — NAVIGATION_DESIGN_SPEC.md §2. */

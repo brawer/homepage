@@ -6,9 +6,11 @@
   Params (dict):
     chips    (required) slice of {label, href, active (optional bool)}.
     ariaLabel (required) accessible name for the chip group.
+    wrap     (optional bool) wrap instead of horizontal-scroll — set by
+             detail pages (see .chip-row-wrap in main.css).
 */}}
 {{ if gt (len .chips) 0 }}
-<ul class="chip-row" aria-label="{{ .ariaLabel }}">
+<ul class="chip-row{{ if .wrap }} chip-row-wrap{{ end }}" aria-label="{{ .ariaLabel }}">
   {{ range .chips }}
     <li><a class="chip{{ if .active }} chip-active{{ end }}" href="{{ .href }}"{{ if .active }} aria-current="page"{{ end }}>{{ .label }}</a></li>
   {{ end }}

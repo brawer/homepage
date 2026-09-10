@@ -31,18 +31,45 @@
   {{ with .Params.pdf }}
     {{ $pdfResource = $.Resources.GetMatch . }}
   {{ end }}
-  {{ if or $heroImage $pdfResource }}
-    {{/* hero-matte-light: theme-following (Canvas), same bucket as
-         Projects -- "reads like paper" per NAVIGATION_DESIGN_SPEC.md
-         §7's table, unlike Art's fixed dark neutral. */}}
-    <div class="hero hero-matte-light">
-      {{ with $heroImage }}
-        <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
-      {{ end }}
+
+  <a class="backlink" href="{{ .CurrentSection.RelPermalink }}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    {{ partial "section-name.html" . }}
+  </a>
+
+  {{ if $heroImage }}
+    {{/* hero-matte-light is the warm --paper-dim grid-card tint since
+         the 2026-09-10 pass (a white scan on near-white `Canvas`
+         glared) — same bucket as Projects, per NAVIGATION_DESIGN_SPEC.md
+         §7. "Download PDF" is a full-width shelf ATTACHED BELOW the
+         frame (hero-with-cta), not an overlay: it can't crop the
+         document, and a flat opaque panel stays legible where a
+         gradient (assuming a dark image to fade into) would not.
+         Later: an inline PDF embed/toggle could sit here too, as its
+         own block next to the shelf rather than folded into this
+         logic. */}}
+    <div class="hero hero-matte-light{{ if $pdfResource }} hero-with-cta{{ end }}">
+      <div class="hero-media">
+        <div class="hero-frame">
+          <div class="detail-image">{{ partial "picture.html" (dict "image" $heroImage "alt" $.Title) }}</div>
+        </div>
+        {{ partial "hero-nav.html" $ }}
+      </div>
       {{ with $pdfResource }}
-        <a class="hero-cta" href="{{ .RelPermalink }}">{{ i18n "download_pdf" }}</a>
+        <a class="hero-cta" href="{{ .RelPermalink }}">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13M7 12l5 5 5-5M5 21h14"/></svg>
+          {{ i18n "download_pdf" }}
+        </a>
       {{ end }}
     </div>
+    {{ if or .NextInSection .PrevInSection }}<p class="kbd-hint" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> {{ i18n "keyboard_browse_hint" }}</p>{{ end }}
+  {{ else if $pdfResource }}
+    {{/* A downloadable PDF but no image/preview (rare) — a plain button
+         where the hero would have been, not a floating shelf. */}}
+    <a class="cta-standalone" href="{{ $pdfResource.RelPermalink }}">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v13M7 12l5 5 5-5M5 21h14"/></svg>
+      {{ i18n "download_pdf" }}
+    </a>
   {{ end }}
   <h1>{{ .Title }}</h1>
   {{/* Optional second, explanatory half of a long paper title, kept as
@@ -56,7 +83,7 @@
   {{ with .GetTerms "tags" }}
     {{ $chips := slice }}
     {{ range . }}{{ $chips = $chips | append (dict "label" .Title "href" .RelPermalink) }}{{ end }}
-    {{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tags_label")) }}
+    {{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tags_label") "wrap" true) }}
   {{ end }}
 
   {{/* Language name in the label is localized to the SITE's current

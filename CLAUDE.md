@@ -1313,6 +1313,12 @@ the two files above.
   layout; larger circular Prev/Next buttons + arrow-key support;
   landscape-specific grid column counts/header collapse beyond what
   the responsive rules above already produce.
+  - **Done 2026-09-10** (see "Detail page design pass" below): circular
+    Prev/Next buttons + arrow-key support, and the whole detail-page
+    hero/CTA/pager. Still deferred from this bullet: the "Read more"
+    line-clamp (see that section for why it was dropped), the two-column
+    tablet/desktop detail layout, `safe-area-inset-*`, real icon
+    artwork, the WIREFRAME token set, animations.
 - **No content-model or CI-relevant changes** in this pass — no new
   front-matter fields, no `content/` edits. Confirmed
   `hugo build`/`hugo list all` output is unchanged, `check_typography.py`
@@ -1716,6 +1722,97 @@ about to add many publications):
 - Still deferred: exact tile size / whether 4 is right once there are
   ~15+ publications, the landscape-phone grid, whether Projects wants
   its own treatment. Revisit after the publications content lands.
+
+### Detail page design pass, 2026-09-10
+
+The per-item detail pages (`layouts/{art,publications,projects}/single.html`)
+got their visual design — same mockup-first workflow as the grid,
+chrome and résumé passes; mockup: the "Detail Page Design" Artifact,
+iterated with Sascha. Ported files: `assets/css/main.css` (the hero
+block + `.prev-next` → `.pager` replaced wholesale, `.chip-row-wrap`
+and an `article > h1` rule added), the three `single.html` templates,
+new `layouts/partials/hero-nav.html` and `section-name.html`,
+rewritten `layouts/partials/prev-next.html`, `assets/js/nav.js`
+(arrow-key nav), `i18n/*.toml` (new `keyboard_browse_hint`;
+`prev_label` EN value "Prev" → "Previous"). Load-bearing decisions:
+
+- **Hero image frame reduced 24rem → 18rem.** Still a fixed-height
+  container (predictable control positions, consistent page rhythm) —
+  natural-ratio-with-a-cap was mocked and rejected: the hero height
+  then swings per piece and the circular controls lose a fixed spot.
+  `18rem` is the image FRAME; the CTA shelf below adds its own height.
+- **Light matte is now `--paper-dim`** (the warm grid-card tint), not
+  near-white `Canvas` — a white scan on an almost-white matte glared;
+  the hairline `--line` border stays so the scan still has a visible
+  edge. Art keeps the fixed dark `#2C2C2A` matte unchanged. The matte
+  `background` moved from `.hero` onto `.hero-frame`; `.hero-matte-dark`
+  / `.hero-matte-light` are still the modifier classes, still on
+  `.hero`. **Supersedes** the 2026-08-25 "hero matte is a two-bucket
+  CSS class" note's `background: Canvas` specifics for the light bucket.
+- **The CTA ("Download PDF" / "View on GitHub") is a full-width shelf
+  ATTACHED BELOW the image**, not an overlay. `.hero-cta` is a flush
+  `<a>` after `.hero-media` inside `.hero`; `.hero.hero-with-cta`
+  squares off the frame's bottom corners so the two read as one unit.
+  Flat opaque `--ink` panel, never a gradient (a gradient assumes a
+  dark image to fade into and breaks on a near-white scan). Sascha's
+  call: an overlay covers/crops the very document the page is about.
+  **Supersedes** the 2026-08-25 Templates notes predicting a later
+  `/design` pass would show the CTA "as a button overlaid on the hero
+  image with CSS alone, without another template edit" — it's below,
+  and the templates were edited. A project with a `github_url` but no
+  teaser image gets `.cta-standalone` (a normal button) instead of a
+  shelf floating under nothing.
+- **Circular Prev/Next on the hero** (`hero-nav.html`) — 2.75rem
+  paper-raised circles, same fill/hairline/shadow as a grid tile,
+  accent wash on hover. Inset over the image at phone widths, half over
+  the edge at ≥768px (so they clear artwork; on mobile they can't, and
+  that's accepted). Rendered as `<a>` (work with no JS); a section
+  boundary renders a dimmed inert `<span>` so the other button keeps
+  its slot. Uses the **same `.NextInSection` ↔ visual-"prev" swap** as
+  `prev-next.html` — now in THREE places (hero-nav, footer pager, the
+  art viewer), all cross-referenced in comments.
+- **Arrow-key nav** (`nav.js`): ← / → step prev/next, mirroring the
+  circles and — when the art fullscreen viewer is open — driving ITS
+  chevrons instead. Guarded against form fields, modifier keys and
+  already-handled events. A `.kbd-hint` under the hero advertises it:
+  **desktop-only** (CSS; a keyboard is a desktop assumption, per spec
+  §9), and only rendered when a neighbour actually exists.
+- **Named footer pager** replaces the bare "‹ Prev / Next ›" row
+  (`.prev-next` → `.pager`): kicker + neighbour title, plus a square
+  thumbnail for art (it has a curated `teaser`; publications/projects
+  get a chevron). Two equal columns, `next` pinned to column 2 so it
+  stays right at a section boundary with no `prev`.
+- **Back-link above the hero** to the section list
+  (`section-name.html` — the localized section name from the nav menu
+  by `identifier`, same source as `grid-header.html`'s `<h1>`; falls
+  back to `.CurrentSection.Title` for Projects, which is out of the
+  menu). New pattern, not in NAVIGATION_DESIGN_SPEC.
+- **Detail `<h1>` is now styled** (`article > h1`: 1.9rem / 700 /
+  -.01em / `text-wrap: balance`, matching the résumé identity h1) —
+  was browser-default. Scoped to `article >` so it never touches the
+  résumé or the grid header.
+- **The tag chip row wraps** on detail pages (`chip-row.html` gains a
+  `wrap` param → `.chip-row-wrap`) instead of the grid/tag header's
+  horizontal scroll — few tags, no parent scope to scroll back to, and
+  it sits on the page background like body text (spec §6.3).
+- **NOT ported — the description "Read more" line-clamp** (spec §6).
+  The hero's own circular Prev/Next + arrow keys already deliver "flip
+  through pieces quickly" (the clamp's stated justification), and a
+  real clamp needs JS state + a11y wiring that was deliberately
+  deferred once already. Text is left unclamped — spec §6 explicitly
+  allows this. Revisit if still wanted.
+- **Icons**: `hero-nav` / `.pager` / `.backlink` / `.hero-cta` use
+  inline stroke SVG (chevrons, arrow-left, download, the GitHub mark),
+  following the résumé pass's SVG direction. The existing `⤢` zoom
+  glyph and the viewer's `✕ ‹ ›` are untouched — the full
+  icon-artwork pass is still deferred.
+- **No content-model changes** — no new front-matter fields, no
+  `content/` edits; `hugo list all` output unchanged.
+  `check_typography.py` still passes (it doesn't scan `i18n/*.toml`;
+  the one new German string was hand-checked against de-CH). The
+  interactive behaviour (arrow keys, circular-button clicks, the
+  viewer) needs a manual `hugo server` + browser/keyboard check —
+  this session had none.
 
 ## Known open items (as of last content session)
 

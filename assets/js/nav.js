@@ -87,6 +87,32 @@
     history.replaceState(null, "", location.pathname + location.hash);
   }
 
+  // Detail pages: ← / → step to the previous / next item in the
+  // section, mirroring the circular buttons on the hero (hero-nav.html)
+  // and the fullscreen viewer's own chevrons. A desktop affordance (the
+  // hint under the hero is desktop-only via CSS), but the keys work at
+  // any width. When the art viewer is open, drive ITS prev/next
+  // instead. Ignored while typing in a field or when a modifier is
+  // held, and never overrides a link/button that already handled the
+  // key.
+  var heroPrev = document.querySelector("a.hero-nav-prev");
+  var heroNext = document.querySelector("a.hero-nav-next");
+  if (heroPrev || heroNext) {
+    document.addEventListener("keydown", function (e) {
+      if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
+      if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      var t = e.target;
+      if (t && (t.isContentEditable ||
+          /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      var openViewer = document.getElementById("viewer");
+      var inViewer = openViewer && openViewer.open;
+      var prev = inViewer ? openViewer.querySelector(".viewer-prev") : heroPrev;
+      var next = inViewer ? openViewer.querySelector(".viewer-next") : heroNext;
+      var target = e.key === "ArrowLeft" ? prev : next;
+      if (target && target.href) location.href = target.href;
+    });
+  }
+
   // Résumé: the header is position:sticky there (the one page long
   // enough for a pinned header to matter — see CLAUDE.md). Cast a shadow
   // under it only once the page has scrolled: a shadow implies floating

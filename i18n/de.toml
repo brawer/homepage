@@ -172,6 +172,10 @@ other = "Zurück"
 other = "Weiter"
 [prev_next_label]
 other = "Vor/Zurück-Navigation"
+# Detailseite, Hero: «← → zum Blättern» (Pfeiltasten blättern durch den
+# Bereich, siehe nav.js). Die Pfeile stehen wörtlich im Template.
+[keyboard_browse_hint]
+other = "zum Blättern"
 [all_chip_label]
 other = "Alle"
 [tag_filter_label]

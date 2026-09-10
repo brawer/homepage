@@ -212,11 +212,15 @@ other = "Next artwork"
 [viewer_position]
 other = "{{.Position}} / {{.Total}}"
 [prev_label]
-other = "Prev"
+other = "Previous"
 [next_label]
 other = "Next"
 [prev_next_label]
 other = "Prev/next navigation"
+# Detail-page hero: "← → to browse" (arrow keys step through the section,
+# wired in nav.js). The arrows themselves are literal in the template.
+[keyboard_browse_hint]
+other = "to browse"
 [all_chip_label]
 other = "All"
 [tag_filter_label]

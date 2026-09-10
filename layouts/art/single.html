@@ -1,32 +1,47 @@
 {{ define "main" }}
 <article>
-  {{/* Fixed page order per NAVIGATION_DESIGN_SPEC.md §6: Hero → Title
-       → Tag chips → Metadata → Description → Prev/Next.
+  {{/* Fixed page order per NAVIGATION_DESIGN_SPEC.md §6 and the
+       2026-09-10 "Detail Page Design" pass: back-link → hero → title →
+       tag chips → metadata → description → footer pager.
 
-       Whole hero is tappable (opens the fullscreen viewer below), no
-       CTA button, small ⤢ icon — "within-page action, view larger, not
-       leave" (spec §6), unlike publications/projects' exit-action CTA
-       button. hero-matte-dark is a DELIBERATE exception to system-
-       theme following (spec §7's table) — do not make this
-       theme-aware in a future /design pass. */}}
+       Art hero: fixed dark matte (#2C2C2A, a DELIBERATE exception to
+       system-theme following per spec §7 — do NOT make it theme-aware
+       in a future pass). The whole frame is tap-to-zoom into the
+       fullscreen viewer below (small ⤢ chip, no CTA button — "view
+       larger, don't leave" per spec §6, unlike publications'/projects'
+       exit-action shelf). Circular Prev/Next (hero-nav.html) overlay
+       the frame; the named footer pager (prev-next.html) is the
+       with-context sibling. */}}
   {{ $img := "" }}
   {{ with .Params.image }}
     {{ $img = $.Resources.GetMatch . }}
   {{ end }}
+
+  <a class="backlink" href="{{ .CurrentSection.RelPermalink }}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    {{ partial "section-name.html" . }}
+  </a>
+
   {{ with $img }}
     <div class="hero hero-matte-dark">
-      <button type="button" class="hero-zoom" data-viewer-open aria-label="{{ i18n "zoom_open" }}">
-        <span class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</span>
-        <span class="zoom-icon" aria-hidden="true">⤢</span>
-      </button>
+      <div class="hero-media">
+        <div class="hero-frame">
+          <button type="button" class="hero-zoom" data-viewer-open aria-label="{{ i18n "zoom_open" }}">
+            <span class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</span>
+            <span class="zoom-icon" aria-hidden="true">⤢</span>
+          </button>
+        </div>
+        {{ partial "hero-nav.html" $ }}
+      </div>
     </div>
+    {{ if or $.NextInSection $.PrevInSection }}<p class="kbd-hint" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> {{ i18n "keyboard_browse_hint" }}</p>{{ end }}
   {{ end }}
   <h1>{{ .Title }}</h1>
 
   {{ with .GetTerms "tags" }}
     {{ $chips := slice }}
     {{ range . }}{{ $chips = $chips | append (dict "label" .Title "href" .RelPermalink) }}{{ end }}
-    {{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tags_label")) }}
+    {{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tags_label") "wrap" true) }}
   {{ end }}
 
   {{/* height_cm/width_cm are two numeric fields, not one preformatted

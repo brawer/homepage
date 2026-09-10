@@ -1,0 +1,18 @@
+{{/*
+  Localized section name for a detail page's back-link (art /
+  publications / projects single.html). Same single source of truth as
+  grid-header.html's <h1>: hugo.toml's per-language nav menu, matched by
+  the menu entry's `identifier` == the section slug.
+
+  Projects is temporarily out of the menu (hugo.toml), so it falls back
+  to its own content/projects/_index.<lang>.md title. Art and
+  Publications have no _index yet but are always in the menu.
+
+  Param: the current Page.
+*/}}
+{{- $name := .CurrentSection.Title -}}
+{{- $section := .Section -}}
+{{- range site.Menus.main -}}
+  {{- if eq .Identifier $section -}}{{- $name = .Name -}}{{- end -}}
+{{- end -}}
+{{- $name -}}
