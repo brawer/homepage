@@ -1315,10 +1315,12 @@ the two files above.
   the responsive rules above already produce.
   - **Done 2026-09-10** (see "Detail page design pass" below): circular
     Prev/Next buttons + arrow-key support, and the whole detail-page
-    hero/CTA/pager. Still deferred from this bullet: the "Read more"
-    line-clamp (see that section for why it was dropped), the two-column
-    tablet/desktop detail layout, `safe-area-inset-*`, real icon
-    artwork, the WIREFRAME token set, animations.
+    hero/CTA/pager, and the drawer/viewer open/close animation (see
+    "Drawer + viewer animation" below). Still deferred
+    from this bullet: the "Read more" line-clamp (see that section for
+    why it was dropped), the two-column tablet/desktop detail layout,
+    `safe-area-inset-*`, real icon artwork, the WIREFRAME token set,
+    chip/badge polish.
 - **No content-model or CI-relevant changes** in this pass — no new
   front-matter fields, no `content/` edits. Confirmed
   `hugo build`/`hugo list all` output is unchanged, `check_typography.py`
@@ -1818,6 +1820,39 @@ rewritten `layouts/partials/prev-next.html`, `assets/js/nav.js`
   interactive behaviour (arrow keys, circular-button clicks, the
   viewer) needs a manual `hugo server` + browser/keyboard check —
   this session had none.
+
+### Drawer + viewer animation, 2026-09-10
+
+CSS-only open/close animation for the two native `<dialog>`s (the last
+"drawer/viewer open/close animation" item from the 2026-08-25 deferred
+list). `assets/css/main.css` only — no JS, no markup change.
+
+- **Drawer**: the panel **slides** from the right edge (`translate:
+  100% 0` ↔ `0 0` — its own width, off the 100vw mobile sheet or the
+  400px desktop dock), the **scrim fades** (`#nav-drawer::backdrop`
+  opacity). Material nav-drawer convention (panel slides, scrim fades,
+  not both). Enter decelerates over .26s (`cubic-bezier(.16,1,.3,1)`),
+  exit accelerates over .19s.
+- **Viewer**: a lightbox **fade + small scale pop** (`.97` → `1`) — it
+  opens from the ⤢ button so a slight zoom-in reads right. The
+  near-black `.viewer` background is opaque, so its own fade covers the
+  generic `dialog::backdrop`; no separate backdrop rule.
+- **Mechanism**: `transition-behavior: allow-discrete` on `overlay`
+  and `display`, plus `@starting-style` for the enter — this is what
+  makes the **close** animate (not just the open) on a native
+  `<dialog>` that flips to `display: none`. A browser without these
+  (pre-2024ish) just snaps open/closed — fully functional, no
+  animation. Both are well past baseline now and the site already uses
+  comparably new CSS (container queries, `dvh`, `text-wrap`).
+- `@media (prefers-reduced-motion: reduce)` drops every transition
+  (instant open/close).
+- **Known minor**: `body.drawer-open` (the background scroll lock,
+  toggled in nav.js on the `close` event) releases at the *start* of
+  the ~190ms exit, so the page is briefly scrollable while the panel
+  slides out. Judged not worth a `transitionend` listener.
+- Not verifiable without a browser — needs a manual `hugo server`
+  check (both dialogs, both themes, reduced-motion, and the art
+  viewer's `?view=full` auto-open path).
 
 ## Known open items (as of last content session)
 
