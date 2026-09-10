@@ -494,12 +494,13 @@ verified against source for patents), `venue`, `abstract`.
   2000 -o . the.pdf` built in for page 1 specifically, no install
   needed, as a fallback if `pdftoppm`/`poppler` isn't installed).
   **Which page (`N`) is an editorial call, not always page 1** — pick
-  whichever page best represents the document. Default assumption is
-  page 1 (the title page) unless told otherwise; `modellieren-
-  raumbezogener-daten` deliberately uses page 7 instead (Sascha: the
-  book's own chapter-by-chapter overview reads better than its title
-  page). If asked to change one, regenerate with the same two
-  commands at the requested page number — don't just assume page 1.
+  whichever page best represents the document. Default is page 1 (the
+  title page); every publication now uses it. (`modellieren-
+  raumbezogener-daten` briefly used page 7 — its chapter overview —
+  but the lone illustration in the square teaser crop read as random
+  on the grid; reverted to the title page 2026-09-10, matching every
+  other document item.) If asked to change one, regenerate with the
+  same two commands at the requested page number.
   Checked into git like any other bundle resource — not regenerated
   at build time, and there's no Hugo-native way to rasterize a PDF
   page even if it were (Hugo's image pipeline only processes
