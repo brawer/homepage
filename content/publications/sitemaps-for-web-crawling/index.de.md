@@ -9,6 +9,20 @@ teaser_is_document: true
 authors: ["Sascha Brawer", "Maximilian Ibel", "Ralph M. Keller", "Narayanan Shivakumar"]
 assignee: "Google LLC"
 patent_family:
+  # siehe index.en.md — zwei US-Stränge, Priorität 2005-05-31.
+  # TODO(review): expires-Daten der beiden 2010er-Patente sind
+  # konservative Schätzungen (~2018–2019 wegen nicht bezahlter
+  # Gebühren erloschen), nicht verifiziert.
+  - office: "US"
+    number: "US 7,769,742 B1"
+    status: "lapsed"
+    granted: "2010-08-03"
+    expires: "2019-02-03"
+  - office: "US"
+    number: "US 7,801,881 B1"
+    status: "lapsed"
+    granted: "2010-09-21"
+    expires: "2019-03-21"
   - office: "US"
     number: "US 8,037,055 B2"
     status: "expired"
@@ -35,5 +49,5 @@ pdf: "us9355177.pdf"
 ---
 Die Patente hinter dem [Sitemaps-Protokoll](https://www.sitemaps.org/),
 das 2005 bei Google mitentwickelt und offen als Industriestandard
-veröffentlicht wurde. US 9,355,177 B2 setzt das ältere US 7,769,742 B1
-fort.
+veröffentlicht wurde – zwei US-Fortsetzungsstränge, einer für die
+Website-Seite und einer für die Crawler-Seite.
