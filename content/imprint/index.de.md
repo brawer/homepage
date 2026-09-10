@@ -11,4 +11,6 @@ Aufgrund des tiefen Jahresumsatzes bin ich von der Mehrwertsteuerpflicht befreit
 
 ## Cookies
 
-Diese Website verwendet keine Cookies.
+Diese Website verwendet keine Cookies. Wenn du eine Sprache auswählst,
+wird diese Wahl lokal in deinem Browser gespeichert und nirgendwohin
+übermittelt.

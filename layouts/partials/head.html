@@ -1,5 +1,31 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+{{/* Remembered language choice. If the visitor has previously picked
+   a language with the switcher (footer/drawer), that choice is stored
+   in localStorage and honoured here: a page shown in the other
+   language redirects to its translation. Deliberately ONLY an explicit
+   past choice — never inferred from navigator.language (that's the
+   auto-redirect antipattern Google warns against, and it fights
+   hreflang; see the hreflang note below). Inline and render-blocking
+   on purpose — a deferred script would paint the wrong language first,
+   then jump. location.replace, not assign, so the wrong-language URL
+   never lands in history (Back stays sane). Redirects on every page,
+   not just the home page: "I told this site my language" should hold
+   for deep links too. Storage access can throw (private mode); the
+   catch just means the preference isn't applied, which is fine. */}}
+{{- if .IsTranslated }}
+{{- $urls := dict }}
+{{- range .AllTranslations }}{{ $urls = merge $urls (dict .Lang .RelPermalink) }}{{ end }}
+<script>
+(function () {
+  try {
+    var pref = localStorage.getItem("preferred-lang");
+    var urls = {{ $urls }};
+    if (pref && pref !== {{ .Lang }} && urls[pref]) location.replace(urls[pref]);
+  } catch (e) {}
+})();
+</script>
+{{ end }}
 {{/* `noindex`: the whole staging site while site.Params.noindex is
      true (flipped off at launch), plus /projects and everything under
      it permanently — that section stays a work-in-progress and is out
