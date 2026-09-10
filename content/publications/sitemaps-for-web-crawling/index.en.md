@@ -2,7 +2,7 @@
 title: "Sitemaps for Web Crawling"
 date: 2005-05-31
 publishDate: 2026-09-07
-tags: ["Google", "Open Source"]
+tags: ["Google"]
 kind: "patent"
 kind_label: "Patent Family"
 teaser_is_document: true
