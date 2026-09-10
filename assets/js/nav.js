@@ -101,6 +101,7 @@
     document.addEventListener("keydown", function (e) {
       if (e.key !== "ArrowLeft" && e.key !== "ArrowRight") return;
       if (e.defaultPrevented || e.altKey || e.ctrlKey || e.metaKey || e.shiftKey) return;
+      if (document.body.classList.contains("drawer-open")) return;
       var t = e.target;
       if (t && (t.isContentEditable ||
           /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
