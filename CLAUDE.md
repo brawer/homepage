@@ -78,6 +78,53 @@ templates/CSS via `/design` mode.
   `.Translations`, not a filename-matching reimplementation) or if
   any file under `content/` is a symlink.
 
+### Language selection (static site, no server)
+
+The site deploys as static files to a CDN (issue #81) — there is no
+server to do an `Accept-Language` redirect. Language selection is
+handled two ways, neither of which ever guesses from
+`navigator.language` (that's the auto-redirect antipattern Google
+warns against, and it fights the hreflang tags):
+
+- **Search traffic — `hreflang` alternates** (PR #97,
+  `layouts/partials/head.html`). Every translated, indexable page emits
+  a reciprocal set of `<link rel="alternate" hreflang="…">` (each
+  language version, including itself, plus `x-default` → the
+  default-language page, detected as the one whose site home is `"/"`,
+  not a hardcoded `"en"`). Guarded by `.IsTranslated` **and**
+  `not $noindex`, so `/projects/*` and the whole staging site (while
+  `params.noindex` is true) emit none — a noindex page is dropped from
+  its hreflang cluster anyway. `$noindex` is computed once near the top
+  of `head.html` and shared with the robots-meta line.
+- **Direct visitors — remembered explicit choice** (PR #98). Clicking
+  **EN**/**DE** in the footer or drawer switcher writes
+  `localStorage["preferred-lang"]` (`assets/js/nav.js`, wired to a
+  `data-lang-choice="<lang>"` attribute on the switcher `<a>` in
+  `utility-nav.html` and `drawer-utility.html`). A small
+  **render-blocking inline `<script>`** near the top of `head.html`
+  (the first inline JS on the site) reads it on every page load and,
+  when the page is shown in the other language, `location.replace()`s
+  to its translation. It only ever acts on a choice the visitor
+  actually made — first-time visitors and crawlers are never
+  redirected. Inline + synchronous so the wrong language never paints
+  first; `replace` not `assign` so Back isn't trapped; `localStorage`
+  access in `try/catch` (private mode). Redirects on **every** page,
+  not just the home page. The switcher *is* the preference — there's no
+  "just this once" mode. Disclosed in the imprint's Cookies section
+  ("saved locally in your browser … never sent anywhere" / de:
+  informal *du*) so "does not use cookies" stays complete.
+  - **CSP follow-up parked in #81**: the inline script's body is not
+    byte-identical across pages (it embeds this page's `{lang: url}`
+    map), so one static `sha256-` hash can't cover the whole site.
+    Before a Content-Security-Policy lands, refactor it to read the
+    per-page data from the DOM (a `<script type="application/json">`
+    island — *not* the hreflang tags, which sit below it in the head
+    and are absent under noindex) so the executable body collapses to
+    one hashable constant. Not done now: the payoff is inert until a
+    CSP exists, and the CSP design (edge rule vs. `<meta http-equiv>`,
+    or just `script-src 'unsafe-inline'` for a zero-third-party site)
+    isn't decided.
+
 ## Typography (applies to content, not just templates)
 
 - German content follows **Swiss conventions (de-CH)**, not
