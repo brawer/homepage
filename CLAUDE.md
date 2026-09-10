@@ -1682,6 +1682,13 @@ about to add many publications):
   and robots.txt then also starts advertising the sitemap. No
   `X-Robots-Tag` HTTP header is set (deploy target still undecided), so
   the meta tag is the load-bearing signal.
+  - **`/projects` and everything under it stay `noindex` even after
+    launch** (2026-09-10): `head.html` emits the robots meta when
+    `site.Params.noindex` **or** `eq .Section "projects"`. It's a
+    work-in-progress section, out of the nav. `robots.txt` is left
+    permissive for `/projects` on purpose — a `Disallow` there would
+    stop crawlers seeing the `noindex`. Remove the `.Section` clause
+    when Projects is ready.
 
 - **The "Paper & Plum" grid design is live, ported 2026-08-26**
   (`static/css/main.css` + `layouts/partials/gallery-grid.html`) —

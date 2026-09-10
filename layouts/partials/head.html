@@ -1,6 +1,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-{{ if site.Params.noindex }}<meta name="robots" content="noindex, nofollow">
+{{/* `noindex`: the whole staging site while site.Params.noindex is
+     true (flipped off at launch), plus /projects and everything under
+     it permanently — that section stays a work-in-progress and is out
+     of the nav (see hugo.toml). `.Section` is "projects" for the list
+     page and every leaf page (it's a real multi-page section, so the
+     "empty for single-page sections" caveat doesn't apply). Leave
+     /projects crawlable in robots.txt so this tag is actually seen. */}}
+{{ if or site.Params.noindex (eq .Section "projects") }}<meta name="robots" content="noindex, nofollow">
 {{ end -}}
 <title>{{ if .IsHome }}{{ .Site.Params.fullName }}{{ else }}{{ .Title }} — {{ .Site.Params.fullName }}{{ end }}</title>
 {{- /* Content-hashed URL so the Bunny edge can cache it forever (issue
