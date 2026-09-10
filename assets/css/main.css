@@ -493,6 +493,16 @@ dialog::backdrop {
    convention the viewer already uses for its own background. */
 #nav-drawer::backdrop {
   background: rgba(26, 22, 19, .55);
+  /* Scrim fades with the panel (see the .drawer open/close animation
+     below). transition-behavior: allow-discrete + @starting-style let
+     the CLOSE animate too, not just the open; browsers without them
+     just snap (fully functional). */
+  opacity: 0;
+  transition: opacity .22s ease, overlay .22s allow-discrete, display .22s allow-discrete;
+}
+#nav-drawer[open]::backdrop { opacity: 1; }
+@starting-style {
+  #nav-drawer[open]::backdrop { opacity: 0; }
 }
 
 .drawer[open] {
@@ -530,6 +540,40 @@ dialog::backdrop {
     border-radius: 20px 0 0 20px;
     box-shadow: -8px 0 32px rgba(var(--shadow-color), var(--shadow-op-hover-2));
   }
+}
+
+/* Open/close animation -- the panel slides from the right edge
+   (Material nav-drawer convention: the panel slides, the scrim fades;
+   translate:100% is the element's own width, off either the 100vw
+   mobile sheet or the 400px desktop dock). Enter decelerates and is a
+   touch longer; exit accelerates and is quicker. `overlay` +
+   `display` transitions with allow-discrete (plus @starting-style for
+   the enter) keep the panel painted through the close, so both
+   directions animate; a browser without these just snaps, still fully
+   working. prefers-reduced-motion drops all of it. The body scroll
+   lock (body.drawer-open, toggled in nav.js on the `close` event) is
+   released at the start of the exit -- 200ms of scrollable background
+   is not worth another transitionend listener. */
+.drawer {
+  translate: 100% 0;
+  transition: translate .19s cubic-bezier(.4, 0, 1, 1),
+              overlay .19s allow-discrete,
+              display .19s allow-discrete;
+}
+.drawer[open] {
+  translate: 0 0;
+  transition: translate .26s cubic-bezier(.16, 1, .3, 1),
+              overlay .26s allow-discrete,
+              display .26s allow-discrete;
+}
+@starting-style {
+  .drawer[open] { translate: 100% 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .drawer,
+  .drawer[open],
+  #nav-drawer::backdrop,
+  #nav-drawer[open]::backdrop { transition: none; }
 }
 
 .drawer-header {
@@ -706,6 +750,28 @@ body.drawer-open {
   color: #fff;
   display: flex;
   flex-direction: column;
+}
+
+/* Open/close animation -- a lightbox fade with a small scale pop
+   (opened by the ⤢ "zoom" button, so a slight zoom-in reads right).
+   Same allow-discrete + @starting-style mechanism as the drawer so the
+   close animates too; snaps on browsers without it; off under
+   prefers-reduced-motion. The near-black .viewer background is opaque,
+   so its own fade covers the generic dialog::backdrop -- no separate
+   backdrop rule needed here. */
+.viewer {
+  opacity: 0;
+  scale: .97;
+  transition: opacity .2s ease, scale .2s ease,
+              overlay .2s allow-discrete, display .2s allow-discrete;
+}
+.viewer[open] { opacity: 1; scale: 1; }
+@starting-style {
+  .viewer[open] { opacity: 0; scale: .97; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .viewer,
+  .viewer[open] { transition: none; }
 }
 
 .viewer-chrome {
