@@ -6,8 +6,9 @@
      of the nav (see hugo.toml). `.Section` is "projects" for the list
      page and every leaf page (it's a real multi-page section, so the
      "empty for single-page sections" caveat doesn't apply). Leave
-     /projects crawlable in robots.txt so this tag is actually seen. */}}
-{{ if or site.Params.noindex (eq .Section "projects") }}<meta name="robots" content="noindex, nofollow">
+     /projects crawlable in robots.txt so this tag is actually seen. */ -}}
+{{- $noindex := or site.Params.noindex (eq .Section "projects") }}
+{{ if $noindex }}<meta name="robots" content="noindex, nofollow">
 {{ end -}}
 <title>{{ if .IsHome }}{{ .Site.Params.fullName }}{{ else }}{{ .Title }} — {{ .Site.Params.fullName }}{{ end }}</title>
 {{- /* Content-hashed URL so the Bunny edge can cache it forever (issue
@@ -19,4 +20,23 @@
 <link rel="stylesheet" href="{{ $css.RelPermalink }}" integrity="{{ $css.Data.Integrity }}">
 {{ with .OutputFormats.Get "rss" }}
 <link rel="alternate" type="application/rss+xml" href="{{ .Permalink }}">
+{{ end }}
+{{- /* hreflang alternates: how a static, server-less site does
+   language selection — search engines serve the right language per the
+   searcher's locale, no Accept-Language redirect needed. Absolute
+   URLs, every version lists every version (incl. itself). x-default is
+   the default-language page, detected as the one whose site home is
+   "/" (defaultContentLanguageInSubdir = false) rather than hardcoding
+   "en". Emitted only for translated pages — the site is fully
+   bilingual, but auto-generated edge cases shouldn't emit a lone
+   self-referential pair. Skipped on noindex pages (/projects/*): a
+   noindex page is dropped from its hreflang cluster by search engines
+   anyway, so the tags would be dead weight. */ -}}
+{{ if and .IsTranslated (not $noindex) }}
+{{ range .AllTranslations }}
+<link rel="alternate" hreflang="{{ .Lang }}" href="{{ .Permalink }}">
+{{- if eq .Site.Home.RelPermalink "/" }}
+<link rel="alternate" hreflang="x-default" href="{{ .Permalink }}">
+{{- end }}
+{{ end }}
 {{ end }}
