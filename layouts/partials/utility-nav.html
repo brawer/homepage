@@ -40,7 +40,7 @@
            requires). */}}
       {{ $langName := i18n (printf "language_name_%s" .Lang) }}
       {{ if eq .Lang $page.Lang }}<strong aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</strong>
-      {{- else }}<a href="{{ .RelPermalink }}" aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</a>
+      {{- else }}<a href="{{ .RelPermalink }}" data-lang-choice="{{ .Lang }}" aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</a>
       {{- end }}
     {{ end }}
   {{ else }}

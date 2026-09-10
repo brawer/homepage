@@ -46,6 +46,24 @@
   // Fullscreen art viewer.
   wireDialog("viewer", "[data-viewer-open]", "[data-viewer-close]");
 
+  // Language switcher: record an explicit choice so later visits can
+  // honour it. The redirect itself is done by the inline <head> script
+  // (see head.html) — it has to run before paint. This only writes the
+  // preference, which can happen late: the click also navigates via the
+  // link's href, and the next page reads the freshly-written value.
+  // Never inferred from navigator.language, only what was actually
+  // clicked. A failed write (private mode) just means "not remembered".
+  document.querySelectorAll("[data-lang-choice]").forEach(function (link) {
+    link.addEventListener("click", function () {
+      try {
+        localStorage.setItem(
+          "preferred-lang",
+          link.getAttribute("data-lang-choice")
+        );
+      } catch (e) {}
+    });
+  });
+
   // Tag-page back arrow: return to wherever the visitor actually
   // pivoted from (a tag can be reached from many different parent
   // pages), at the same scroll position. The href="/" on the same

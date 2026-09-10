@@ -36,7 +36,7 @@
              -- see that partial's own comment, not repeated here. */}}
         {{ $langName := i18n (printf "language_name_%s" .Lang) }}
         {{ if eq .Lang $page.Lang }}<span aria-current="page" aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</span>
-        {{- else }}<a href="{{ .RelPermalink }}" aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</a>
+        {{- else }}<a href="{{ .RelPermalink }}" data-lang-choice="{{ .Lang }}" aria-label="{{ .Language.Label }}, {{ $langName }}">{{ .Language.Label }}</a>
         {{- end }}
       {{ end }}
     {{ else }}

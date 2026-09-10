@@ -11,4 +11,5 @@ I am exempt from VAT registration due to annual turnover below the threshold.
 
 ## Cookies
 
-This site does not use cookies.
+This site does not use cookies. If you pick a language, that choice is
+saved locally in your browser and is never sent anywhere.
