@@ -65,11 +65,13 @@ uglyURLs = false
       identifier = "resume"
       pageRef = "/resume"
       weight = 10
-    [[languages.en.menu.main]]
-      name = "Projects"
-      identifier = "projects"
-      pageRef = "/projects"
-      weight = 20
+    # Projects (weight 20) is deliberately NOT in the menu while
+    # /projects is a placeholder — the page still builds and is
+    # reachable by URL, just hidden from the nav bar, the drawer, and
+    # the homepage section tiles (all three range over site.Menus.main).
+    # Its list-page <h1> comes from content/projects/_index.*.md now,
+    # not the menu. To restore: re-add this block (both languages) and
+    # optionally drop the _index files.
     [[languages.en.menu.main]]
       name = "Publications"
       identifier = "publications"
@@ -102,11 +104,8 @@ uglyURLs = false
       identifier = "resume"
       pageRef = "/resume"
       weight = 10
-    [[languages.de.menu.main]]
-      name = "Projekte"
-      identifier = "projects"
-      pageRef = "/projects"
-      weight = 20
+    # Projekte (weight 20) bewusst nicht im Menü, solange /projects ein
+    # Platzhalter ist — siehe Kommentar im [languages.en]-Block.
     [[languages.de.menu.main]]
       name = "Publikationen"
       identifier = "publications"
