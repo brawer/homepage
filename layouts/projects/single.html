@@ -1,32 +1,47 @@
 {{/* See CLAUDE.md's Projects bundle front matter section. */}}
 {{ define "main" }}
 <article>
-  {{/* image and github_url are wrapped in one .hero container -- even
-       though nothing here draws it as an overlay yet -- specifically
-       so a later /design pass can position the GitHub link as a
-       button on top of the hero image with CSS alone (position:
-       relative on .hero, position: absolute on .hero-cta), without
-       another template edit. Wrapping is conditional on having
-       *either* field, not just image, so a project with a
-       github_url but no teaser image yet still gets its link
-       rendered (as a plain, non-overlaid one) instead of losing it
-       silently. See CLAUDE.md's Templates section. */}}
+  {{/* 2026-09-10 "Detail Page Design" pass. Structure mirrors
+       publications: back-link → hero (warm --paper-dim matte, same
+       "screenshots read as documents" bucket as publications per
+       NAVIGATION_DESIGN_SPEC.md §7) → circular hero-nav → title.
+       "View on GitHub" is a full-width shelf ATTACHED BELOW the frame
+       (hero-with-cta), same treatment as "Download PDF". A project
+       with a github_url but no teaser image yet still gets the link,
+       as a plain .cta-standalone button where the hero would have
+       been. The project-hero treatment is PROVISIONAL (Sascha's call)
+       — revisit once there are more projects and real screenshots. */}}
   {{ $img := "" }}
   {{ with .Params.image }}
     {{ $img = $.Resources.GetMatch . }}
   {{ end }}
-  {{ if or $img .Params.github_url }}
-    {{/* hero-matte-light: theme-following (Canvas), same bucket as
-         Publications -- NAVIGATION_DESIGN_SPEC.md §7's table treats
-         code screenshots like documents, not framed artwork. */}}
-    <div class="hero hero-matte-light">
-      {{ with $img }}
-        <div class="detail-image">{{ partial "picture.html" (dict "image" . "alt" $.Title) }}</div>
-      {{ end }}
+
+  <a class="backlink" href="{{ .CurrentSection.RelPermalink }}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+    {{ partial "section-name.html" . }}
+  </a>
+
+  {{ if $img }}
+    <div class="hero hero-matte-light{{ if .Params.github_url }} hero-with-cta{{ end }}">
+      <div class="hero-media">
+        <div class="hero-frame">
+          <div class="detail-image">{{ partial "picture.html" (dict "image" $img "alt" $.Title) }}</div>
+        </div>
+        {{ partial "hero-nav.html" $ }}
+      </div>
       {{ with .Params.github_url }}
-        <a class="hero-cta" href="{{ . }}">{{ i18n "view_on_github" }}</a>
+        <a class="hero-cta" href="{{ . }}">
+          <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.2 11.16.6.1.82-.25.82-.56 0-.28-.01-1.02-.02-2-3.34.71-4.04-1.58-4.04-1.58-.55-1.36-1.34-1.72-1.34-1.72-1.09-.73.08-.72.08-.72 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.5.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.3-5.47-5.79 0-1.28.47-2.33 1.24-3.15-.13-.3-.54-1.5.11-3.13 0 0 1.01-.32 3.3 1.2a11.6 11.6 0 0 1 6 0c2.29-1.52 3.3-1.2 3.3-1.2.65 1.63.24 2.83.12 3.13.77.82 1.23 1.87 1.23 3.15 0 4.5-2.81 5.48-5.49 5.77.43.36.81 1.09.81 2.2 0 1.59-.01 2.87-.01 3.26 0 .31.21.68.82.56A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"/></svg>
+          {{ i18n "view_on_github" }}
+        </a>
       {{ end }}
     </div>
+    {{ if or .NextInSection .PrevInSection }}<p class="kbd-hint" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> {{ i18n "keyboard_browse_hint" }}</p>{{ end }}
+  {{ else if .Params.github_url }}
+    <a class="cta-standalone" href="{{ .Params.github_url }}">
+      <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.37.5 0 5.78 0 12.29c0 5.2 3.44 9.6 8.2 11.16.6.1.82-.25.82-.56 0-.28-.01-1.02-.02-2-3.34.71-4.04-1.58-4.04-1.58-.55-1.36-1.34-1.72-1.34-1.72-1.09-.73.08-.72.08-.72 1.2.08 1.84 1.21 1.84 1.21 1.07 1.79 2.81 1.27 3.5.97.11-.76.42-1.27.76-1.56-2.67-.3-5.47-1.3-5.47-5.79 0-1.28.47-2.33 1.24-3.15-.13-.3-.54-1.5.11-3.13 0 0 1.01-.32 3.3 1.2a11.6 11.6 0 0 1 6 0c2.29-1.52 3.3-1.2 3.3-1.2.65 1.63.24 2.83.12 3.13.77.82 1.23 1.87 1.23 3.15 0 4.5-2.81 5.48-5.49 5.77.43.36.81 1.09.81 2.2 0 1.59-.01 2.87-.01 3.26 0 .31.21.68.82.56A12.01 12.01 0 0 0 24 12.29C24 5.78 18.63.5 12 .5z"/></svg>
+      {{ i18n "view_on_github" }}
+    </a>
   {{ end }}
   <h1>{{ .Title }}</h1>
 
@@ -36,7 +51,7 @@
   {{ with .GetTerms "tags" }}
     {{ $chips := slice }}
     {{ range . }}{{ $chips = $chips | append (dict "label" .Title "href" .RelPermalink) }}{{ end }}
-    {{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tags_label")) }}
+    {{ partial "chip-row.html" (dict "chips" $chips "ariaLabel" (i18n "tags_label") "wrap" true) }}
   {{ end }}
 
   {{/* role/date-range/status form a byline, same shape as

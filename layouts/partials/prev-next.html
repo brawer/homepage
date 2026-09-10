@@ -1,26 +1,54 @@
 {{/*
-  Shared Prev/Next row for detail pages — NAVIGATION_DESIGN_SPEC.md §6,
-  "bottom of page." Scoped to the page's own section, ordered by the
-  section's default sort (date descending, newest first — no `weight`
-  set anywhere in current content; this is the same order the grid
-  views use, which is correct and must NOT change).
+  Footer pager for detail pages — NAVIGATION_DESIGN_SPEC.md §6, bottom
+  of page. Names the neighbouring item (kicker + title) rather than a
+  bare "‹ Prev / Next ›"; art also carries a small square thumbnail
+  (it has a curated `teaser`), publications/projects get a chevron.
+  The circular buttons on the hero (hero-nav.html) are the quick-flip
+  control; this is the with-context one. "Detail Page Design" mockup.
+
+  Scoped to the page's own section, section default sort (date
+  descending, newest first — the same order the grid views use; no
+  `weight` set anywhere in current content).
 
   Confirmed 2026-08-25, empirically, not just from docs (Hugo's own
   naming here is a well-known trap): with that newest-first order,
   .NextInSection returns the page at the LOWER index (the NEWER
-  neighbor) and .PrevInSection returns the page at the HIGHER index
-  (the OLDER neighbor) -- backwards from what the method names
-  suggest. So "Prev" (visually: go back to something newer) is fed by
-  .NextInSection, and "Next" (visually: go forward to something
-  older) is fed by .PrevInSection. Do not "simplify" this back to the
-  intuitive pairing -- that's the bug this fixed (reported via the
-  fullscreen viewer's position counter incrementing/decrementing
-  backwards from the </>/‹ buttons). Same swap applies to the
-  viewer's own prev/next links in art/single.html.
+  neighbour) and .PrevInSection the HIGHER index (the OLDER neighbour)
+  — backwards from what the method names suggest. So the visual "Prev"
+  (go back to something newer) is fed by .NextInSection, and visual
+  "Next" (forward to something older) by .PrevInSection. Do not
+  "simplify" this back to the intuitive pairing — that's the bug this
+  fixed (reported via the fullscreen viewer's position counter moving
+  opposite to the ‹/› buttons). The same swap is in hero-nav.html and
+  in the viewer's own prev/next links in art/single.html — keep all
+  three in sync.
 */}}
-{{ if or .PrevInSection .NextInSection }}
-<nav class="prev-next" aria-label="{{ i18n "prev_next_label" }}">
-  {{ with .NextInSection }}<a class="prev" href="{{ .RelPermalink }}">‹ {{ i18n "prev_label" }}</a>{{ end }}
-  {{ with .PrevInSection }}<a class="next" href="{{ .RelPermalink }}">{{ i18n "next_label" }} ›</a>{{ end }}
+{{ $prev := .NextInSection }}
+{{ $next := .PrevInSection }}
+{{ $isArt := eq .Section "art" }}
+{{ if or $prev $next }}
+<nav class="pager" aria-label="{{ i18n "prev_next_label" }}">
+  {{ with $prev }}
+  <a class="pager-prev" href="{{ .RelPermalink }}" rel="prev">
+    {{ if $isArt }}
+      {{ $teaser := .Resources.GetMatch (.Params.teaser | default .Params.image) }}
+      {{ with $teaser }}<span class="pager-thumb">{{ partial "picture-thumbnail.html" (dict "image" . "alt" "" "anchor" "center" "widths" (slice 120 240) "sizes" "2.75rem") }}</span>{{ end }}
+    {{ else }}
+      <svg class="pager-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+    {{ end }}
+    <span><span class="pager-dir">{{ i18n "prev_label" }}</span><span class="pager-title">{{ .Title }}</span></span>
+  </a>
+  {{ end }}
+  {{ with $next }}
+  <a class="pager-next" href="{{ .RelPermalink }}" rel="next">
+    {{ if $isArt }}
+      {{ $teaser := .Resources.GetMatch (.Params.teaser | default .Params.image) }}
+      {{ with $teaser }}<span class="pager-thumb">{{ partial "picture-thumbnail.html" (dict "image" . "alt" "" "anchor" "center" "widths" (slice 120 240) "sizes" "2.75rem") }}</span>{{ end }}
+    {{ else }}
+      <svg class="pager-chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+    {{ end }}
+    <span><span class="pager-dir">{{ i18n "next_label" }}</span><span class="pager-title">{{ .Title }}</span></span>
+  </a>
+  {{ end }}
 </nav>
 {{ end }}

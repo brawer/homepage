@@ -1,0 +1,34 @@
+{{/*
+  Circular Prev/Next buttons overlaid on a detail-page hero — a quick
+  flip through the current section's items, sitting alongside the
+  fuller named footer pager (prev-next.html). NAVIGATION_DESIGN_SPEC.md
+  §6/§9, "Detail Page Design" mockup.
+
+  Same visual-direction-vs-Hugo-naming swap as prev-next.html (see its
+  header comment for the full explanation): with the section sorted
+  newest-first, the VISUAL "prev" (‹, a step toward newer) is
+  .NextInSection and the visual "next" (›) is .PrevInSection. Keep the
+  two partials in sync.
+
+  Rendered as <a> so a plain click needs no JS; nav.js adds ← / → keys
+  on top of it. At a section boundary the missing side becomes a dimmed,
+  inert <span> so the remaining button keeps its position.
+
+  Param: the current Page.
+*/}}
+{{ $prev := .NextInSection }}
+{{ $next := .PrevInSection }}
+{{ if $prev }}
+  <a class="hero-nav hero-nav-prev" href="{{ $prev.RelPermalink }}" rel="prev" aria-label="{{ i18n "prev_label" }}: {{ $prev.Title }}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 18l-6-6 6-6"/></svg>
+  </a>
+{{ else }}
+  <span class="hero-nav hero-nav-prev is-disabled" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6"/></svg></span>
+{{ end }}
+{{ if $next }}
+  <a class="hero-nav hero-nav-next" href="{{ $next.RelPermalink }}" rel="next" aria-label="{{ i18n "next_label" }}: {{ $next.Title }}">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18l6-6-6-6"/></svg>
+  </a>
+{{ else }}
+  <span class="hero-nav hero-nav-next is-disabled" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18l6-6-6-6"/></svg></span>
+{{ end }}
