@@ -38,10 +38,13 @@ name: Check content
 #      this fails silently otherwise ("the build won't error, it'll
 #      just produce a broken site").
 
+# Runs on every PR, and is called by deploy.yml as a reusable workflow to gate
+# the push-to-main deploy. It no longer triggers on push to main directly:
+# deploy.yml owns that path (via `uses:` here) and a second standalone trigger
+# would just double-run the whole suite on every merge.
 on:
-  push:
-    branches: [main]
   pull_request:
+  workflow_call:
 
 jobs:
   check:
