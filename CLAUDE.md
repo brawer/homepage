@@ -1741,6 +1741,11 @@ rewritten `layouts/partials/prev-next.html`, `assets/js/nav.js`
   natural-ratio-with-a-cap was mocked and rejected: the hero height
   then swings per piece and the circular controls lose a fixed spot.
   `18rem` is the image FRAME; the CTA shelf below adds its own height.
+  Frame **width is capped at 36rem** (`.hero max-width`, ~2× the
+  height) and left-aligned in the reading column — full-column width on
+  desktop stretched the matte absurdly wide around an A4 page or a talk
+  slide (Sascha, on the ported page). `.hero-media`/`.hero-cta` inherit
+  it, so the circular buttons hug the frame edge, not the column edge.
 - **Light matte is now `--paper-dim`** (the warm grid-card tint), not
   near-white `Canvas` — a white scan on an almost-white matte glared;
   the hairline `--line` border stays so the scan still has a visible

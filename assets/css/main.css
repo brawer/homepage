@@ -897,7 +897,15 @@ article > h1 {
    NAVIGATION_DESIGN_SPEC.md §7 ("image sits inside at its native aspect
    ratio, centered"). Matte colour is a two-bucket rule, not per-image,
    per the same section's table. */
-.hero { position: relative; margin-bottom: 1rem; }
+/* Capped at ~2× the 18rem frame height (Sascha's call, 2026-09-10):
+   full-column-width on desktop stretched the matte absurdly wide around
+   an A4 page or even a talk slide. Left-aligned in the reading column
+   (no auto margins) so the frame's left edge — and the Prev button on
+   it — line up with the title, chips and body text below. Shrinks
+   freely below 36rem on a phone. .hero-media / .hero-cta inherit this
+   width; the circular buttons therefore hug the frame edge, not the
+   column edge. */
+.hero { position: relative; margin-bottom: 1rem; max-width: 36rem; }
 .hero-media { position: relative; }
 .hero-frame {
   position: relative;
@@ -1055,6 +1063,9 @@ article > h1 {
     justify-content: flex-end;
     align-items: center;
     gap: .35rem;
+    /* Same 36rem cap as .hero, so the hint's right edge sits under the
+       frame's right edge (and the Next button), not the column edge. */
+    max-width: 36rem;
     margin: .5rem 0 0;
     font-size: .72rem;
     color: var(--ink-faint);
