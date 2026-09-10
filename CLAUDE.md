@@ -929,6 +929,39 @@ content-hashed URLs, not edge purges.
   same commit** (making `main.css` a Hugo template just to rewrite one
   `url()` isn't worth it for a file that changes ~never).
 
+- **Deploy pipeline** (issue #81 Stage 2, added 2026-09-10):
+  `.github/workflows/deploy.yml` runs on push to `main` and manual
+  dispatch. It `uses:` `check-content.yml` as a reusable workflow (a
+  `check` job the `deploy` job `needs:`), builds `hugo --gc --minify
+  --cleanDestinationDir`, sanity-gates the tree (≥300 files,
+  `index.html` present), then runs `scripts/deploy_bunny.py public`.
+  `check-content.yml` **no longer triggers on push to `main`** (only
+  `pull_request` + `workflow_call`) — deploy.yml owns that path now
+  and a standalone trigger would double-run the suite on every merge.
+  - `scripts/deploy_bunny.py` — stdlib-only, native Bunny Storage API
+    (the `brawer-homepage` zone is type `Standard`, no S3). SHA256
+    diff against the zone's `Checksum`, then uploads in three phases:
+    **all non-HTML → then `*.html`/`*.xml`/`robots.txt` → then delete
+    remote paths not present locally**. That order is load-bearing: a
+    visitor loading a page mid-deploy never gets HTML referencing a
+    hashed asset that hasn't uploaded yet, nor one pointing at a
+    deleted file — and it's the precondition for the long immutable
+    edge TTL (brawer/production#13). No cache purge (CI holds only the
+    one-zone storage password, never the un-scopeable account key).
+    Env: `BUNNY_STORAGE_PASSWORD` (the `production` GitHub environment,
+    branch-restricted to `main`), `BUNNY_STORAGE_ZONE`,
+    `BUNNY_STORAGE_ENDPOINT`, `BUNNY_DEPLOY_DRY_RUN`.
+  - Edge cache TTLs are **not** set in this repo — storage origins drop
+    `Cache-Control`. They're pull-zone Edge Rules in `brawer/production`
+    (`bunny/cdn.tf`), already in place: 300s default, longer for the
+    hashed-asset globs.
+  - **`DEPLOY.md`** covers manual instant propagation of a *changed*
+    stable-URL file (a page edit, a replaced PDF, the launch `noindex`
+    flip) — a Bunny purge from a trusted machine with the account key,
+    never CI.
+  - Keep the `peaceiris/actions-hugo` + `hugo-version` pins in
+    `deploy.yml` **identical** to `check-content.yml`'s.
+
 ## Legacy PDF fonts
 
 Several of Sascha's 1990s papers are Acrobat PDFWriter / early Distiller

@@ -1,0 +1,99 @@
+name: Deploy
+
+# Publishes the built site to the Bunny "brawer-homepage" storage zone on every
+# green push to main (and on manual dispatch). brawer/homepage#81 Stage 2.
+#
+# Gating: the `check` job below re-runs the full content suite via
+# check-content.yml as a reusable workflow, and `deploy` needs it -- a push to
+# main that fails a content check never reaches Bunny. (check-content.yml still
+# runs on its own for pull_request events; it no longer triggers on push to
+# main, since this workflow now owns that path and would otherwise double-run
+# it.)
+#
+# No cache purge step: CI holds only the single-zone storage password (the
+# account API key, which Bunny cannot scope, is deliberately never in CI).
+# Cache correctness comes from content-hashed asset URLs + short edge TTLs
+# configured in brawer/production; scripts/deploy_bunny.py uploads
+# assets-before-HTML so a mid-deploy visitor never sees a dangling reference.
+# Manual instant propagation of a changed HTML page is a separate documented
+# step from a trusted machine (brawer/homepage#81 Stage 3 / DEPLOY.md).
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Least privilege: checkout + Hugo only need to read the repo. Applies to the
+# reusable `check` workflow too (a called workflow can only narrow the caller's
+# permissions, never widen them).
+permissions:
+  contents: read
+
+# Never deploy two builds at once, and never cancel one mid-sync -- a partial
+# sync that got cancelled during the delete phase could leave the live site
+# inconsistent. Queue instead.
+concurrency:
+  group: bunny-deploy
+  cancel-in-progress: false
+
+jobs:
+  check:
+    uses: ./.github/workflows/check-content.yml
+
+  deploy:
+    needs: check
+    runs-on: ubuntu-latest
+    # The `production` environment carries the BUNNY_STORAGE_PASSWORD secret and
+    # a deployment-branch rule restricting it to `main` -- so the secret is
+    # unavailable to any run this workflow might have on another ref.
+    environment:
+      name: production
+      url: https://dandelis.ch
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          lfs: true
+
+      # Keep this pin identical to check-content.yml's -- a mismatch means CI
+      # validates a different Hugo build than it ships.
+      - name: Set up Hugo
+        uses: peaceiris/actions-hugo@2752ce1d29631191ea3f27c23495fa06139a5b78 # v3.2.1
+        with:
+          hugo-version: "0.165.0"
+          extended: true
+
+      - name: Build
+        run: hugo --gc --minify --cleanDestinationDir
+
+      # Cheap insurance against a half-built tree wiping the live site in the
+      # delete phase. A clean build is ~1070 files; 300 is comfortably below
+      # any plausible real content set and well above a broken render.
+      - name: Sanity-gate the build
+        run: |
+          test -f public/index.html || { echo "::error::no public/index.html"; exit 1; }
+          count="$(find public -type f | wc -l)"
+          echo "built $count file(s)"
+          if [ "$count" -lt 300 ]; then
+            echo "::error::only $count files in public/ -- refusing to deploy"
+            exit 1
+          fi
+
+      - name: Sync to Bunny storage
+        env:
+          BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
+        run: python3 scripts/deploy_bunny.py public
+
+      # dandelis.ch fronts the same brawer-homepage zone, so this exercises the
+      # real edge even before the brawer.ch cutover.
+      - name: Smoke-test the live site
+        run: |
+          for i in 1 2 3 4 5; do
+            body="$(curl -fsS --max-time 20 https://dandelis.ch/ || true)"
+            case "$body" in
+              *"Sascha Brawer"*) echo "ok"; exit 0 ;;
+            esac
+            echo "attempt $i: not ready, retrying"; sleep 6
+          done
+          echo "::error::dandelis.ch did not serve the expected content after the deploy"
+          exit 1
