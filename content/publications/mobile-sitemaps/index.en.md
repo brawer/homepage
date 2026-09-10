@@ -2,7 +2,7 @@
 title: "Mobile Sitemaps"
 date: 2005-08-29
 publishDate: 2026-09-07
-tags: ["Google", "Open Source"]
+tags: ["Google"]
 kind: "patent"
 kind_label: "Patent Family"
 teaser_is_document: true

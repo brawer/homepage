@@ -2,7 +2,7 @@
 title: "Sitemaps für das Web-Crawling"
 date: 2005-05-31
 publishDate: 2026-09-07
-tags: ["Google", "Quelloffen"]
+tags: ["Google"]
 kind: "patent"
 kind_label: "Patentfamilie"
 teaser_is_document: true

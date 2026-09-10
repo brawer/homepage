@@ -2,7 +2,7 @@
 title: "Mobile Sitemaps"
 date: 2005-08-29
 publishDate: 2026-09-07
-tags: ["Google", "Quelloffen"]
+tags: ["Google"]
 kind: "patent"
 kind_label: "Patentfamilie"
 teaser_is_document: true
