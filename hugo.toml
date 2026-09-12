@@ -55,9 +55,7 @@ uglyURLs = false
       intro = """\
         I’ve been curious about how things work for as long as I can remember, \
 	and that curiosity shows up everywhere — in the open-source code I write, \
-	the books I read, and the paintings I make. I especially like taking \
-	something complicated and making it simple — simple enough that \
-	it’s actually useful to real people.\
+	the books I read, and the paintings I make.\
 	"""
 
     [[languages.en.menu.main]]
@@ -91,12 +89,10 @@ uglyURLs = false
     [languages.de.params]
       location = "Bern, Schweiz"
       intro = """\
-        Solange ich zurückdenken kann, bin ich neugierig darauf, wie \
-        Dinge funktionieren – und diese Neugier zeigt sich überall: im \
+        Ich habe mich schon immer dafür interessiert, wie \
+        Dinge funktionieren – und diese Neugierde zeigt sich überall: im \
         Open-Source-Code, den ich schreibe, in den Büchern, die ich \
-        lese, und in den Bildern, die ich male. Am liebsten nehme ich \
-        etwas Kompliziertes und mache es einfach – so einfach, dass \
-        es für Menschen nützlich ist.\
+        lese, und in den Bildern, die ich male.\
         """
 
     [[languages.de.menu.main]]
