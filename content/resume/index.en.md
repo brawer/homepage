@@ -1,5 +1,6 @@
 ---
 title: "Résumé"
+aliases: ["/cv/"] # old brawer.ch/cv/ path, issue #89
 experience:
   - date_range: "Since Oct 2021"
     marker: "company"

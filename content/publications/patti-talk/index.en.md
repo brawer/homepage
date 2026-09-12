@@ -3,6 +3,10 @@ title: "Patti"
 subtitle: "Compiling Unification-Based Finite-State Automata into Machine Instructions for PowerPC"
 date: 1999-09-01
 publishDate: 2026-09-09
+# Old brawer.ch/articles/pattitalk/. Issue #89's table (written before
+# this page existed as its own bundle) pointed this at /publications/patti/
+# instead — stale; the talk is now its own item, so it aliases here.
+aliases: ["/articles/pattitalk/"]
 tags: ["NLP", "Apple"]
 kind: "talk"
 kind_label: "Talk"

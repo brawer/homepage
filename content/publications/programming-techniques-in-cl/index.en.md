@@ -4,6 +4,7 @@ original_title: "Programmiertechniken der Computerlinguistik"
 original_language: "de"
 date: 1997-10-01
 publishDate: 2026-08-23
+aliases: ["/articles/prolog/"] # old brawer.ch/articles/ path, issue #89
 tags: ["NLP", "Prolog"]
 kind: "lecture"
 kind_label: "Lecture Series"

@@ -2,6 +2,7 @@
 title: "Current NSDI Activities in Switzerland Based on ISO 19100 Standards"
 date: 2002-05-22
 publishDate: 2026-09-09
+aliases: ["/articles/nsdi_ch/"] # old brawer.ch/articles/ path, issue #89
 tags: ["Geo"]
 kind: "talk"
 kind_label: "Talk"

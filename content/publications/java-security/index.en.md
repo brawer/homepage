@@ -2,6 +2,7 @@
 title: "Java Security: How Free Software Is Secured Using the Java Language"
 date: 2004-02-22
 publishDate: 2026-09-09
+aliases: ["/articles/classpathSecurity/"] # old brawer.ch/articles/ path, issue #89
 tags: ["Java", "Open Source"]
 kind: "talk"
 kind_label: "Talk"

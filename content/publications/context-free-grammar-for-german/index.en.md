@@ -5,6 +5,12 @@ original_title: "Mechanismen einer kontextfreien Grammatik für das Deutsche"
 original_language: "de"
 date: 1994-09-18
 publishDate: 2026-09-08
+# Old brawer.ch had this paper (English) and its German original as two
+# separate /articles/ pages; both alias here per the "one page per work"
+# policy (see CLAUDE.md's publications section) — the German alias lands
+# on this English-language file, not a /de/ page, per Sascha's call to
+# keep old-site redirects simple (issue #89).
+aliases: ["/articles/cfg-german/", "/articles/mechanismen/"]
 tags: ["NLP"]
 kind: "paper"
 kind_label: "Paper"

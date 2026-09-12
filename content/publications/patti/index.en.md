@@ -3,6 +3,7 @@ title: "Patti"
 subtitle: "Compiling Unification-Based Finite-State Automata into Machine Instructions for a Superscalar Pipelined RISC Processor"
 date: 1998-01-01
 publishDate: 2026-09-08
+aliases: ["/articles/patti/"] # old brawer.ch/articles/ path, issue #89
 tags: ["NLP", "Apple"]
 kind: "thesis"
 kind_label: "Diploma Thesis"

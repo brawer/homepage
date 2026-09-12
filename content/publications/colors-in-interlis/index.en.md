@@ -4,6 +4,7 @@ original_title: "Farben in INTERLIS 2"
 original_language: "de"
 date: 2000-01-01
 publishDate: 2026-09-09
+aliases: ["/articles/farbenili/"] # old brawer.ch/articles/ path, issue #89
 tags: ["Geo"]
 kind: "study"
 kind_label: "Commissioned Study"

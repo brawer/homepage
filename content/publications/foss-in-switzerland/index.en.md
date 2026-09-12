@@ -4,6 +4,7 @@ original_title: "Die Open-Source- und Freie-Software-Szene in der Schweiz"
 original_language: "de"
 date: 2004-02-18
 publishDate: 2026-09-09
+aliases: ["/articles/fossinch/"] # old brawer.ch/articles/ path, issue #89
 tags: ["Open Source"]
 kind: "talk"
 kind_label: "Talk"
