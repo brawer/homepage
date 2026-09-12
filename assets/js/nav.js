@@ -43,8 +43,73 @@
     });
   }
 
-  // Fullscreen art viewer.
+  // Fullscreen art viewer -- reflects open/closed state as ?view=full
+  // in the address bar (issue #104). wireDialog above already makes
+  // the right clicks open/close the dialog; everything here just layers
+  // URL/history syncing on top of that, the same layering pattern the
+  // drawer above uses for its own body-class side effect (a second
+  // [data-*-open] click listener, plus the dialog's own 'close' event
+  // for every dismissal method at once).
+  //
+  // Three ways the viewer ends up open, each needing different history
+  // handling:
+  //   1. Clicking the zoom button: no navigation happens, so this
+  //      pushes the ?view=full URL itself, tagging the new entry with
+  //      state.viewerOpen=true. That tag is what makes closing call
+  //      history.back() instead of just editing the URL -- Back then
+  //      always lands on the exact pre-open state, even through a real
+  //      reload/bfcache restore of this same document (the History API
+  //      restores history.state from the target entry regardless of
+  //      how the navigation happened).
+  //   2. A real page load that already carries ?view=full -- a shared/
+  //      pasted link, or a Prev/Next hop *within* the viewer (still a
+  //      normal <a href> full navigation on purpose -- see
+  //      art/single.html's own comment for why that's not an in-dialog
+  //      image swap). history.state is null here (nothing pushed it),
+  //      so closing just cleans the URL in place via replaceState --
+  //      there's no "opened from" entry to jump back to, and jumping to
+  //      whatever IS one entry back (the referrer, or the previous
+  //      piece in a hop chain) would leave the current piece's page
+  //      entirely, which closing shouldn't do.
+  //   3. Back/Forward landing on a ?view=full (or plain) entry: a
+  //      popstate listener opens/closes the dialog to match, without
+  //      touching history itself (the browser already moved it).
+  //
+  // No guard flag is needed to stop the popstate case from re-triggering
+  // the 'close' handler's own history call: by the time 'close' fires
+  // from a popstate-driven .close(), the URL has already moved off
+  // ?view=full (browsers update the URL before dispatching popstate),
+  // so that handler's own `?view=full` check is simply false.
   wireDialog("viewer", "[data-viewer-open]", "[data-viewer-close]");
+  var viewer = document.getElementById("viewer");
+  if (viewer) {
+    if (new URLSearchParams(location.search).get("view") === "full") {
+      viewer.showModal();
+    }
+
+    document.querySelectorAll("[data-viewer-open]").forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var url = new URL(location.href);
+        url.searchParams.set("view", "full");
+        history.pushState({ viewerOpen: true }, "", url.toString());
+      });
+    });
+
+    viewer.addEventListener("close", function () {
+      if (new URLSearchParams(location.search).get("view") !== "full") return;
+      if (history.state && history.state.viewerOpen) {
+        history.back();
+      } else {
+        history.replaceState(null, "", location.pathname + location.hash);
+      }
+    });
+
+    window.addEventListener("popstate", function () {
+      var isFull = new URLSearchParams(location.search).get("view") === "full";
+      if (isFull && !viewer.open) viewer.showModal();
+      else if (!isFull && viewer.open) viewer.close();
+    });
+  }
 
   // Language switcher: record an explicit choice so later visits can
   // honour it. The redirect itself is done by the inline <head> script
@@ -76,16 +141,6 @@
       }
     });
   });
-
-  // Auto-reopen the fullscreen viewer after a Prev/Next navigation
-  // inside it (a real page load, not an in-dialog image swap — see
-  // NAVIGATION_DESIGN_SPEC.md plan §6 for why). Strip the marker from
-  // the URL afterwards so browser Back doesn't reopen it a second time.
-  if (new URLSearchParams(location.search).get("view") === "full") {
-    var viewer = document.getElementById("viewer");
-    if (viewer) viewer.showModal();
-    history.replaceState(null, "", location.pathname + location.hash);
-  }
 
   // Detail pages: ← / → step to the previous / next item in the
   // section, mirroring the circular buttons on the hero (hero-nav.html)
