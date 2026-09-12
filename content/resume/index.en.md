@@ -200,9 +200,9 @@ skills:
     (ported libraries) of other Unices (Tru64 UNIX, HP-UX, Solaris), and Win32.
     Minimal exposure to VMS and CP/M.
 spoken_languages:
-  - "Swiss German (native)"
-  - "English (fluent)"
-  - "Italian and French (working knowledge)"
-  - "Romansh and Japanese (entry-level)"
+  - "Swiss German (native, C2)"
+  - "English (fluent, C1)"
+  - "Italian and French (working knowledge, B2)"
+  - "Romansh and Japanese (entry-level, A1)"
 ---
 See [Publications](/publications/) for a full list of papers, talks, and patents.
