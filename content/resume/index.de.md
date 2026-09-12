@@ -205,9 +205,9 @@ skills:
     UNIX, HP-UX, Solaris) sowie Win32.  Minimale Erfahrung mit VMS und
     CP/M.
 spoken_languages:
-  - "Schweizerdeutsch (Muttersprache)"
-  - "Englisch (fliessend)"
-  - "Italienisch und Französisch (Grundkenntnisse)"
-  - "Rätoromanisch und Japanisch (Einsteigerniveau)"
+  - "Schweizerdeutsch und Deutsch (muttersprachlich, C2)"
+  - "Englisch (verhandlungssicher, C1)"
+  - "Italienisch und Französisch (Maturität, B2)"
+  - "Rätoromanisch und Japanisch (Einsteigerniveau, A1)"
 ---
 Siehe [Publikationen](/de/publications/) für eine vollständige Liste von Publikationen, Vorträgen und Patenten.
