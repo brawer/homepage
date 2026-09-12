@@ -143,7 +143,7 @@ experience:
     location: "Zürich, Schweiz"
     organization: "Universität Zürich, Institut für Informatik"
     organization_url: "https://www.ifi.uzh.ch/"
-    role: "Lehrauftrag"
+    role: "Lehrbeauftragter"
     highlights:
       - >-
         Hielt einen Lehrauftrag zu [Programmiertechniken der
