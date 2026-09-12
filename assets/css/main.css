@@ -210,7 +210,15 @@ main {
   box-sizing: border-box;
   max-width: 60rem;
   margin: 0 auto;
-  padding: 2rem 1rem 3rem;
+  /* Left/right only need the safe-area max() -- on a wide-enough
+     screen main's own max-width already keeps it clear of any edge,
+     but on a notched phone IN LANDSCAPE (e.g. ~844px on an iPhone 14)
+     main is at or past that max-width, so its own edge padding is the
+     only thing between the reading column and the notch/rounded
+     corner. Top/bottom stay plain -- main sits between header and
+     footer, never touching the true top/bottom edge, so there's no
+     notch/home-indicator to clear there. */
+  padding: 2rem max(1rem, env(safe-area-inset-right)) 3rem max(1rem, env(safe-area-inset-left));
 }
 
 /* Accessibility primitive, not visual design — see
@@ -268,7 +276,15 @@ header {
   align-items: center;
   flex-wrap: wrap;
   gap: 1rem;
-  padding: 1.1rem 1rem;
+  /* max(), not +: on a non-notched screen env(safe-area-inset-*) is
+     0, so this must fall back to exactly the old plain 1.1rem/1rem --
+     adding would pad every ordinary phone/desktop too. header itself
+     has no padding/height of its own (see its comment above), so
+     growing this pushes the header's own background/height down with
+     it -- the notch-top gets header background, not page background,
+     for free. Left/right cover the landscape case, where the notch/
+     rounded corners sit on a SIDE edge instead of the top. */
+  padding: max(1.1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 1.1rem max(1rem, env(safe-area-inset-left));
 }
 
 .site-logo {
@@ -580,10 +596,27 @@ dialog::backdrop {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1.1rem 1rem;
+  /* Same safe-area max() as .site-header-inner -- the drawer is a true
+     fixed, full-screen sheet (see .drawer[open] above), so its own top
+     edge IS the screen's true top edge, notch included. */
+  padding: max(1.1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 1.1rem max(1rem, env(safe-area-inset-left));
 }
 .drawer-logo { font-size: 1.5rem; line-height: 1; text-decoration: none; }
-.drawer-body { padding: .5rem 1.75rem 1.75rem; display: flex; flex-direction: column; flex: 1; }
+.drawer-body {
+  /* Custom properties, not the literal 1.75rem inline below -- the
+     edge-to-edge divider trick on .primary-links li just below (and
+     the <a> padding that restores label position) both need to bleed
+     to/from exactly this same effective value, including on a notched
+     phone in landscape where env(safe-area-inset-left/right) can
+     exceed 1.75rem. Keeping one source of truth here means that trick
+     can't silently drift out of sync with this padding again. */
+  --drawer-inset-start: max(1.75rem, env(safe-area-inset-left));
+  --drawer-inset-end: max(1.75rem, env(safe-area-inset-right));
+  padding: .5rem var(--drawer-inset-end) max(1.75rem, env(safe-area-inset-bottom)) var(--drawer-inset-start);
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
 
 .drawer-close {
   /* Same size/type-scale as .drawer-trigger -- literally the same
@@ -628,19 +661,21 @@ dialog::backdrop {
    list -- the standard native-list convention (settings-style lists on
    both major mobile platforms) is the opposite: each row's label keeps
    its own inset, but the separator beneath it runs the full list width
-   regardless. Negative margin equal to .drawer-body's own 1.75rem
-   horizontal padding bleeds the <li> box out to .drawer[open]'s TRUE
-   edge. The <a>'s own horizontal padding then restores the label text
-   to exactly its original visual position -- only the invisible
-   bounding box (and therefore the hairline) moved. */
+   regardless. Negative margin equal to .drawer-body's own effective
+   horizontal padding (--drawer-inset-start/-end, defined on
+   .drawer-body above -- plain 1.75rem on an ordinary screen, wider on
+   a notched phone in landscape) bleeds the <li> box out to
+   .drawer[open]'s TRUE edge. The <a>'s own horizontal padding then
+   restores the label text to exactly its original visual position --
+   only the invisible bounding box (and therefore the hairline) moved. */
 .drawer .primary-links li {
   border-bottom: 1px solid var(--line);
-  margin: 0 -1.75rem;
+  margin: 0 calc(-1 * var(--drawer-inset-end)) 0 calc(-1 * var(--drawer-inset-start));
 }
 .drawer .primary-links li:last-child { border-bottom: none; }
 .drawer .primary-links a {
   display: block;
-  padding: 1rem 1.75rem;
+  padding: 1rem var(--drawer-inset-end) 1rem var(--drawer-inset-start);
   font-size: 1.1rem;
   /* Resets the shared .primary-links a's own 2px accent border-bottom
      (the desktop nav-bar's current-page underline) -- found and fixed
@@ -778,7 +813,11 @@ body.drawer-open {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 1rem;
+  /* Same safe-area max() as the drawer/site headers -- the viewer is
+     also a true fixed, full-screen <dialog> (see .viewer[open] above),
+     so its close button/counter sit right at the screen's true top
+     edge otherwise, notch included. */
+  padding: max(1rem, env(safe-area-inset-top)) max(1rem, env(safe-area-inset-right)) 1rem max(1rem, env(safe-area-inset-left));
 }
 
 /* flex:1 gives this a fully definite box (100vw wide, remaining
@@ -824,11 +863,15 @@ body.drawer-open {
 }
 
 .viewer-prev {
-  left: .5rem;
+  /* max(), not left:.5rem plain -- fullscreen art viewing is at least
+     as likely in landscape as portrait, where a notch/rounded corner
+     sits on this SIDE edge rather than the top; without this the
+     chevron's tap target can land partly under it. */
+  left: max(.5rem, env(safe-area-inset-left));
 }
 
 .viewer-next {
-  right: .5rem;
+  right: max(.5rem, env(safe-area-inset-right));
 }
 
 /* Grid header + tag chip row — shared by section list pages and tag
@@ -1855,7 +1898,12 @@ article > h1 {
 .footer-inner {
   max-width: 60rem;
   margin: 0 auto;
-  padding: 1.75rem 1rem 2.5rem;
+  /* Same max()-over-plain-value pattern as .site-header-inner/main
+     above, mirrored for the bottom edge: .site-footer has no padding
+     of its own, so growing this pushes the footer's own bleed
+     background down to clear the home-indicator strip, rather than
+     leaving a page-background gap under it. */
+  padding: 1.75rem max(1rem, env(safe-area-inset-right)) max(2.5rem, env(safe-area-inset-bottom)) max(1rem, env(safe-area-inset-left));
   display: flex;
   flex-direction: column;
   align-items: center;
