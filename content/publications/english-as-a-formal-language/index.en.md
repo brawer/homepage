@@ -4,6 +4,7 @@ original_title: "R. Montagues Semantikmodellierung in «English as a Formal Lang
 original_language: "de"
 date: 1995-06-20
 publishDate: 2026-09-09
+aliases: ["/articles/efl/"] # old brawer.ch/articles/ path, issue #89
 tags: ["NLP"]
 kind: "seminar_paper"
 kind_label: "Term Paper"

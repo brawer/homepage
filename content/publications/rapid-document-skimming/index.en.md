@@ -2,6 +2,7 @@
 title: "Dynamic Presentation of Document Content for Rapid On-Line Skimming"
 date: 1998-03-23
 publishDate: 2026-09-09
+aliases: ["/articles/seefacts/"] # old brawer.ch/articles/ path, issue #89
 tags: ["NLP", "Apple"]
 kind: "paper"
 kind_label: "Paper"

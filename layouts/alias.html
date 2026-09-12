@@ -1,0 +1,22 @@
+{{/*
+  Override for Hugo's built-in alias-redirect stub (used for every
+  `aliases:` front-matter entry — old brawer.ch/articles/* and /cv/
+  paths, issue #89). The internal default template in this Hugo
+  version (v0.165.0) does NOT emit a robots noindex meta tag —
+  verified by inspecting its actual output, contradicting what issue
+  #89 assumed ("Hugo's built-in alias template already carries
+  <meta name="robots" content="noindex">"). This template adds it
+  explicitly, alongside the same canonical + meta-refresh soft
+  redirect Hugo's default produces, so only the real (canonical) page
+  ever gets indexed — see CLAUDE.md's Known open items / #89 notes.
+*/}}
+<!DOCTYPE html>
+<html lang="{{ .Language.Lang }}">
+<head>
+  <title>{{ .Permalink }}</title>
+  <link rel="canonical" href="{{ .Permalink }}">
+  <meta name="robots" content="noindex">
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; url={{ .Permalink }}">
+</head>
+</html>

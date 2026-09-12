@@ -2,6 +2,7 @@
 title: "Computational Lexicology"
 date: 1993-06-30
 publishDate: 2026-09-09
+aliases: ["/articles/lexicology/"] # old brawer.ch/articles/ path, issue #89
 tags: ["NLP"]
 kind: "proseminar_paper"
 kind_label: "Term Paper"

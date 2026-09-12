@@ -4,6 +4,7 @@ original_title: "Modellieren raumbezogener Daten"
 original_language: "de"
 date: 2003-10-01
 publishDate: 2026-08-23
+aliases: ["/articles/modraumdat/"] # old brawer.ch/articles/ path, issue #89
 tags: ["Geo"]
 kind: "textbook"
 kind_label: "Textbook"

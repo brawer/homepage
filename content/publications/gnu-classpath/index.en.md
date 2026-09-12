@@ -2,6 +2,7 @@
 title: "GNU Classpath: Core Classes for a Diversity of Java Virtual Machines"
 date: 2004-02-18
 publishDate: 2026-09-09
+aliases: ["/articles/classpathFeb2004/"] # old brawer.ch/articles/ path, issue #89
 tags: ["Java", "Open Source"]
 kind: "talk"
 kind_label: "Talk"

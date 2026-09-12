@@ -2,6 +2,7 @@
 title: "An Architecture for Content Analysis of Documents and its Use in Information and Knowledge Management Tasks"
 date: 1998-04-01
 publishDate: 2026-09-09
+aliases: ["/articles/sigchi498/"] # old brawer.ch/articles/ path, issue #89
 tags: ["NLP", "Apple"]
 kind: "article"
 kind_label: "Article"
