@@ -109,6 +109,44 @@
       if (isFull && !viewer.open) viewer.showModal();
       else if (!isFull && viewer.open) viewer.close();
     });
+
+    // Click the empty space around the photo to close -- the standard
+    // lightbox affordance (Google Photos, macOS Quick Look, most gallery
+    // viewers), and a much bigger/easier target than the small X. Issue
+    // #104's own follow-up: this is deliberately NOT the dialog's real
+    // ::backdrop (wireDialog's own `e.target === dialog` check above) --
+    // .viewer-chrome and .viewer-image between them tile the ENTIRE
+    // dialog box, so there is no exposed backdrop pixel to click at all.
+    // The "empty space" a viewer actually sees is the letterbox/pillarbox
+    // margin INSIDE .viewer-image: main.css deliberately stretches the
+    // <img> itself to width/height:100% (object-fit:contain doing the
+    // letterboxing visually -- see that rule's own comment for why,
+    // a flex-shrink bug this sidesteps), so the <img> ELEMENT's own
+    // clickable box covers that margin too; e.target/e.currentTarget
+    // can't tell a click in the dead margin apart from one on the photo.
+    // Comparing the click's coordinates against the actual rendered
+    // image rect (replicating object-fit:contain's own centering math
+    // from the <img>'s real width/height attributes) can.
+    var viewerImg = viewer.querySelector(".viewer-image img");
+    var viewerImageBox = viewer.querySelector(".viewer-image");
+    if (viewerImg && viewerImageBox) {
+      viewerImageBox.addEventListener("click", function (e) {
+        var box = viewerImg.getBoundingClientRect();
+        var iw = viewerImg.naturalWidth || viewerImg.width;
+        var ih = viewerImg.naturalHeight || viewerImg.height;
+        // No intrinsic size yet (still loading) -- don't guess, treat
+        // the click as "on the photo" so it's never mistakenly closed.
+        if (!iw || !ih) return;
+        var scale = Math.min(box.width / iw, box.height / ih);
+        var renderedW = iw * scale;
+        var renderedH = ih * scale;
+        var x = e.clientX - box.left;
+        var y = e.clientY - box.top;
+        var insideX = x >= (box.width - renderedW) / 2 && x <= (box.width + renderedW) / 2;
+        var insideY = y >= (box.height - renderedH) / 2 && y <= (box.height + renderedH) / 2;
+        if (!insideX || !insideY) viewer.close();
+      });
+    }
   }
 
   // Language switcher: record an explicit choice so later visits can
