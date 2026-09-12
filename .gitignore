@@ -9,3 +9,13 @@
 # Python
 __pycache__/
 *.pyc
+
+# Node/Playwright — see CLAUDE.md's "Browser/interaction tests"
+# section. Not a build step for the site (Hugo doesn't know these
+# exist), so nothing here ships to production; committed:
+# package.json, package-lock.json, playwright.config.js, tests/.
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/

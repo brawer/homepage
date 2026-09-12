@@ -1103,6 +1103,73 @@ whether there's a layout to render them with:
   anywhere; currently caught by review, which won't scale once
   `content/projects/` has entries and the content set grows).
 
+## Browser/interaction tests
+
+Added 2026-09-12. Everywhere else above says the interactive JS
+(`assets/js/nav.js` — the drawer, the fullscreen art viewer) "needs a
+manual `hugo server` + browser check, this session has none" — true
+when written, and still true for general accessibility/focus-trap/
+screen-reader QA (see those notes), but **specific, easy-to-silently-
+regress behavior now has real automated coverage**: the `?view=full`
+address-bar history state machine (#104/#113), click-the-empty-margin-
+to-close (#114), and `env(safe-area-inset-*)` padding (#115's
+underlying `100vh`→`100dvh` fix aside — that one couldn't be
+reproduced this way, see its own PR). None of this was verifiable from
+`hugo build` or by reading the source — it's exactly the kind of thing
+a future edit could break in one branch without anyone noticing by eye
+(e.g. "press Back three times after two Prev/Next hops" isn't a check
+anyone does manually).
+
+- **Playwright, not a real device/browser** — `tests/*.spec.js`, run
+  via `npx playwright test` (script: `npm test`). A `webServer` entry
+  in `playwright.config.js` starts a real `hugo server` on port 4173
+  and waits for it before any test runs (and tears it down after), so
+  that one command is everything needed locally — first time,
+  `npm ci && npx playwright install --with-deps chromium`.
+- **Chromium only, deliberately** (`playwright.config.js`'s `projects`)
+  — this suite exists to verify `nav.js`'s own logic and a couple of
+  Chromium-only CDP hooks with no Firefox/WebKit equivalent in
+  Playwright (`Emulation.setSafeAreaInsetsOverride`, used to fake a
+  notched phone with no real device — see `tests/safe-area.spec.js`'s
+  own header comment for why `env(safe-area-inset-*)` resolves to 0
+  without it). Real cross-browser rendering QA stays the deferred
+  manual pass the rest of this doc already tracks.
+- **Never hardcodes a specific art-piece slug** (`tests/helpers.js`) —
+  picks whichever piece sorts first (or second, when a test needs both
+  the ‹ and › chevrons present, which the newest/first piece never
+  has) off the live `/art/` grid, so content changes (a new piece
+  added, an old one renamed) don't require updating the tests.
+- **`reducedMotion: "reduce"`** (`playwright.config.js`) — the drawer/
+  viewer open-close animation already fully honors
+  `prefers-reduced-motion` (see "Drawer + viewer animation" above), so
+  tests never need an arbitrary sleep to wait out a slide/fade before
+  checking DOM state or computed layout. Assertions otherwise rely on
+  Playwright's own auto-retrying `expect()`, not manual waits.
+- **Found real flakiness under full parallelism** in a resource-
+  constrained sandbox, not in the app itself: a same-document
+  `popstate`-driven dialog reopen can lag Playwright's own
+  `goForward()` promise by a couple hundred ms under CPU contention
+  (confirmed harmless — reproduced reliably passing at `--workers=1`,
+  and manually confirmed the dialog does reopen, just slightly later).
+  `playwright.config.js` caps `workers: 2` and raises the default
+  assertion timeout to 8s **in CI only** (`process.env.CI`) as a
+  defensive margin; uncapped locally for fast iteration.
+- **CI**: `.github/workflows/test-nav.yml`, **path-filtered** (only
+  runs when `nav.js`, `main.css`, an interactive template/partial, or
+  the test infrastructure itself changes) — an ordinary content-only
+  PR (a new art piece, a new publication) never triggers it and builds
+  exactly as fast as before this existed. Same `actions/checkout`
+  (`lfs: true` — art-piece pages load real, LFS-tracked images) and
+  Hugo version pin as `check-content.yml`/`deploy.yml`; keep all three
+  in sync if the Hugo version ever changes.
+- **Not a build step for the site itself** — `package.json`/
+  `node_modules`/Playwright are dev-only tooling for this suite; Hugo
+  and `hugo.toml` have no knowledge of any of it, and none of it ships
+  to production. This is the repo's first Node/npm dependency
+  (`nav.js` itself stays plain, no-build-step JS, per its own header
+  comment) — a deliberate, scoped exception for test tooling, not a
+  change to how the site itself is built.
+
 ## Templates (bare-bones, pre-/design)
 
 A first functional template pass exists as of 2026-08-24 — deliberately

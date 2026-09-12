@@ -1,0 +1,11 @@
+{
+  "name": "brawer-homepage-nav-tests",
+  "private": true,
+  "description": "Playwright tests for the site's hand-written interactive JS (assets/js/nav.js) — the mobile drawer, the fullscreen art viewer, and safe-area padding. Not a build step for the site itself: Hugo/hugo.toml don't know this exists, and nothing here ships to production. See CLAUDE.md's 'Browser/interaction tests' section for what's covered and how/when to run this.",
+  "scripts": {
+    "test": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.63.0"
+  }
+}

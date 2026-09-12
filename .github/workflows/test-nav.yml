@@ -1,0 +1,67 @@
+name: Test nav.js
+
+# Playwright tests for the site's hand-written interactive JS
+# (assets/js/nav.js) — the mobile drawer, the fullscreen art viewer,
+# and safe-area padding for notched phones. See CLAUDE.md's "Browser/
+# interaction tests" section for what's covered and why it's a
+# separate suite from check-content.yml (this drives a real browser
+# against a real `hugo server`, not a static content/config check).
+#
+# Path-filtered on purpose: an ordinary content-only PR (a new art
+# piece, a new publication) never touches any of the files below, and
+# should build/merge exactly as fast as it did before this workflow
+# existed. Keep this list in sync with what actually affects nav.js's
+# behavior — the interactive templates/partials it wires up, the CSS
+# it reads computed styles from, and its own test infrastructure.
+on:
+  pull_request:
+    paths:
+      - "assets/js/nav.js"
+      - "assets/css/main.css"
+      - "layouts/art/single.html"
+      - "layouts/partials/head.html"
+      - "layouts/partials/drawer.html"
+      - "layouts/partials/drawer-utility.html"
+      - "layouts/partials/hero-nav.html"
+      - "layouts/partials/utility-nav.html"
+      - "layouts/_default/baseof.html"
+      - "tests/**"
+      - "playwright.config.js"
+      - "package.json"
+      - "package-lock.json"
+      - ".github/workflows/test-nav.yml"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # LFS, same reason as check-content.yml: the viewer/safe-area
+          # tests load real art-piece pages, whose images are
+          # LFS-tracked (*.webp) — an unresolved pointer file wouldn't
+          # fail the build, just make those pages render broken images.
+          lfs: true
+
+      - name: Set up Hugo
+        uses: peaceiris/actions-hugo@2752ce1d29631191ea3f27c23495fa06139a5b78 # v3.2.1
+        with:
+          # Keep identical to check-content.yml/deploy.yml's pin.
+          hugo-version: "0.165.0"
+          extended: true
+
+      - name: Set up Node
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version: 24
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright's Chromium
+        run: npx playwright install --with-deps chromium
+
+      - name: Run tests
+        run: npm test
