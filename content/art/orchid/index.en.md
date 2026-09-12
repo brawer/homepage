@@ -12,6 +12,5 @@ image: "orchid.webp"
 teaser: "orchid.webp"
 ---
 I like flowers, but as a subject to paint I find people much more
-interesting. My mother-in-law doesn’t share that hang-up — she loves
-flowers, and she loves the color white — so for her birthday I made an
-exception: a white orchid, in oil.
+interesting. But my mother-in-law loves flowers, and she loves the
+color white — so for her birthday I painted a white orchid, in oil.

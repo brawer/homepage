@@ -12,6 +12,6 @@ image: "orchid.webp"
 teaser: "orchid.webp"
 ---
 Blumen mag ich, aber als Motiv finde ich Menschen viel spannender.
-Meine Schwiegermutter hat diese Marotte nicht – sie liebt Blumen, und
-sie liebt die Farbe Weiss –, also machte ich zu ihrem Geburtstag eine
-Ausnahme: eine weisse Orchidee, in Öl.
+Meine Schwiegermutter aber liebt Blumen, und sie liebt die Farbe
+Weiss –, also machte ich ihr zu ihrem Geburtstag eine weisse
+Orchidee, in Öl.
