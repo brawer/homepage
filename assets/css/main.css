@@ -525,7 +525,20 @@ dialog::backdrop {
   position: fixed;
   inset: 0;
   width: 100vw;
-  height: 100vh;
+  /* 100dvh, not 100vh -- found via a real Pixel 10 (#115), not caught
+     on any emulated/desktop screen: 100vh is the LAYOUT viewport,
+     which mobile Chrome/Firefox size as if the address bar were
+     already hidden, so it's taller than what's actually on screen
+     while that bar is showing. .drawer-utility (the language picker)
+     is pinned to the very bottom of this box via margin-top:auto (see
+     its own comment below) -- sized a real address-bar's-worth too
+     tall, that bottom edge lands below the visible viewport entirely,
+     cropped off with no way to scroll to it (the drawer's own
+     overflow-y:auto has nothing left to reveal -- the box already
+     contains everything, just extending past what's drawn). Same fix,
+     same reasoning as body's own min-height above: 100dvh tracks the
+     real, currently-visible viewport instead. */
+  height: 100dvh;
   display: flex;
   flex-direction: column;
   /* No padding here -- deliberately. A single blanket inset used to
@@ -776,7 +789,14 @@ body.drawer-open {
   position: fixed;
   inset: 0;
   width: 100vw;
-  height: 100vh;
+  /* 100dvh, not 100vh -- same mobile-address-bar bug as .drawer[open]
+     above (#115), just not the one actually reported: this dialog has
+     no bottom-pinned content to crop, but it would still render taller
+     than the real visible viewport while the browser's own chrome is
+     showing, which is exactly what 100dvh is for. Fixed alongside the
+     drawer rather than leaving the identical latent bug in place here
+     too -- same reasoning the dialog margin:0 fix above already used. */
+  height: 100dvh;
   /* Near-black regardless of theme — deliberate viewer convention
      (isolates the image from surrounding chrome), same
      non-theme-following exception as .hero-matte-dark below. Do not
