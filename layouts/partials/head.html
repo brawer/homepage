@@ -1,5 +1,15 @@
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+{{/* viewport-fit=cover opts into drawing under the notch/rounded
+   corners/home-indicator area on iPhones — required before
+   env(safe-area-inset-*) resolves to anything but 0. Load-bearing for
+   the safe-area padding in main.css (.site-header-inner, .footer-inner,
+   main, the drawer, the fullscreen art viewer) — see those rules'
+   comments. Without this, the whole page just keeps letterboxing
+   itself inside the safe area automatically (the pre-existing, equally
+   valid default), so removing it isn't a regression on its own — but
+   it WOULD silently zero out every safe-area rule below, since env()
+   only returns non-zero once the page has opted into cover mode. */}}
 {{/* Remembered language choice. If the visitor has previously picked
    a language with the switcher (footer/drawer), that choice is stored
    in localStorage and honoured here: a page shown in the other
