@@ -1,0 +1,31 @@
+{{/*
+  Keyboard-hint line under the hero (".kbd-hint" in main.css,
+  desktop-only). Used to be inert text advertising the ← / → keys
+  (nav.js); per github.com/brawer/homepage#101, each arrow is now also
+  a plain link to the same prev/next page hero-nav.html points at — a
+  second, low-cost target for people who reach for the mouse instead
+  of the keyboard or the circular hero-nav buttons.
+
+  Same visual-direction-vs-Hugo-naming swap as hero-nav.html/
+  prev-next.html (see either's header comment for the full
+  explanation) — now FOUR places doing this swap, all cross-referenced
+  in comments: keep them in sync.
+
+  At a section boundary the missing side stays a plain, non-linked
+  <kbd> (as both always were before #101) rather than hero-nav.html's
+  dimmed .is-disabled treatment — there's no established "disabled
+  key" visual on this site, and a plain inert glyph already reads as
+  non-interactive here since nothing else in the line is clickable
+  either.
+
+  Param: the current Page.
+*/}}
+{{ $prev := .NextInSection }}
+{{ $next := .PrevInSection }}
+{{ if or $prev $next }}
+<p class="kbd-hint">
+  {{ if $prev }}<a href="{{ $prev.RelPermalink }}" aria-label="{{ i18n "prev_label" }}: {{ $prev.Title }}"><kbd aria-hidden="true">←</kbd></a>{{ else }}<kbd>←</kbd>{{ end }}
+  {{ if $next }}<a href="{{ $next.RelPermalink }}" aria-label="{{ i18n "next_label" }}: {{ $next.Title }}"><kbd aria-hidden="true">→</kbd></a>{{ else }}<kbd>→</kbd>{{ end }}
+  {{ i18n "keyboard_browse_hint" }}
+</p>
+{{ end }}

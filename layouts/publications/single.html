@@ -62,7 +62,7 @@
         </a>
       {{ end }}
     </div>
-    {{ if or .NextInSection .PrevInSection }}<p class="kbd-hint" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> {{ i18n "keyboard_browse_hint" }}</p>{{ end }}
+    {{ partial "kbd-hint.html" $ }}
   {{ else if $pdfResource }}
     {{/* A downloadable PDF but no image/preview (rare) — a plain button
          where the hero would have been, not a floating shelf. */}}
