@@ -47,6 +47,19 @@
 {{ if $noindex }}<meta name="robots" content="noindex, nofollow">
 {{ end -}}
 <title>{{ if .IsHome }}{{ .Site.Params.fullName }}{{ else }}{{ .Title }} — {{ .Site.Params.fullName }}{{ end }}</title>
+{{- /* Preload the self-hosted variable font (issue #39) — without this,
+   the browser only learns it needs the font after downloading AND
+   parsing main.css and reaching the @font-face rule inside it, a whole
+   extra round-trip of delay before the font fetch even starts. This
+   hint lets it start in parallel with the CSS. `crossorigin` is
+   required even though the font is same-origin — the Fetch spec always
+   fetches fonts in anonymous-CORS mode, and a preload issued without
+   this attribute is a *different* cache entry the browser then
+   silently fetches a second time. Stable, un-fingerprinted path (see
+   "Static assets & fingerprinting" in CLAUDE.md: /fonts/* is cached
+   immutably at the edge under a fixed filename), so unlike main.css
+   this can be a plain literal href. */ -}}
+<link rel="preload" href="/fonts/karla-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
 {{- /* Content-hashed URL so the Bunny edge can cache it forever (issue
    #81, Stage 1). Bare reference, not `with`: a missing main.css must
    fail the build, never ship a naked page. `minify` here — not only the

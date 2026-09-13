@@ -1925,7 +1925,52 @@ list). `assets/css/main.css` only — no JS, no markup change.
   cards with system-font-and-Canvas chrome). Not done in this port:
   loading-performance tuning for the font (`font-display`/`preload`/
   layout-shift), explicitly deferred per Sascha's own "get the design
-  working first."
+  working first" — **done 2026-09-13, issue #39**, see "Font
+  loading-performance tuning" below.
+- **Font loading-performance tuning, 2026-09-13 (issue #39)**:
+  `font-display: swap` was already set; what was missing was a
+  `<link rel="preload">` (`head.html`, before the CSS link, with
+  `crossorigin` — required even though the font is same-origin, or the
+  browser double-fetches it) and a metric-adjusted fallback face to
+  reduce the reflow when Karla swaps in.
+  - The fallback face (`"Karla Fallback"`, `assets/css/main.css`,
+    inserted into `body`'s `font-family` between `"Karla"` and the
+    plain OS-native stack) targets `local("Arial")`/`local("Helvetica")`
+    with `size-adjust`/`ascent-override`/`descent-override`/
+    `line-gap-override`. **The values are NOT derived from Karla's/
+    Arial's OS/2 font tables** — tried that first (the standard
+    `xAvgCharWidth`-ratio formula used by tools like Next.js's font
+    optimizer) and it was wrong: Karla's declared
+    `OS/2.xAvgCharWidth` overstates its real average glyph width for
+    actual prose, which would have made the fallback ~16% *too wide* —
+    worse than shipping no adjustment at all. Caught by verifying
+    empirically instead of trusting the arithmetic (same discipline as
+    the rest of this file): rendered a representative bilingual
+    paragraph (English + German, umlauts, guillemets) in both fonts via
+    Canvas2D `measureText` at a large font size, derived `size-adjust`
+    from the actual measured width ratio and the override values from
+    `actualBoundingBoxAscent`/`Descent`, then confirmed the result
+    against a real page's rendered `<h1>` in a headless browser with the
+    font fetch artificially delayed — 0.00% width difference between
+    the fallback-face render and the post-swap Karla render. Without
+    the fix, the site's actual fallback stack (`-apple-system` / San
+    Francisco, on macOS) measured **8.2% narrower** than Karla for the
+    same representative text — a real, previously-unmeasured reflow on
+    every page load until the font finished fetching.
+  - Deliberately targets Arial/Helvetica specifically, not the site's
+    real OS-native stack (`-apple-system`, `Segoe UI`, …) — those are
+    the only fallback fonts with metrics that are reliably inspectable/
+    reproducible across machines; falls through to the real stack
+    unadjusted if neither resolves locally, same as before this change.
+  - Verified with Playwright against a local `hugo server`: the preload
+    link's attributes (`href`/`as`/`type`/`crossorigin`) and that it
+    precedes the stylesheet link; exactly one network request for the
+    font file (confirming `crossorigin` prevents the classic
+    preload-without-crossorigin double-fetch); `document.fonts.check`
+    genuinely reports "Karla" unloaded during a throttled fetch and
+    loaded after; and pixel-identical before/after screenshots of a
+    real detail page's hero+heading with the font fetch held open for
+    3s. No content-model changes.
 - **Header/drawer/footer chrome is now also live, ported 2026-08-27**
   — see "Header/drawer/footer design pass" above for the full list of
   what shipped (tonal drawer elevation, full-bleed header/footer mat
