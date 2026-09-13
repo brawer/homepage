@@ -1211,6 +1211,11 @@ article > h1 {
   background: var(--paper-raised);
   color: var(--ink-soft);
 }
+/* #101: each arrow is now also a link to the prev/next page (a plain,
+   non-linked <kbd> stays at a section boundary — see kbd-hint.html). */
+.kbd-hint a { display: inline-flex; text-decoration: none; }
+.kbd-hint a:hover kbd { background: var(--accent-soft); color: var(--ink); }
+.kbd-hint a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
 
 /* Grid-tile badges (gallery-grid.html) and the matching entry-page
    tiles (index.html) — a small format/type glyph, not translated

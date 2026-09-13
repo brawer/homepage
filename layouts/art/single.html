@@ -34,7 +34,7 @@
         {{ partial "hero-nav.html" $ }}
       </div>
     </div>
-    {{ if or $.NextInSection $.PrevInSection }}<p class="kbd-hint" aria-hidden="true"><kbd>←</kbd><kbd>→</kbd> {{ i18n "keyboard_browse_hint" }}</p>{{ end }}
+    {{ partial "kbd-hint.html" $ }}
   {{ end }}
   <h1>{{ .Title }}</h1>
 
