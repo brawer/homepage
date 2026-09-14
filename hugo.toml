@@ -118,12 +118,15 @@ uglyURLs = false
 [params]
   fullName = "Sascha Brawer"
 
-  # Staging switch: while true, every page gets
-  # <meta name="robots" content="noindex, nofollow"> (head.html) AND
-  # robots.txt becomes a blanket Disallow (layouts/robots.txt). Set to
-  # false — or delete this line — to open the site to search engines at
-  # launch. See CLAUDE.md's "Known open items".
-  noindex = true
+  # Staging switch -- flipped off 2026-09-14: the site now serves live
+  # from brawer.ch (dandelis.ch is being retired to a parked domain).
+  # While true, every page got <meta name="robots" content="noindex,
+  # nofollow"> (head.html) and robots.txt was a blanket Disallow
+  # (layouts/robots.txt). Kept here as an explicit `false`, not
+  # deleted, so it's a documented on/off switch if staging is ever
+  # needed again (e.g. ahead of a future major redesign). See
+  # CLAUDE.md's "Known open items" for the full launch history.
+  noindex = false
 
   [params.social]
     github = "https://github.com/brawer/"
