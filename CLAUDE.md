@@ -1124,7 +1124,16 @@ whether there's a layout to render them with:
   a CI step via `pip install pyyaml && python3
   scripts/check_typography.py`; run it locally the same way. A
   separate step checks every LFS-tracked `*.webp`/`*.pdf` isn't an
-  unresolved pointer file. When testing *shell/grep*-based CI checks
+  unresolved pointer file. **`scripts/test_deploy_bunny.py`**, added
+  2026-09-14 (issue #121), is a different kind of check in the same
+  workflow — not content, but `deploy_bunny.py`'s orphan-grace-period
+  logic (`unittest`, stdlib-only, an in-memory fake Bunny backend, no
+  real network/credentials): a regression there would be silent until
+  someone hit the exact "site broken until reload" symptom #121 was
+  filed for, and the script runs on every push to `main`, so it's
+  worth catching on every PR rather than only after a real deploy.
+  Run locally the same way CI does: `python3 scripts/test_deploy_bunny.py
+  -v`. When testing *shell/grep*-based CI checks
   locally on macOS specifically: note this environment aliases the
   `grep` command to `ugrep`, which is more permissive than either BSD
   grep (macOS default) or GNU grep (Ubuntu, what CI actually runs);

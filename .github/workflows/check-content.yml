@@ -37,6 +37,12 @@ name: Check content
 #      unresolved pointer file — CLAUDE.md's Git LFS section warns
 #      this fails silently otherwise ("the build won't error, it'll
 #      just produce a broken site").
+#   6. scripts/deploy_bunny.py's orphan-grace-period logic (issue #121)
+#      against an in-memory fake Bunny backend — no real network, no
+#      real credentials. Not a content check like 1–5, but it lives
+#      here rather than only in deploy.yml so a regression is caught
+#      on every PR, not just discovered after a push to main already
+#      ran the real deploy.
 
 # Runs on every PR, and is called by deploy.yml as a reusable workflow to gate
 # the push-to-main deploy. It no longer triggers on push to main directly:
@@ -103,6 +109,9 @@ jobs:
         run: |
           pip install --quiet pyyaml
           python3 scripts/check_typography.py
+
+      - name: Test deploy_bunny.py's orphan-grace-period logic
+        run: python3 scripts/test_deploy_bunny.py -v
 
       - name: Check LFS files resolved to real content
         run: |

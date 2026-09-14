@@ -39,19 +39,21 @@ compare it to the local file's and only PUT on a miss or mismatch. A first
 deploy (empty zone) uploads everything and deletes nothing.
 
 Orphan grace period (brawer/homepage#121, found while verifying #39's own
-fix): there is no cache purge on deploy,
-so for up to the HTML Cache-Control max-age (brawer/production's
-bunny/cdn.tf), a visitor's browser -- or the CDN edge itself -- can still be
-holding PRE-deploy HTML that references a content-hashed CSS/JS/image whose
-bytes just changed underneath it. Deleting the old hash file in the SAME
-deploy that orphans it turns that into a 404 (missing CSS) until the visitor
-reloads. So a remote file that has fallen out of the local build isn't
-deleted right away -- it's tracked (in STATE_KEY, persisted in the zone
-itself, since CI runners keep no state between invocations) and only
-actually removed once it has been orphaned for BUNNY_ORPHAN_GRACE_HOURS.
-Losing that state file (corrupt, briefly unreachable) fails safe: every currently
-tracked orphan's clock just restarts, which only means keeping it a bit
-longer, never deleting it early.
+fix): there is no cache purge on deploy, so for up to the HTML
+Cache-Control max-age (brawer/production's bunny/cdn.tf), a visitor's
+browser -- or the CDN edge itself -- can still be holding PRE-deploy HTML
+that references a content-hashed CSS/JS/image whose bytes just changed
+underneath it. Deleting the old hash file in the SAME deploy that orphans
+it turns that into a 404 (missing CSS) until the visitor reloads. So a
+remote file that has fallen out of the local build isn't deleted right
+away -- it's tracked (in STATE_KEY, persisted in the zone itself, since CI
+runners keep no state between invocations) and only actually removed once
+it has been orphaned for BUNNY_ORPHAN_GRACE_HOURS. Losing that state file
+(corrupt, briefly unreachable) fails safe: every currently tracked
+orphan's clock just restarts, which only means keeping it a bit longer,
+never deleting it early. This logic is covered by test_deploy_bunny.py
+(an in-memory fake Bunny backend, no real network) -- run it after any
+change here.
 """
 
 from __future__ import annotations
