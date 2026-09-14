@@ -63,6 +63,118 @@
   {{- $title = cond (eq .Site.Language.Lang "de") "Seite nicht gefunden" "Page not found" }}
 {{- end }}
 <title>{{ if .IsHome }}{{ .Site.Params.fullName }}{{ else }}{{ $title }} — {{ .Site.Params.fullName }}{{ end }}</title>
+{{- /* Plain-text description for <meta name="description">/OpenGraph/
+   Twitter (issue #135) — resolved per content type, since there's no
+   one shared field for it: publications' `abstract`, projects'
+   `summary` (both markdownify'd then plainify'd, since they may
+   contain inline Markdown links — see CLAUDE.md), else Hugo's own
+   auto-generated `.Summary` (plainify'd) for anything else with real
+   Markdown body content — art pieces, prose-bearing tag pages, the
+   imprint — else the site's own `intro` sentence (already written as
+   a general "about Sascha" blurb for the homepage; reused here rather
+   than duplicating a second description somewhere else). The home
+   page always uses `intro` outright — its own body is deliberately
+   just the "# Hello, I'm Sascha" greeting (see CLAUDE.md's Homepage
+   section), a worse description than the real intro sentence sitting
+   right next to it. The 404 page (no content file at all, so no
+   `.Summary` either) gets its own short, per-render string, same
+   reasoning as its <title> override above. */ -}}
+{{- $description := "" }}
+{{- if eq .Kind "404" }}
+  {{- $description = cond (eq .Site.Language.Lang "de") "Diese Seite existiert nicht." "This page does not exist." }}
+{{- else if .IsHome }}
+  {{- $description = .Site.Params.intro }}
+{{- else if .Params.abstract }}
+  {{- $description = .Params.abstract | markdownify | plainify }}
+{{- else if .Params.summary }}
+  {{- $description = .Params.summary | markdownify | plainify }}
+{{- else if .Summary }}
+  {{- $description = .Summary | plainify }}
+{{- else }}
+  {{- $description = .Site.Params.intro }}
+{{- end }}
+{{- /* Collapse whitespace (multi-paragraph body/abstract text carries
+   real newlines through markdownify/plainify/.Summary — harmless
+   inside an HTML attribute, browsers normalize it, but ugly source
+   and needlessly fragile for other consumers) and cap the length —
+   an abstract like patti's runs to several hundred words, far past
+   what any platform actually displays; 200 characters is a single
+   plain-language middle ground between the ~155-160 search engines
+   truncate a meta description to and the wider ~300 OpenGraph/Twitter
+   allow, rather than maintaining two separately-truncated strings for
+   one field used identically in both places. */ -}}
+{{- /* strings.TrimSpace, not `trim " "` -- piping puts the piped value
+   LAST, which is the wrong slot for trim's (s, cutset) signature (it
+   silently trims EVERY character in the piped string out of the
+   two-space cutset instead, emptying it -- confirmed empirically,
+   not from docs, after this exact bug produced empty descriptions
+   sitewide on first build). TrimSpace takes only one arg, so it has
+   no argument-order slot to get wrong. */ -}}
+{{- $description = $description | replaceRE `\s+` " " | strings.TrimSpace | truncate 200 }}
+{{ with $description }}<meta name="description" content="{{ . }}">
+{{ end -}}
+{{- /* OpenGraph image: the same teaser-else-image fallback
+   gallery-grid.html/prev-next.html already use for "best
+   representative thumbnail", but cropped to the 1200x630 (1.91:1)
+   size social platforms expect — our own images are square (art) or
+   whatever shape the source is (publications/projects), nowhere near
+   that ratio, so this is its own crop, not a re-use of the grid's
+   square teaser file. JPEG output, not the site's usual WebP/AVIF:
+   OpenGraph image support for WebP is inconsistent across real-world
+   crawlers (several major ones have historically not rendered it
+   reliably) — correctness matters more here than the bytes saved,
+   since a broken preview image is this feature failing silently, not
+   loudly. Only pages with a teaser/image field get one (art/
+   publications/projects items) — everything else (home, résumé,
+   imprint, list/tag pages, 404) omits og:image/twitter:image
+   entirely rather than reaching for an arbitrary stand-in; a card
+   with no image degrades gracefully on every platform that supports
+   OpenGraph at all. */ -}}
+{{- $ogImage := "" }}
+{{- with (.Params.teaser | default .Params.image) }}
+  {{- $ogImage = $.Resources.GetMatch . }}
+{{- end }}
+{{- with $ogImage }}
+  {{- $ogImage = .Fill "1200x630 jpg smart" }}
+{{- end }}
+{{- /* og:locale wants underscore-joined language_TERRITORY, not a
+   bare BCP-47 tag. "de_CH" matches the de-CH convention already
+   established sitewide (CLAUDE.md's Typography section); English
+   content doesn't target a specific territory, so "en_US" — the
+   overwhelmingly common default when a site doesn't commit to one
+   (the OG spec's own examples default to it) — rather than inventing
+   a new, unreviewed English-locale decision just for this tag. */ -}}
+{{- $ogLocale := cond (eq .Site.Language.Lang "de") "de_CH" "en_US" }}
+<meta property="og:site_name" content="{{ .Site.Params.fullName }}">
+<meta property="og:type" content="website">
+<meta property="og:url" content="{{ .Permalink }}">
+<meta property="og:title" content="{{ if .IsHome }}{{ .Site.Params.fullName }}{{ else }}{{ $title }}{{ end }}">
+{{ with $description }}<meta property="og:description" content="{{ . }}">
+{{ end -}}
+<meta property="og:locale" content="{{ $ogLocale }}">
+{{- /* Alternate-locale hint, same clustering concept as the hreflang
+   alternates below and gated the same way (translated + not noindex)
+   — .AllTranslations includes the page itself, so skip that entry;
+   with only two languages this always emits exactly one line. */ -}}
+{{ if and .IsTranslated (not $noindex) }}
+{{ range .AllTranslations }}
+{{- if ne .Lang $.Lang }}
+<meta property="og:locale:alternate" content="{{ if eq .Lang "de" }}de_CH{{ else }}en_US{{ end }}">
+{{ end -}}
+{{ end }}
+{{ end -}}
+{{ with $ogImage }}
+<meta property="og:image" content="{{ .Permalink }}">
+<meta property="og:image:type" content="image/jpeg">
+<meta property="og:image:width" content="{{ .Width }}">
+<meta property="og:image:height" content="{{ .Height }}">
+<meta property="og:image:alt" content="{{ $title }}">
+{{ end -}}
+{{- /* Twitter/X falls back to the equivalent og: tag for title/
+   description/image when its own is absent (documented Twitter Card
+   behaviour) — only twitter:card itself has no OG equivalent, so
+   that's the one tag actually needed here. */ -}}
+<meta name="twitter:card" content="{{ if $ogImage }}summary_large_image{{ else }}summary{{ end }}">
 {{- /* Preload the self-hosted variable font (issue #39) — without this,
    the browser only learns it needs the font after downloading AND
    parsing main.css and reaching the @font-face rule inside it, a whole
