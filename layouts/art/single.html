@@ -17,12 +17,13 @@
     {{ $img = $.Resources.GetMatch . }}
   {{ end }}
 
-  {{/* Prefetch both neighbours' hero images (issue #102), not just the
-       visually-"next" one — hero-prefetch.html's own comment has the
-       format/width tradeoffs. Both directions regardless of the
-       Next/Prev-naming swap documented elsewhere (hero-nav.html,
-       prev-next.html): a prefetch hint doesn't care which chevron a
-       click came from, only that the neighbour exists. */}}
+  {{/* Prefetch both neighbours' HTML and hero images (issue #102), not
+       just the visually-"next" one — neighbor-prefetch.html's own
+       comment has the format/width tradeoffs. Both directions
+       regardless of the Next/Prev-naming swap documented elsewhere
+       (hero-nav.html, prev-next.html): a prefetch hint doesn't care
+       which chevron a click came from, only that the neighbour
+       exists. */}}
   {{ $prefetchImages := slice }}
   {{ range (slice .NextInSection .PrevInSection) }}
     {{ $n := . }}
@@ -32,7 +33,7 @@
       {{ end }}
     {{ end }}
   {{ end }}
-  {{ partial "hero-prefetch.html" (dict "images" $prefetchImages) }}
+  {{ partial "neighbor-prefetch.html" (dict "page" $ "images" $prefetchImages) }}
 
   <a class="backlink" href="{{ .CurrentSection.RelPermalink }}">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
