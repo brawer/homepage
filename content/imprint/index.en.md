@@ -1,11 +1,11 @@
 ---
 title: "Imprint"
 ---
-Sascha Brawer, Länggassstrasse 27, 3012 Bern, Switzerland
+**Sascha Brawer**, Länggassstrasse 27, 3012 Bern, Switzerland
 
-Email: [sascha@brawer.ch](mailto:sascha@brawer.ch)
+**Email:** [sascha@brawer.ch](mailto:sascha@brawer.ch)
 
-UID: CHE-484.325.065
+**UID:** CHE-484.325.065
 
 ## Cookies
 

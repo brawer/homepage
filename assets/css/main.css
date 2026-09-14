@@ -2023,6 +2023,33 @@ article > h1 {
 }
 .notfound-lang .cta-standalone { margin-bottom: 0; }
 
+/* Imprint (layouts/imprint/single.html). Before this pass the page had
+   no styling of its own at all -- plain browser-default <p>/<h2>
+   margins, which is why the identity block (name/address/email/UID)
+   read as loosely-spaced prose instead of a tight letterhead-style
+   block of facts (Sascha's own complaint, 2026-09-14). `.imprint p`
+   tightens EVERY paragraph regardless of how many precede the first
+   heading, so a future added line (a phone number, say) joins the
+   same tight block automatically without this rule needing an update
+   -- `.imprint h2 ~ p` then restores normal prose rhythm for anything
+   that follows a heading (the Cookies explanation), which is genuine
+   prose, not a data block, and reads better with real paragraph air.
+   The h1 gets no rule of its own -- article > h1 (this file, shared
+   with every detail page) already covers it once the template wraps
+   the content in <article>. */
+.imprint p {
+  margin: .2rem 0;
+}
+.imprint h2 ~ p {
+  margin: .75rem 0;
+}
+.imprint h2 {
+  margin: 2rem 0 .5rem;
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: -.005em;
+}
+
 /* Print -- strip the site, keep the document. Scoped to .resume-page:
    the résumé is the one page anyone actually prints or saves to PDF, so
    the other pages keep the browser's own print defaults untouched. */

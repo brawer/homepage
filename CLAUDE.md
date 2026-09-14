@@ -868,6 +868,28 @@ localized) `.Title`, no separate i18n key.
   lookup bug (see "Templates" below): section-specific paths are
   known to resolve reliably in this Hugo setup, `_default/` ones
   aren't always reachable.
+- **Spacing design pass, 2026-09-14** (Sascha's own complaint: Email
+  and UID read as too loosely spaced from the address line). The page
+  had no styling of its own before this — plain browser-default
+  `<p>`/`<h2>` margins, since `single.html` just dumped `{{ .Content }}`
+  with no wrapper. Fixed with CSS only, no new front matter (still
+  free-form Markdown body, per the reasoning above):
+  `layouts/imprint/single.html` now wraps the content in `<article
+  class="imprint">` — gets `article > h1`'s existing 1.9rem heading
+  style for free (the only other rule using a bare `article` selector,
+  confirmed via grep, so nothing else leaks in) — and
+  `assets/css/main.css`'s new `.imprint` block tightens `<p>` margins
+  sitewide within the page (`.imprint p`), then restores normal prose
+  rhythm specifically for paragraphs that come **after** a heading via
+  `.imprint h2 ~ p` (the Cookies explanation is genuine prose, not a
+  data block). Deliberately not scoped to "the first N paragraphs" by
+  count — a future added identity line (a phone number, say) joins the
+  same tight block automatically, no CSS update needed. Content itself
+  picked up two small bold touches for the same "letterhead, not
+  prose" feel: the name (`**Sascha Brawer**`) and the `Email`/`UID`
+  labels (`**Email:**`/`**UID:**`, `**E-Mail:**` on the German page) —
+  same labeled-fact pattern publications' patent block already uses
+  (`<strong>{{ i18n "assignee_label" }}</strong> …`).
 
 ## Custom 404 page
 
