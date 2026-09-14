@@ -1,0 +1,59 @@
+{{/*
+  Custom 404 page. Deliberately ONE bilingual document — both languages'
+  text always shown together — rather than the usual index.en.md/
+  index.de.md split. See CLAUDE.md's Bilingual section for why every
+  other page splits by language and this one can't:
+
+  Bunny's storage-zone 404 fallback (bunnycdn_errors/404.html, wired in
+  scripts/deploy_bunny.py) serves ONE fixed file for every missing URL
+  in the whole zone, with no per-path/per-language routing at the edge
+  — so there is no "the visitor was under /de/..." signal to render
+  off of for most 404s. Guessing the language from the browser instead
+  (navigator.language) is exactly the antipattern this site's own
+  hreflang/language-switcher design already rejects (see the "Language
+  selection" section) — so both languages are shown together instead,
+  each with its own clearly-labeled home link, rather than picking one.
+
+  Hugo DOES render this per language (confirmed via `hugo build`:
+  public/404.html AND public/de/404.html, correctly auto-paired as
+  .Translations of each other — same auto-pairing Hugo already does for
+  same-string taxonomy terms — so the EN/DE switcher in the header/
+  footer/drawer chrome genuinely works here, unlike a guess). But since
+  Bunny's fallback only ever serves ONE of those two files (see below —
+  the root/English one, matching defaultContentLanguage, same tie-break
+  as the hreflang x-default page), both renders deliberately show the
+  IDENTICAL bilingual content regardless of which language's Site
+  context is rendering — only the display ORDER follows the current
+  site's language (own language first), and the surrounding chrome
+  (nav labels, aria-labels, skip link) localizes normally. That keeps
+  a direct visit to /de/404.html or a switcher click coherent, without
+  making the one file Bunny actually serves incomplete for either
+  language's visitors.
+
+  Chrome text stays out of i18n/*.toml on purpose for the two message
+  blocks below (unlike every other piece of UI chrome) — Hugo's i18n
+  lookup always resolves against the CURRENT page's language, so
+  there's no way to pull a second language's string into one render
+  the way this page needs to. A deliberate, documented exception, not
+  an oversight.
+*/}}
+{{ define "main" }}
+<div class="notfound">
+  <p class="notfound-code" aria-hidden="true">404</p>
+  {{ $en := dict "lang" "en" "heading" "Page not found"
+    "body" "The page you were looking for doesn’t exist, or it may have moved."
+    "cta" "Back to the homepage" "href" "/" }}
+  {{ $de := dict "lang" "de" "heading" "Seite nicht gefunden"
+    "body" "Die gesuchte Seite existiert nicht oder wurde verschoben."
+    "cta" "Zur Startseite" "href" "/de/" }}
+  {{ $blocks := slice $en $de }}
+  {{ if eq .Site.Language.Lang "de" }}{{ $blocks = slice $de $en }}{{ end }}
+  {{ range $blocks }}
+  <section class="notfound-lang" lang="{{ .lang }}">
+    <h1>{{ .heading }}</h1>
+    <p>{{ .body }}</p>
+    <a class="cta-standalone" href="{{ .href }}">{{ .cta }}</a>
+  </section>
+  {{ end }}
+</div>
+{{ end }}

@@ -866,6 +866,75 @@ localized) `.Title`, no separate i18n key.
   known to resolve reliably in this Hugo setup, `_default/` ones
   aren't always reachable.
 
+## Custom 404 page
+
+Added 2026-09-14. `layouts/404.html` — Hugo's special "kind" template,
+no content file. Two things about it are genuinely unusual for this
+site, both explained at length in the template's own header comment
+(not fully repeated here):
+
+- **Deliberately bilingual on one page**, both languages' text always
+  shown together, rather than the usual `index.en.md`/`index.de.md`
+  split every other page uses. Reason: Bunny's storage-zone 404
+  fallback (see below) serves ONE fixed file for every missing URL in
+  the whole zone, with no per-path/per-language routing at the edge —
+  there's no reliable "the visitor was under `/de/...`" signal to
+  render off of. Guessing from `navigator.language` instead is exactly
+  the antipattern this site's hreflang/language-switcher design already
+  rejects (see "Language selection" above), so both languages render
+  together, each with its own clearly-labeled home link, rather than
+  picking one.
+  - Hugo still renders this once per language (`public/404.html` +
+    `public/de/404.html`), auto-paired as `.Translations` of each other
+    (confirmed via `hugo build` — same auto-pairing Hugo already does
+    for same-string taxonomy terms) — so the header/footer/drawer EN/DE
+    switcher genuinely works if a visitor lands on either file directly.
+    Content is identical either way; only the display order (own
+    language first) and the surrounding chrome localize per render.
+  - The two message strings are hand-written directly in the template,
+    **not** routed through `i18n/*.toml` like every other piece of UI
+    chrome — Hugo's `i18n` lookup always resolves against the
+    *current* page's language, so there's no way to pull a second
+    language's string into one render. A deliberate, documented
+    exception to "every piece of UI chrome text is an i18n key" (see
+    "Templates" below), not an oversight.
+  - `head.html`'s `<title>` and `noindex` logic both special-case
+    `.Kind "404"`: the title is overridden per-render (Hugo's own
+    default, `.Title` = "404 Page not found", is English on both
+    renders and wrong on the German one), and the page is *always*
+    `noindex, nofollow` regardless of the site-wide staging
+    `noindex` switch — standard practice for an error page, and
+    unlike `/projects` there's no reason to ever want it crawlable.
+- **Wired to Bunny via a file-presence convention, not an API call**:
+  a Bunny storage zone serves `bunnycdn_errors/404.html` (still with a
+  real 404 status code) for any missing object in the zone — no
+  pull-zone/account-level setting needed, confirmed against Bunny's own
+  support docs. `scripts/deploy_bunny.py`'s `sync_error_page()` mirrors
+  the built `public/404.html` (the root/English render — Bunny only
+  ever serves the one fixed file zone-wide, so which of the two
+  per-language renders gets mirrored doesn't matter for content, only
+  for which chrome language a cold 404 shows; English matches
+  `defaultContentLanguage`, same tie-break as the hreflang
+  `x-default`) to `public/bunnycdn_errors/404.html` before the sync, so
+  it uploads through the normal walk like any other file — no separate
+  upload/diff/orphan codepath. Runs from CI with only the existing
+  storage password (no Bunny dashboard step, no account API key,
+  consistent with this site's deploy security posture — see "Static
+  assets & fingerprinting" below). `deploy.yml`'s sanity gate requires
+  `public/404.html` to exist, alongside its existing `index.html`
+  check. Covered by `scripts/test_deploy_bunny.py` (mirrors on deploy,
+  updates when the source changes, skips — doesn't fail — when no
+  404.html is present, which is why none of that script's other test
+  fixtures need one).
+- CSS: `.notfound`/`.notfound-code`/`.notfound-lang` in
+  `static/css/main.css`, single-column at every width (like the résumé
+  — consistency over a two-column layout for one small page), centered
+  (the footer's "no direction to point in → centered" reasoning from
+  the 2026-08-27 chrome design pass applies just as well to a dead-end
+  page). The large "404" numeral is a low-contrast (`--line`) watermark
+  behind the real message, `aria-hidden` — decorative reinforcement,
+  not a second heading.
+
 ## Images
 
 - Store as WebP, not JPEG/HEIC:
@@ -952,7 +1021,9 @@ content-hashed URLs, not edge purges.
     account key). Env: `BUNNY_STORAGE_PASSWORD` (the `production`
     GitHub environment, branch-restricted to `main`),
     `BUNNY_STORAGE_ZONE`, `BUNNY_STORAGE_ENDPOINT`,
-    `BUNNY_DEPLOY_DRY_RUN`, `BUNNY_ORPHAN_GRACE_HOURS`.
+    `BUNNY_DEPLOY_DRY_RUN`, `BUNNY_ORPHAN_GRACE_HOURS`. Also mirrors the
+    built 404 page to `bunnycdn_errors/404.html` before the sync — see
+    "Custom 404 page" above for the full reasoning.
     - **Orphan grace period, added 2026-09-14 (issue #121, found while
       verifying #39's own fix)**: pushing a CSS/JS change gives it a
       new content-hash filename, and

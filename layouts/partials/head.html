@@ -41,12 +41,28 @@
      it permanently — that section stays a work-in-progress and is out
      of the nav (see hugo.toml). `.Section` is "projects" for the list
      page and every leaf page (it's a real multi-page section, so the
-     "empty for single-page sections" caveat doesn't apply). Leave
+     "empty for single-page sections" caveat doesn't apply). The 404
+     page is ALSO always noindex, launch flag or not — standard
+     practice for an error page, and independent of the staging
+     switch above (unlike /projects, nothing here needs it crawlable:
+     a 404 has no canonical URL of its own to be found by). Leave
      /projects crawlable in robots.txt so this tag is actually seen. */ -}}
-{{- $noindex := or site.Params.noindex (eq .Section "projects") }}
+{{- $noindex := or site.Params.noindex (or (eq .Section "projects") (eq .Kind "404")) }}
 {{ if $noindex }}<meta name="robots" content="noindex, nofollow">
 {{ end -}}
-<title>{{ if .IsHome }}{{ .Site.Params.fullName }}{{ else }}{{ .Title }} — {{ .Site.Params.fullName }}{{ end }}</title>
+{{/* The special 404 page has no content file, so .Title is Hugo's own
+     generic English default ("404 Page not found") on BOTH language
+     renders — wrong on /de/404.html. Overridden here, localized to
+     the render's own site language, even though the page's own BODY
+     is deliberately bilingual either way (see layouts/404.html's own
+     header comment) — the <title>/tab text is chrome, not the
+     not-found message itself, so it follows the normal per-render
+     localization every other page's title already gets. */ -}}
+{{- $title := .Title }}
+{{- if eq .Kind "404" }}
+  {{- $title = cond (eq .Site.Language.Lang "de") "Seite nicht gefunden" "Page not found" }}
+{{- end }}
+<title>{{ if .IsHome }}{{ .Site.Params.fullName }}{{ else }}{{ $title }} — {{ .Site.Params.fullName }}{{ end }}</title>
 {{- /* Preload the self-hosted variable font (issue #39) — without this,
    the browser only learns it needs the font after downloading AND
    parsing main.css and reaching the @font-face rule inside it, a whole

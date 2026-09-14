@@ -240,6 +240,38 @@ class OrphanGraceTest(unittest.TestCase):
         self.deploy(T0 + 1)  # a second run must not try to "orphan" its own state file
         self.assertIn(deploy_bunny.STATE_KEY, self.backend.store)
 
+    # -- Custom 404 error page (bunnycdn_errors/ convention) --------------
+
+    def test_404_is_mirrored_to_bunnycdn_errors_convention(self):
+        self.write("index.html", "x")
+        self.write("404.html", "<html>not found</html>")
+        self.deploy(T0)
+
+        self.assertIn("bunnycdn_errors/404.html", self.backend.store)
+        self.assertEqual(self.backend.store["bunnycdn_errors/404.html"][0],
+                          b"<html>not found</html>")
+
+    def test_404_mirror_updates_when_the_source_changes(self):
+        self.write("index.html", "x")
+        self.write("404.html", "<html>v1</html>")
+        self.deploy(T0)
+        self.assertEqual(self.backend.store["bunnycdn_errors/404.html"][0],
+                          b"<html>v1</html>")
+
+        self.write("404.html", "<html>v2</html>")
+        self.deploy(T0 + 3600)
+        self.assertEqual(self.backend.store["bunnycdn_errors/404.html"][0],
+                          b"<html>v2</html>")
+
+    def test_missing_404_is_skipped_not_fatal(self):
+        """sync_error_page() is best-effort (see its own docstring) --
+        deploy.yml's sanity gate is what makes a real deploy require a
+        404.html, not this general-purpose script. Every other test in
+        this file relies on this too (none of them write a 404.html)."""
+        self.write("index.html", "x")
+        self.deploy(T0)  # must not raise
+        self.assertNotIn("bunnycdn_errors/404.html", self.backend.store)
+
 
 if __name__ == "__main__":
     # buffer=True: deploy_bunny.main() prints a full trace of every

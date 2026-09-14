@@ -19,6 +19,11 @@ Why the native API and not S3: the "brawer-homepage" zone is type "Standard",
 which does not speak S3 (and converting it is destructive -- it cascade-deletes
 the pull zone). See brawer/production/bunny/storage.tf.
 
+Before the sync, the built 404.html is also mirrored to
+bunnycdn_errors/404.html -- Bunny's own file-presence convention for a
+zone-wide custom 404 page, needing no separate account-level API call.
+See sync_error_page()'s own docstring.
+
 Upload ORDER matters and is the whole point of this script over a naive sync:
 
     1. every non-HTML file (hashed CSS/JS, images, PDFs, fonts, ...)
@@ -224,6 +229,42 @@ def sha256_upper(path: str) -> str:
     return h.hexdigest().upper()
 
 
+def sync_error_page(root: str) -> None:
+    """Mirror the built 404 page to Bunny's custom-error-page convention:
+    a storage zone serves <zone>/bunnycdn_errors/404.html (still with a
+    real 404 status code) for any missing object in the whole zone, no
+    pull-zone/account-level API config needed -- so this can run from
+    CI with only the storage password already in scope here (see
+    CLAUDE.md's "Static assets & fingerprinting" section). No official
+    API for this -- it's a file-presence convention, confirmed via
+    Bunny's own support docs.
+
+    Hugo's layouts/404.html already renders to <root>/404.html (and,
+    since the site is multilingual, also <root>/de/404.html -- but
+    Bunny's fallback only ever serves ONE fixed file zone-wide, so only
+    the root/English one is the candidate; see 404.html's own header
+    comment for why its content is bilingual regardless of which of the
+    two gets mirrored here). This just copies that one file to the path
+    Bunny's convention expects, so it uploads through the normal walk
+    in main() like any other file -- no separate upload/diff/orphan
+    codepath needed, and it naturally gets re-uploaded whenever its
+    content changes, same as everything else.
+
+    Best-effort: a build without a 404.html (e.g. a unit-test fixture
+    that never calls this) just skips rather than failing -- it's
+    deploy.yml's own sanity gate that makes a real deploy require one,
+    not this general-purpose script refusing to run without it."""
+    src = os.path.join(root, "404.html")
+    if not os.path.isfile(src):
+        return
+    dst_dir = os.path.join(root, "bunnycdn_errors")
+    os.makedirs(dst_dir, exist_ok=True)
+    with open(src, "rb") as fh:
+        data = fh.read()
+    with open(os.path.join(dst_dir, "404.html"), "wb") as fh:
+        fh.write(data)
+
+
 def is_html_like(key: str) -> bool:
     return key.endswith(HTML_SUFFIXES) or key.rsplit("/", 1)[-1] in HTML_EXACT
 
@@ -256,6 +297,7 @@ def main() -> None:
     root = sys.argv[1]
     if not os.path.isfile(os.path.join(root, "index.html")):
         die(f"{root}/index.html missing -- refusing to deploy a non-build")
+    sync_error_page(root)
 
     password = os.environ.get("BUNNY_STORAGE_PASSWORD")
     if not password:

@@ -1975,6 +1975,54 @@ article > h1 {
   color: var(--ink-faint);
 }
 
+/* 404 page (layouts/404.html). Centered and narrower than the site's
+   usual 60rem reading column -- there's nothing here to read, only to
+   notice and leave, so it reads better as one quiet block than a
+   full-width page (same "no direction to point in -> centered"
+   reasoning the footer already uses, from the 2026-08-27 chrome
+   design pass). Single column at every width, like the résumé --
+   consistency with the rest of the site over a two-column layout that
+   would exist for one small page. */
+.notfound {
+  max-width: 26rem;
+  margin: 3rem auto;
+  text-align: center;
+}
+/* Decorative watermark, not a second heading -- deliberately low-
+   contrast (aria-hidden in the template, --line rather than --ink) so
+   it reads as texture behind the real message, never competing with
+   it; never overlapped by real text, so that low contrast is never an
+   a11y problem in its own right. */
+.notfound-code {
+  font-size: 6rem;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -.02em;
+  color: var(--line);
+  margin: 0 0 1rem;
+}
+/* The two bilingual blocks (see 404.html's own comment for why both
+   always render) -- a hairline between them makes the split legible
+   as "two independent renderings of one message," not one run-on
+   paragraph that happens to switch languages. */
+.notfound-lang {
+  padding: 1.25rem 0;
+}
+.notfound-lang:first-child {
+  border-bottom: 1px solid var(--line);
+}
+.notfound-lang h1 {
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  margin: 0 0 .5rem;
+}
+.notfound-lang p {
+  color: var(--ink-soft);
+  margin: 0 0 1rem;
+}
+.notfound-lang .cta-standalone { margin-bottom: 0; }
+
 /* Print -- strip the site, keep the document. Scoped to .resume-page:
    the résumé is the one page anyone actually prints or saves to PDF, so
    the other pages keep the browser's own print defaults untouched. */
