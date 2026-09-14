@@ -938,6 +938,83 @@ site, both explained at length in the template's own header comment
   behind the real message, `aria-hidden` — decorative reinforcement,
   not a second heading.
 
+## OpenGraph / social-share meta (issue #135)
+
+`layouts/partials/head.html`, right after `<title>`: `meta
+name="description"`, `og:*`, and `twitter:card`. No new front-matter
+fields — everything is resolved from what already exists.
+
+- **Description** — no single shared field, so resolved per content
+  type: publications' `abstract`, else projects' `summary` (both
+  through `markdownify | plainify`, since they may hold inline
+  Markdown links), else Hugo's own auto-generated `.Summary |
+  plainify` for anything else with real Markdown body content (art
+  pieces, prose-bearing tag pages, the imprint), else
+  `Site.Params.intro` (the homepage's own "about Sascha" sentence,
+  reused rather than duplicating a second description elsewhere). The
+  home page always uses `intro` outright — its own body is
+  deliberately just the "# Hello, I'm Sascha" greeting. The 404 page
+  (no content file, so no `.Summary`) gets its own short per-render
+  string, same pattern as its `<title>` override (see "Custom 404
+  page" above).
+  - Collapsed to one line and capped at 200 characters
+    (`replaceRE`/`truncate`) — multi-paragraph source text carries
+    real newlines through `markdownify`/`plainify`/`.Summary`, and an
+    abstract like `patti`'s runs to several hundred words. One
+    truncation length is used for both `meta description` and
+    `og:description`/`twitter` (reused identically), a plain
+    middle ground between the ~155-160 chars search engines truncate
+    a meta description to and the wider ~300 OpenGraph/Twitter allow.
+  - **Footgun, found empirically while building this**: Hugo's `trim`
+    has signature `trim(s, cutset)`, but *piping* appends the piped
+    value as the function's LAST argument — so `$s | trim " "`
+    actually calls `trim(" ", $s)`, trimming every character in `$s`
+    out of the string `" "` (i.e. treating `$s` as the cutset), which
+    empties `" "` down to nothing. Confirmed by testing in isolation,
+    not by reading docs — it silently produced an empty description
+    on every single page on first build, with no warning or error at
+    all (`with $description` then just skipped the whole meta tag).
+    Fixed by using `strings.TrimSpace` instead (one argument, so no
+    slot for the order to get wrong). If you need `trim` with a pipe
+    and a non-default cutset elsewhere, don't reach for `X | trim
+    "cutset"` — call it directly as `trim X "cutset"` instead, or use
+    `strings.TrimSpace` when the cutset is just whitespace.
+- **Image** — the same `teaser`-else-`image` fallback
+  `gallery-grid.html`/`prev-next.html` already use for "best
+  representative thumbnail" (art/publications/projects items only),
+  but its own crop: `.Fill "1200x630 jpg smart"` — social platforms
+  expect roughly 1.91:1, nothing our source shape naturally lands on
+  (art is square, publications/projects are whatever the source is).
+  **JPEG, not the site's usual WebP/AVIF** — OpenGraph image support
+  for WebP is inconsistent across real-world crawlers (several major
+  ones have historically not rendered it reliably), and a broken
+  preview image is this feature failing silently, which matters more
+  here than the bytes saved. Pages with no `teaser`/`image` (home,
+  résumé, imprint, list/tag pages, the 404 page) emit no
+  `og:image`/`twitter:image` at all rather than reaching for an
+  arbitrary stand-in — a card with no image still degrades gracefully
+  everywhere OpenGraph is supported.
+- **`og:locale`** — `de_CH` on German renders (matches the de-CH
+  convention already established sitewide), `en_US` on English ones
+  (the site doesn't target a specific English-speaking territory, and
+  `en_US` is the field's own conventional default when a site
+  doesn't commit to one — not a new, separately-reviewed locale
+  decision). `og:locale:alternate` mirrors the hreflang alternates
+  immediately below it in the file — same `.IsTranslated` + `not
+  $noindex` guard, same reasoning (a noindex page shouldn't advertise
+  a translation cluster). Unlike hreflang, `og:title`/`description`/
+  `image`/`url` themselves are **not** noindex-gated — `noindex` is
+  purely a search-indexing signal, and a real visitor sharing a
+  `/projects/*` link (or the 404 page) still deserves a working
+  preview card.
+- **`twitter:card` is the only Twitter-specific tag** — Twitter/X's
+  documented behavior falls back to the equivalent `og:*` tag for
+  title/description/image when its own isn't present, so duplicating
+  all three would be redundant; `twitter:card` itself has no OG
+  equivalent, so that's the one tag actually needed.
+- No content-model changes — every value is derived from fields that
+  already existed.
+
 ## Images
 
 - Store as WebP, not JPEG/HEIC:
