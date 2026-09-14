@@ -942,19 +942,55 @@ content-hashed URLs, not edge purges.
     (the `brawer-homepage` zone is type `Standard`, no S3). SHA256
     diff against the zone's `Checksum`, then uploads in three phases:
     **all non-HTML → then `*.html`/`*.xml`/`robots.txt` → then delete
-    remote paths not present locally**. That order is load-bearing: a
-    visitor loading a page mid-deploy never gets HTML referencing a
-    hashed asset that hasn't uploaded yet, nor one pointing at a
-    deleted file — and it's the precondition for the long immutable
-    edge TTL (brawer/production#13). No cache purge (CI holds only the
-    one-zone storage password, never the un-scopeable account key).
-    Env: `BUNNY_STORAGE_PASSWORD` (the `production` GitHub environment,
-    branch-restricted to `main`), `BUNNY_STORAGE_ZONE`,
-    `BUNNY_STORAGE_ENDPOINT`, `BUNNY_DEPLOY_DRY_RUN`.
+    orphaned remote paths (ones gone from the local build) that have
+    stayed orphaned past a grace period**. That upload-then-delete
+    order is load-bearing: a visitor loading a page mid-deploy never
+    gets HTML referencing a hashed asset that hasn't uploaded yet, nor
+    one pointing at a deleted file — and it's the precondition for the
+    long immutable edge TTL (brawer/production#13). No cache purge (CI
+    holds only the one-zone storage password, never the un-scopeable
+    account key). Env: `BUNNY_STORAGE_PASSWORD` (the `production`
+    GitHub environment, branch-restricted to `main`),
+    `BUNNY_STORAGE_ZONE`, `BUNNY_STORAGE_ENDPOINT`,
+    `BUNNY_DEPLOY_DRY_RUN`, `BUNNY_ORPHAN_GRACE_HOURS`.
+    - **Orphan grace period, added 2026-09-14 (issue #121, found while
+      verifying #39's own fix)**: pushing a CSS/JS change gives it a
+      new content-hash filename, and
+      the OLD hash filename was being deleted in the *same* deploy that
+      orphaned it. With no cache purge on deploy, a visitor's browser (or
+      the CDN edge itself) can still be holding pre-deploy HTML
+      referencing that old hash for up to the HTML `Cache-Control`
+      max-age — so the old file 404ing immediately turned into "no CSS
+      until a manual reload" for anyone unlucky enough to hit that
+      window. Fixed by timestamping first-orphaned-at instead of deleting
+      on sight, and only actually deleting once a file has been orphaned
+      for `BUNNY_ORPHAN_GRACE_HOURS` (default 72 / 3 days). The
+      timestamps persist in the **same Bunny zone**, at
+      `.deploy/orphan-state.json` (CI runners keep no state between
+      invocations, so this couldn't live anywhere else without adding a
+      second mechanism — e.g. `actions/cache` — for one small file;
+      judged not worth it). That file is deploy bookkeeping, not a site
+      page, and is excluded from every local/remote diff — but it isn't
+      secret and the pull zone will serve it over HTTP like any other
+      stored object if asked (it holds nothing but a map of
+      already-public asset paths to timestamps, so that was an accepted
+      tradeoff, not an oversight). Losing/corrupting that file fails
+      safe: every tracked orphan's clock just restarts, meaning it's kept
+      a bit longer, never deleted early. **72h must stay ≥ whatever HTML
+      max-age ends up being in `brawer/production`'s `bunny/cdn.tf`** —
+      sized as ~3x an assumed 24h max-age, for clock skew/staggered
+      per-PoP edge expiry margin; revisit together if that max-age
+      changes. Right after this shipped, anything already orphaned
+      *before* the feature existed gets a fresh 72h grace period too
+      (first-seen defaults to "now" for anything untracked) — expected,
+      not a bug, and self-resolves after one grace-period's worth of
+      deploys.
   - Edge cache TTLs are **not** set in this repo — storage origins drop
     `Cache-Control`. They're pull-zone Edge Rules in `brawer/production`
     (`bunny/cdn.tf`), already in place: 300s default, longer for the
-    hashed-asset globs.
+    hashed-asset globs. (HTML's default was ~300s as of 2026-09-10;
+    revisit the orphan-grace note above if this ever moves to something
+    like 24h.)
   - **`DEPLOY.md`** covers manual instant propagation of a *changed*
     stable-URL file (a page edit, a replaced PDF, the launch `noindex`
     flip) — a Bunny purge from a trusted machine with the account key,

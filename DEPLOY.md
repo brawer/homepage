@@ -6,7 +6,17 @@ Every push to `main` that passes the content checks runs
 `.github/workflows/deploy.yml`: `hugo --gc --minify`, then
 `scripts/deploy_bunny.py` syncs `public/` to the Bunny **brawer-homepage**
 storage zone (native Storage API, SHA256 diff, upload order
-assets → HTML/feeds → delete-removed). No cache purge.
+assets → HTML/feeds → delete-orphaned-past-grace-period). No cache purge.
+
+A remote file that drops out of the local build (most often: a CSS/JS/image
+whose content-hash filename just changed underneath it) isn't deleted the
+moment it's noticed — it's kept for `BUNNY_ORPHAN_GRACE_HOURS` (default 72h)
+after first going orphaned, tracked in `.deploy/orphan-state.json` inside the
+same zone. This exists because there's no cache purge here: a visitor's
+browser, or the CDN edge itself, can still be holding pre-deploy HTML that
+references the old filename for up to the HTML edge TTL below — deleting
+instantly would 404 that visitor's CSS until they reload. See
+`scripts/deploy_bunny.py`'s module docstring for the full reasoning.
 
 New pages and content-hashed assets (`/css/main.min.<hash>.css`,
 `/js/nav.min.<hash>.js`, `…_hu_<hash>.webp/.avif`, `/fonts/*`) are visible
