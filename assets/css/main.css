@@ -2034,9 +2034,16 @@ article > h1 {
    -- `.imprint h2 ~ p` then restores normal prose rhythm for anything
    that follows a heading (the Cookies explanation), which is genuine
    prose, not a data block, and reads better with real paragraph air.
-   The h1 gets no rule of its own -- article > h1 (this file, shared
-   with every detail page) already covers it once the template wraps
-   the content in <article>. */
+   The h1 mostly relies on article > h1 (this file, shared with every
+   detail page, in effect here once the template wraps the content in
+   <article>) -- except its bottom margin, overridden below so the gap
+   under "Imprint" collapses to the same .75rem as the gap under
+   "Cookies" (Sascha's own ask, 2026-09-14): article > h1's shared
+   .35rem is right for a detail page's h1-straight-into-a-chip-row, but
+   too tight against this page's own p margin to match its own h2. */
+.imprint h1 {
+  margin-bottom: .75rem;
+}
 .imprint p {
   margin: .2rem 0;
 }
