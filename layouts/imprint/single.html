@@ -1,4 +1,11 @@
+{{/* Wrapped in <article> (2026-09-14 design pass) purely to inherit
+     the shared `article > h1` heading style every detail page already
+     uses (main.css) — no other article-scoped rule exists, so this
+     pulls in nothing else. `.imprint` is this page's own hook for the
+     tight identity-block spacing right below it. */}}
 {{ define "main" }}
+<article class="imprint">
 <h1>{{ .Title }}</h1>
 {{ .Content }}
+</article>
 {{ end }}
