@@ -1,0 +1,41 @@
+{{/*
+  <link rel="prefetch"> hints for a detail page's neighbour hero images
+  (issue #102) — cache-warms the next/previous item's hero image so
+  clicking a hero-nav/pager/arrow-key hop doesn't load it cold.
+  Deliberately `rel=prefetch`, not `preload`: this page doesn't need
+  the image itself, a future navigation might — a low-priority,
+  best-effort, idle-time hint is the right one, per the issue.
+
+  Param:
+    images  slice of already-resolved Page Resources (0-2 entries) —
+            the neighbour pages' hero images. Which front-matter field
+            counts as "the hero image" differs per section (art/
+            projects: `image`; publications: `pdf_preview` else
+            `image` — see each single.html's own comment), so callers
+            resolve that themselves and pass only Resources that
+            actually exist; this partial just emits the <link> tags.
+
+  One AVIF rendition per image, at a fixed 960px width — picture.html's
+  own default middle tier, a reasonable middle ground given the hero
+  frame's 36rem/~576px display cap, without knowing the real viewport
+  at prefetch time (a bare <link> has no srcset to choose from).
+
+  AVIF only, not also WebP: doubling the format would double the bytes
+  fetched for what the issue itself flags as "nice-to-have polish", and
+  every currently-supported browser besides very old ones already
+  prefers AVIF from picture.html's own <source> order — a WebP-only
+  visitor just gets a harmless prefetch cache miss on click instead of
+  an instant hit, exactly the kind of best-effort outcome rel=prefetch
+  is meant to allow.
+
+  Not done here (left for a future pass if it turns out to matter):
+  gating on navigator.connection.saveData/slow connections, and
+  prefetching the neighbour's HTML — both listed as open questions in
+  the issue, neither load-bearing for the "flip feels instant" goal.
+*/}}
+{{ range .images }}
+  {{ $w := 960 }}
+  {{ if gt $w .Width }}{{ $w = .Width }}{{ end }}
+  {{ $r := .Resize (printf "%dx avif" $w) }}
+  <link rel="prefetch" as="image" type="image/avif" href="{{ $r.RelPermalink }}">
+{{ end }}
