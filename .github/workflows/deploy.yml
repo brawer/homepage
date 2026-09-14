@@ -48,7 +48,7 @@ jobs:
     # unavailable to any run this workflow might have on another ref.
     environment:
       name: production
-      url: https://dandelis.ch
+      url: https://brawer.ch
     steps:
       - name: Check out repository
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -85,16 +85,17 @@ jobs:
           BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
         run: python3 scripts/deploy_bunny.py public
 
-      # dandelis.ch fronts the same brawer-homepage zone, so this exercises the
-      # real edge even before the brawer.ch cutover.
+      # brawer.ch has been the live domain since 2026-09-14 (dandelis.ch,
+      # the old staging domain fronting the same brawer-homepage zone, is
+      # being retired to a parked domain -- see DEPLOY.md).
       - name: Smoke-test the live site
         run: |
           for i in 1 2 3 4 5; do
-            body="$(curl -fsS --max-time 20 https://dandelis.ch/ || true)"
+            body="$(curl -fsS --max-time 20 https://brawer.ch/ || true)"
             case "$body" in
               *"Sascha Brawer"*) echo "ok"; exit 0 ;;
             esac
             echo "attempt $i: not ready, retrying"; sleep 6
           done
-          echo "::error::dandelis.ch did not serve the expected content after the deploy"
+          echo "::error::brawer.ch did not serve the expected content after the deploy"
           exit 1

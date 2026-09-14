@@ -1,9 +1,12 @@
 # CLAUDE.md — brawer.ch
 
-Personal Hugo site for Sascha Brawer. Deployed via GitHub Actions
-(exact deploy target — container vs. scp — not yet decided). Working
-in a content-first order: filling in real content before building
-templates/CSS via `/design` mode.
+Personal Hugo site for Sascha Brawer. Deployed via GitHub Actions to a
+Bunny CDN storage zone (see "Static assets & fingerprinting" below) —
+**live at brawer.ch since 2026-09-14** (the old staging domain,
+dandelis.ch, is being retired to a parked domain; see "Known open
+items"). Content-first order (filling in real content before building
+templates/CSS via `/design` mode) is now largely complete — see
+"Templates" below for the design passes that have shipped.
 
 ## Site structure
 
@@ -2005,23 +2008,38 @@ list). `assets/css/main.css` only — no JS, no markup change.
 
 ## Known open items (as of last content session)
 
-- **Search-engine indexing is blocked while this is a staging site**
-  (added 2026-09-07). One switch: `params.noindex` in `hugo.toml`.
-  While `true` it emits `<meta name="robots" content="noindex,
-  nofollow">` on every page (`layouts/partials/head.html`) and makes
-  `robots.txt` a blanket `Disallow: /` (`layouts/robots.txt`, with
-  `enableRobotsTXT = true`). **Launch step:** set `noindex = false` (or
-  delete the line) — that alone flips both the meta tag and robots.txt,
-  and robots.txt then also starts advertising the sitemap. No
-  `X-Robots-Tag` HTTP header is set (deploy target still undecided), so
-  the meta tag is the load-bearing signal.
-  - **`/projects` and everything under it stay `noindex` even after
-    launch** (2026-09-10): `head.html` emits the robots meta when
-    `site.Params.noindex` **or** `eq .Section "projects"`. It's a
-    work-in-progress section, out of the nav. `robots.txt` is left
-    permissive for `/projects` on purpose — a `Disallow` there would
-    stop crawlers seeing the `noindex`. Remove the `.Section` clause
-    when Projects is ready.
+- **Launched 2026-09-14: search-engine indexing is open, site is live
+  at brawer.ch.** One switch: `params.noindex` in `hugo.toml`, now
+  `false` (added 2026-09-07 as `true` while the site was staging-only;
+  see hugo.toml's own comment). While `true` it emitted `<meta
+  name="robots" content="noindex, nofollow">` on every page
+  (`layouts/partials/head.html`) and made `robots.txt` a blanket
+  `Disallow: /` (`layouts/robots.txt`, with `enableRobotsTXT = true`);
+  now `robots.txt` is permissive and advertises the sitemap. No
+  `X-Robots-Tag` HTTP header is set (Bunny storage origins don't offer
+  one — see "Static assets & fingerprinting"), so the meta tag is
+  still the load-bearing signal. Kept as an explicit `false` rather
+  than deleted, so it's a documented on/off switch if staging is ever
+  needed again (e.g. ahead of a future major redesign).
+  - **`/projects` and everything under it stay `noindex` regardless**
+    (2026-09-10, unaffected by the launch flip): `head.html` emits the
+    robots meta when `site.Params.noindex` **or** `eq .Section
+    "projects"`. It's a work-in-progress section, out of the nav.
+    `robots.txt` is left permissive for `/projects` on purpose — a
+    `Disallow` there would stop crawlers seeing the `noindex`. Remove
+    the `.Section` clause when Projects is ready.
+  - **dandelis.ch → brawer.ch domain cutover, 2026-09-14**: the
+    `brawer-homepage` Bunny storage zone now fronts `brawer.ch` as the
+    live domain; `dandelis.ch` (the old staging domain, same zone) is
+    being retired to a parked domain rather than torn down outright.
+    Updated to match: `hugo.toml`'s `baseURL` (already `brawer.ch` —
+    this predates the actual cutover, since it only affects generated
+    URLs, not which hostname serves them), `deploy.yml`'s `environment.url`
+    and smoke-test target, and `DEPLOY.md`'s purge example/pull-zone-id
+    note. Nothing in `content/` or the templates hardcodes either
+    domain (URLs are generated from `baseURL`/`absURL`/`relLangURL`
+    throughout), so no content changes were needed for the cutover
+    itself.
 
 - **The "Paper & Plum" grid design is live, ported 2026-08-26**
   (`static/css/main.css` + `layouts/partials/gallery-grid.html`) —

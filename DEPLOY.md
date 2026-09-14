@@ -39,7 +39,7 @@ KEY="$(cat ~/src/production/secrets/bunny_api_key)"
 
 # One URL (preferred — targeted, fast):
 curl -X POST -H "AccessKey: $KEY" \
-  "https://api.bunny.net/purge?url=https%3A%2F%2Fdandelis.ch%2Fsome%2Fpage%2F&async=false"
+  "https://api.bunny.net/purge?url=https%3A%2F%2Fbrawer.ch%2Fsome%2Fpage%2F&async=false"
 
 # Whole pull zone (after a large change):
 curl -X POST -H "AccessKey: $KEY" \
@@ -47,12 +47,13 @@ curl -X POST -H "AccessKey: $KEY" \
 ```
 
 Pull-zone id: in `brawer/production`,
-`cd bunny && tofu output -json pullzone_ids` (key `dandelis.ch` today; the
-`brawer.ch` zone after the cutover, brawer/production#6).
+`cd bunny && tofu output -json pullzone_ids` (key `brawer.ch` since the
+2026-09-14 cutover, brawer/production#6; `dandelis.ch` before that).
 
-The **brawer-homepage** zone currently backs **both** `dandelis.ch` (staging)
-and, after cutover, `brawer.ch` — a deploy or purge affects whichever
-hostnames front the zone.
+The **brawer-homepage** zone backs `brawer.ch` (live since 2026-09-14) and,
+for now, still `dandelis.ch` too — the old staging domain, being retired to a
+parked domain rather than torn down outright. A deploy or purge affects
+whichever hostnames currently front the zone.
 
 ## Edge cache TTLs
 
