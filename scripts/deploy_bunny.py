@@ -23,7 +23,9 @@ Upload ORDER matters and is the whole point of this script over a naive sync:
 
     1. every non-HTML file (hashed CSS/JS, images, PDFs, fonts, ...)
     2. then *.html + *.xml + robots.txt
-    3. then DELETE remote paths no longer present locally
+    3. then DELETE remote paths no longer present locally -- but only ones
+       that have been gone from the local build for at least
+       BUNNY_ORPHAN_GRACE_HOURS (see below), not immediately
 
 A visitor who loads a page mid-deploy then always gets a consistent set --
 never new HTML referencing a content-hashed asset that has not finished
@@ -35,6 +37,21 @@ key out of CI entirely (no purge step; brawer/homepage#81).
 Diffing is by SHA256: Bunny returns an uppercase-hex Checksum per object, we
 compare it to the local file's and only PUT on a miss or mismatch. A first
 deploy (empty zone) uploads everything and deletes nothing.
+
+Orphan grace period (brawer/homepage#121, found while verifying #39's own
+fix): there is no cache purge on deploy,
+so for up to the HTML Cache-Control max-age (brawer/production's
+bunny/cdn.tf), a visitor's browser -- or the CDN edge itself -- can still be
+holding PRE-deploy HTML that references a content-hashed CSS/JS/image whose
+bytes just changed underneath it. Deleting the old hash file in the SAME
+deploy that orphans it turns that into a 404 (missing CSS) until the visitor
+reloads. So a remote file that has fallen out of the local build isn't
+deleted right away -- it's tracked (in STATE_KEY, persisted in the zone
+itself, since CI runners keep no state between invocations) and only
+actually removed once it has been orphaned for BUNNY_ORPHAN_GRACE_HOURS.
+Losing that state file (corrupt, briefly unreachable) fails safe: every currently
+tracked orphan's clock just restarts, which only means keeping it a bit
+longer, never deleting it early.
 """
 
 from __future__ import annotations
@@ -58,6 +75,28 @@ RETRY_BACKOFF_S = 2
 
 HTML_SUFFIXES = (".html", ".xml")
 HTML_EXACT = ("robots.txt",)
+
+# Default for BUNNY_ORPHAN_GRACE_HOURS (hours an orphaned remote file is
+# kept before actual deletion) -- see the "Orphan grace period" module
+# docstring above for why this exists. Must stay >= the HTML Cache-Control
+# max-age set in brawer/production's bunny/cdn.tf (planned: 24h) -- 72h/3
+# days gives roughly 3x margin over that for clock skew, staggered per-PoP
+# edge expiry, and any intermediate cache that doesn't strictly honour
+# max-age. Revisit together if that max-age ever changes. Like every other
+# env-driven setting here, actually read inside main(), not at import time.
+DEFAULT_ORPHAN_GRACE_HOURS = 72
+
+# Where the orphan-tracking manifest lives -- in the SAME zone, since CI
+# holds no state between runs. Leading dot + nested path so it reads as
+# deploy bookkeeping, not site content, in any listing; excluded from every
+# local/remote diff below (never uploaded as if it were a build output,
+# never treated as an orphan candidate itself). Note this doesn't make it
+# secret: the linked pull zone will happily serve it over HTTP like any
+# other stored object, same as everything else in the zone. That's fine --
+# it holds nothing but a map of already-public asset paths to timestamps --
+# and keeping this self-contained in one script/one zone was judged simpler
+# than wiring up e.g. actions/cache in deploy.yml for the same purpose.
+STATE_KEY = ".deploy/orphan-state.json"
 
 
 def die(msg: str):
@@ -149,6 +188,31 @@ class Bunny:
             raise
         print(f"  DELETE {key}")
 
+    def get_json(self, key: str, default):
+        """GET + parse a small JSON object; 404 or anything unparseable
+        returns `default` rather than raising -- see the orphan-state
+        fail-safe note in the module docstring."""
+        try:
+            raw = self._request("GET", key)
+        except urllib.error.HTTPError as e:
+            if e.code == 404:
+                return default
+            raise
+        try:
+            return json.loads(raw)
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            print(f"::warning::{key} is unreadable, ignoring it", file=sys.stderr)
+            return default
+
+    def put_json(self, key: str, data) -> None:
+        if self.dry_run:
+            print(f"  PUT    {key}  (deploy state, not counted above)")
+            return
+        body = json.dumps(data, sort_keys=True).encode("utf-8")
+        self._request("PUT", key, data=body,
+                      extra_headers={"Checksum": hashlib.sha256(body).hexdigest().upper(),
+                                     "Content-Type": "application/json"})
+
 
 def sha256_upper(path: str) -> str:
     h = hashlib.sha256()
@@ -197,6 +261,8 @@ def main() -> None:
     endpoint = os.environ.get("BUNNY_STORAGE_ENDPOINT", "https://storage.bunnycdn.com")
     zone = os.environ.get("BUNNY_STORAGE_ZONE", "brawer-homepage")
     dry_run = bool(os.environ.get("BUNNY_DEPLOY_DRY_RUN"))
+    grace_hours = float(os.environ.get("BUNNY_ORPHAN_GRACE_HOURS",
+                                       DEFAULT_ORPHAN_GRACE_HOURS))
 
     bunny = Bunny(endpoint, zone, password, dry_run)
     print(f"Deploying {root}/ -> {zone} at {endpoint}"
@@ -204,6 +270,7 @@ def main() -> None:
 
     local = local_index(root)
     remote = bunny.remote_index()
+    remote.pop(STATE_KEY, None)  # deploy bookkeeping, not a site file
     print(f"{len(local)} local file(s), {len(remote)} already in the zone")
 
     assets, pages = [], []
@@ -213,15 +280,38 @@ def main() -> None:
             continue
         (pages if is_html_like(key) else assets).append((bunny.upload, key, path, sha))
 
-    deletions = [(bunny.delete, key) for key in sorted(remote) if key not in local]
+    # Orphan grace period -- see the module docstring's "Orphan grace
+    # period" section. A remote file no longer in the local build isn't
+    # deleted the moment it's noticed; it's timestamped in orphan_state
+    # (first sighting = now, for one not already tracked) and only queued
+    # for deletion once it's been orphaned for ORPHAN_GRACE_HOURS. Anything
+    # that reappears locally (e.g. a revert) just isn't a candidate this
+    # run, so it naturally drops out of the carried-forward state below.
+    now = time.time()
+    orphan_state = bunny.get_json(STATE_KEY, {})
+    orphaned = sorted(key for key in remote if key not in local)
+    deletions, kept = [], {}
+    for key in orphaned:
+        first_seen = orphan_state.get(key, now)
+        age_hours = (now - first_seen) / 3600
+        if age_hours >= grace_hours:
+            deletions.append((bunny.delete, key))
+        else:
+            kept[key] = first_seen
 
     run_phase("Phase 1 (assets)", bunny, assets)
     run_phase("Phase 2 (HTML + feeds)", bunny, pages)
-    run_phase("Phase 3 (delete removed)", bunny, deletions)
+    run_phase(f"Phase 3 (delete orphaned >{grace_hours:.0f}h)", bunny, deletions)
+    bunny.put_json(STATE_KEY, kept)
+
+    if kept:
+        print(f"Orphaned, within the {grace_hours:.0f}h grace period, kept:")
+        for key, first_seen in sorted(kept.items()):
+            print(f"  {key}  (orphaned {(now - first_seen) / 3600:.1f}h ago)")
 
     changed = len(assets) + len(pages)
     print(f"Done: {changed} uploaded, {len(deletions)} deleted, "
-          f"{len(local) - changed} unchanged.")
+          f"{len(kept)} orphaned-but-kept, {len(local) - changed} unchanged.")
 
 
 if __name__ == "__main__":
