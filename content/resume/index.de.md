@@ -18,6 +18,9 @@ experience:
         [cradle.bio](https://cradle.bio/), die Infrastruktur am Laufen
         zu halten, Rechnerkosten zu senken und Laborabläufe zu
         automatisieren.
+      - >-
+        Berät seit Okt. 2025 [Mapterhorn](https://mapterhorn.com/) in
+        Technologie- und Strategiefragen.
   - date_range: "Okt. 2019 – Sept. 2021"
     logo: "niantic.svg"
     location: "Zürich, Schweiz"
