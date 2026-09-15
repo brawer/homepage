@@ -15,6 +15,9 @@ experience:
         Built [OSMViews](https://osmviews.toolforge.org/), ranking
         geographic locations based on OpenStreetMap tile logs.
       - >-
+        Built [Cadaref](/publications/maschinelles-georeferenzieren-archivierter-katasterpläne/),
+        georeferencing Zürich’s cadastral plan archive with Computer Vision.
+      - >-
         In 2025, spent a few months helping former Google colleagues
         at [cradle.bio](https://cradle.bio/) to keep their
         infrastructure running, cut machine costs, and automate lab
