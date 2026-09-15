@@ -21,7 +21,7 @@ Für mein Gemälde verwendete ich zwei verschiedene Weisstöne –
 Zinkweiss, kühl und leicht grau, für den diffusen Hintergrund, und
 Titanweiss, mit ganz wenig Chromgelb versetzt, für den Pullover im
 Vordergrund. Aufgenommen wurde das Foto im Bahnhof Shinjuku in Tokio,
-daher der Titel «Shinjuku-eki», japanisch für «Bahnhof Shinjuku».
+daher der Titel «Shinjuku-eki». («Eki» ist japanisch für «Bahnhof»).
 
 Als ich mit meinem Bild fertig war, schickte ich Eutah ein Foto
 meines Gemäldes – ein Foto eines Gemäldes eines Fotos, was sich im

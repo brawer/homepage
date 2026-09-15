@@ -10,10 +10,9 @@ height_cm: 50
 width_cm: 80
 image: "woman-in-a-leather-jacket.webp"
 ---
-After experimenting with [tools in
-oil](/tags/tools/) — I liked the technique a lot, but found the
-subject deadly dull — it dawned on me: people are far more
-interesting. I’m generally fascinated by 1920s art, especially [New
+This is the first portrait I painted.  After experimenting with [tools
+in oil](/tags/tools/) it dawned on me: people are far more
+interesting. I’m fascinated by 1920s art, especially [New
 Objectivity](https://en.wikipedia.org/wiki/New_Objectivity), and
 wanted to try a portrait in that style.
 
@@ -27,7 +26,4 @@ term for the Weimar Republic’s modern, liberated women.
 
 She surely wouldn’t wear fur today. And “Lady” — duh. Leather jacket
 instead of fur, “Woman” instead of “Lady” — hence the
-title “Woman in a Leather Jacket”. Of course, my version doesn’t come
-close to the original’s quality, but this isn’t a competition anyway
-— I just did it for the joy of experimenting with the technique, and
-as a learning experience.
+title “Woman in a Leather Jacket”.
