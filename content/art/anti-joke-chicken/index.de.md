@@ -14,15 +14,13 @@ Dieses Bild gehört zu meiner [Memes](/de/tags/memes/)-Serie –
 Internet-Memes, neu gedacht in Öl.
 
 Das «Anti-Joke Chicken» ist ein Bildmakro mit einem starr blickenden
-Huhn. Es wird benutzt, um Witze zu betiteln, die eine Pointe
+Huhn. Es symbolisiert Witze, die eine Pointe
 ankündigen und sie dann bewusst verweigern. Statt der Pointe bekommt
-man eine flache, wörtliche, fast unterkühlte Antwort.  das Format geht
+man eine flache, wörtliche, fast unterkühlte Antwort. Das Meme geht
 auf den ältesten Anti-Witz überhaupt zurück: «Warum überquerte das
-Huhn die Strasse? Um auf die andere Seite zu gelangen.»  Keine Pointe,
-kein Wortwitz, nur die offensichtliche, vollkommen nüchterne Antwort.
-Genau das ist der Witz – die Antiklimax ist die Pointe.
+Huhn die Strasse? Um auf die andere Seite zu gelangen.»
 
-Mir gefiel die Idee, ein Format, das komplett darauf aufgebaut ist,
-die erwartete Pointe *nicht* zu liefern, in einem Medium umzusetzen –
-der Ölmalerei –, das normalerweise Dingen vorbehalten ist, die man
-sehr ernst nimmt.
+Mir gefiel die Idee, ein Motiv zu nehmen, das genau dazu erschaffen
+wurde, die erwartete Pointe *nicht* zu liefern, und es in Öl umzusetzen,
+einem Medium, das normalerweise ernsthaften Darstellungen vorbehalten
+ist.

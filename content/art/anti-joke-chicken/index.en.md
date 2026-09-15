@@ -10,19 +10,16 @@ height_cm: 40
 width_cm: 40
 image: "anti-joke-chicken.webp"
 ---
-This one joins my [Memes](/tags/memes/) series — internet memes
+This painting joins my [Memes](/tags/memes/) series — internet memes
 reimagined in oil.
 
 The Anti-Joke Chicken is an image macro built around a chicken
-photographed mid-stare, used to caption jokes that set up a punchline
+photographed mid-stare, used for jokes that set up a punchline
 and then deliberately refuse to deliver one. Instead you get the flat,
-literal, faintly deadpan answer — the format traces back to the oldest
+literal, faintly deadpan answer. The meme traces back to the oldest
 anti-joke there is: “Why did the chicken cross the road? To get to the
-other side.” No twist, no wordplay, just the obvious answer stated
-completely straight. That’s the whole joke — the anticlimax is the
-punchline.
+other side.”
 
-I liked the idea of taking a format built entirely around not
-delivering what you expect, and rendering it in a medium — oil
-painting — that’s usually reserved for things people take very
-seriously.
+I liked the idea of taking a picture built entirely around not
+delivering what you expect, and rendering it in oil, a medium
+that’s usually reserved for images people take very seriously.

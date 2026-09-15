@@ -11,7 +11,7 @@ width_cm: 16
 image: "waldrapp.webp"
 teaser: "teaser.webp"
 ---
-Für seltsam aussehende Tiere habe ich eine Schwäche – je hässlicher,
-desto besser –, und der Waldrapp ist da ein Prachtexemplar: ein
+Ich habe eine Schwäche für seltsam aussehende Tiere: je hässlicher,
+desto besser. Der Waldrapp ist da ein Prachtexemplar: ein
 kahler, faltiger Kopf, ein struppiger Federkragen, ein langer,
-gebogener Schnabel. Schnell hingeworfen.
+gebogener Schnabel, festgehalten in einer raschen Skizze.

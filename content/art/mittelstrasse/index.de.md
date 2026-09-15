@@ -12,20 +12,18 @@ image: "mittelstrasse.webp"
 ---
 Das ist die [Gelateria di Berna](https://gelateriadiberna.ch/) an der
 Mittelstrasse in Bern, ein paar Gehminuten von meiner Wohnung
-entfernt. Gemalt habe ich sie an einem hellen Sommertag – so einem, an
-dem draussen jeder Tisch besetzt ist und die Schlange bis aufs
+entfernt. Gemalt habe ich sie an einem jener hellen Sommertage, an
+denen draussen jeder Tisch besetzt ist und die Schlange bis aufs
 Trottoir reicht.
 
-Spannend finde ich die Wand rechts. Sie ist – auch in echt – von
-einem grossen Graffiti bedeckt. Auf den ersten Blick wirkt es wie
-schnell hingesprüht, tatsächlich ist es aber so sorgfältig gemacht,
-dass es ziemlich sicher eine Auftragsarbeit sein dürfte. Abgemalt habe
-ich es Linie für Linie. In Öl, einem nochmals langsameren Medium, wurde
-es sogar noch eine Spur exakter als im Original. Eben diese Reibung zwischen einem
-alltäglichen Format und einem Galerie-Medium ist der Punkt meiner
-[Memes](/de/tags/memes/)-Serie – dies hier ist zwar kein Meme, aber
+Spannend finde ich die Wand rechts mit dem grossen Graffiti, das ich
+Linie für Linie abgemalt habe. In Öl, einem noch langsameren Medium,
+wurde es sogar noch eine Spur präziser als im Original.  Dieser
+Kontrast zwischen einem alltäglichen Format und einem, das
+normalerweise in Museen hängt, ist der Punkt meiner
+[Memes-Serie](/de/tags/memes/). Das hier ist zwar kein Meme, aber
 offenbar kann ich es nicht lassen, diesen Gegensatz überall zu suchen.
 
-Das Bild hat sein Motiv überlebt. Ein paar Wochen nachdem ich fertig
-war, wurde das Graffiti übermalt und durch ein neues ersetzt. Das
-erste gibt es jetzt nur noch in Öl.
+Das Bild hat sein Motiv überlebt. Ein paar Wochen nachdem ich damit
+fertig war, wurde das Graffiti übermalt und durch ein neues
+ersetzt. Das erste gibt es jetzt nur noch in Öl.
