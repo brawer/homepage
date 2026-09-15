@@ -18,6 +18,5 @@ brighter and more reflective.
 
 What I loved was how easily oil let me try out things. It is so much
 more forgiving than watercolor, where a misjudged stroke is often a
-misjudged stroke for good — with oil you can rework a passage, change
-your mind, and try a different technique right next to the last one,
-and the paint just goes along with it.
+misjudged stroke for good — with oil you can rework a part, change
+your mind, and try a different technique right next to the last one.

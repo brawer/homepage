@@ -11,16 +11,14 @@ width_cm: 50
 image: "pliers.webp"
 ---
 Dies war mein allererstes Ölbild. Ich wollte einfach die Technik
-lernen und suchte mir dafür ein einfaches Motiv – eine Zange.
-Werkzeuge interessieren mich überhaupt nicht; ich habe mir dieses
-Motiv rein deswegen ausgesucht, weil es leicht zu malen aussah.
+lernen und suchte mir dafür ein einfaches Motiv: eine Zange.
 
 Was mich tatsächlich interessierte, war der Kontrast zwischen Motiv
 und Medium. Ölfarbe ist weich und nachgiebig – man kann sie
-verstreichen, verschieben, sich Zeit lassen –, und ich wollte sehen,
-ob sich damit trotzdem etwas so Scharfkantiges und Präzises wie ein
-Metallwerkzeug malen lässt. Herauszufinden, wie man Farbe scharf
-aussehen lässt, war deutlich interessanter, als ich es einem so
-bescheidenen Motiv zugetraut hätte. Dass ich mich damit gerade in die
-Ölmalerei zu verlieben begann, wusste ich zu diesem Zeitpunkt noch
-nicht.
+verstreichen, mehrere Schichten überlagern, sich Zeit lassen –, und
+ich wollte sehen, ob sich damit trotzdem etwas so Scharfkantiges und
+Präzises wie ein Metallwerkzeug malen lässt. Herauszufinden, wie man
+Farbe präzise aussehen lässt, war deutlich interessanter, als ich es
+einem so bescheidenen Motiv zugetraut hätte. Dass ich mich damit
+gerade in die Ölmalerei zu verlieben begann, wusste ich zu diesem
+Zeitpunkt noch nicht.
