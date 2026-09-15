@@ -14,6 +14,10 @@ experience:
         Baute [OSMViews](https://osmviews.toolforge.org/), das
         geografische Orte anhand von OpenStreetMap-Tile-Logs einstuft.
       - >-
+        Baute [Cadaref](/de/publications/maschinelles-georeferenzieren-archivierter-katasterpläne/),
+        welches das Katasterplan-Archiv der Stadt Zürich mittels maschineller Bilderkennung
+        georeferenziert.
+      - >-
         Half 2025 einige Monate lang ehemaligen Google-Kollegen bei
         [cradle.bio](https://cradle.bio/), die Infrastruktur am Laufen
         zu halten, Rechnerkosten zu senken und Laborabläufe zu
@@ -43,7 +47,7 @@ experience:
     location: "Rapperswil, Schweiz"
     role: "Auszeit"
     highlights:
-      - "Widmete sich der Ölmalerei, las viel und genoss das Leben."
+      - "Begann mit der Ölmalerei, las viel und genoss das Leben."
   - date_range: "Mai 2004 – Aug. 2018"
     logo: "google.svg"
     location: "Zürich, Schweiz"
@@ -52,8 +56,8 @@ experience:
     role: "Senior Staff Software Engineer (L7, letzte Position)"
     highlights:
       - >-
-        Entwarf, implementierte massgeblich und brachte zur
-        Markteinführung: Indoor Maps; Google Chart API; Google
+        Entwarf, implementierte und lancierte massgebliche Teile von:
+        Indoor Maps; Google Chart API; Google
         Webmaster Tools/Sitemaps; öffentlicher Verkehr auf Google
         Maps; Layers-Infrastruktur für Google Maps;
         Google-Übersetzungswörterbücher; «Onebox»-Websuchfunktionen
@@ -122,7 +126,7 @@ experience:
       - >-
         Implementierte eine Prototyp-Client/Server-Anwendung zur
         Unterstützung von «Wissensarbeitern».
-      - "Entwickelte die statistische Engine für ein interaktives Klassifikationsprogramm."
+      - "Entwickelte den Statistik-Kern für ein interaktives Klassifikationsprogramm."
   - date_range: "Apr. 1998 – Feb. 2000"
     marker: "company"
     location: "Zürich, Schweiz"
