@@ -21,5 +21,5 @@ Licht der Natriumdampflampen nachzuahmen, wie sie in den 1970er-Jahren
 einem seltsam gesättigten Orange, Scheinwerfer verschwimmen, ein
 Schaufenster verschwindet im Schatten, eine Passantin durchquert die
 Szene mitten in diesem Licht. Die Farbe ist für mich das zentrale
-Element in diesem Bild – auch wenn die Strasse heute gar nicht so mehr
-aussieht.
+Element in diesem Bild – auch wenn die Strasse heute gar nicht mehr
+so aussieht.
