@@ -17,9 +17,9 @@ Metalleffekte üben und gab den beiden Endkappen deshalb
 unterschiedliche Oberflächen: die eine stumpfer und matter, die
 andere heller und reflektierender.
 
-Was mir daran gefiel: wie leicht es mit Öl fällt, Dinge einfach
+Mir gefiel dabei, wie leicht es mit Öl fällt, Dinge
 auszuprobieren. Öl ist so viel nachsichtiger als Aquarell, wo ein
 missglückter Pinselstrich oft ein für alle Mal missglückt bleibt – mit
-Öl kann man eine Passage überarbeiten, es sich anders überlegen und
+Öl kann man eine Stelle überarbeiten, es sich anders überlegen und
 direkt neben der letzten Technik eine andere ausprobieren, und die
 Farbe macht einfach mit.
