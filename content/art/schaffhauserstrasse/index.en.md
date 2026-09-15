@@ -20,5 +20,3 @@ painted it later.
 I ended up cropping the faces out of the frame. To me that makes the
 picture more interesting — you still get the leaning-in, the gestures,
 the shape of a good conversation, without needing to know whose it is.
-I might turn it into a series one day: faceless people, chatting over
-coffee.

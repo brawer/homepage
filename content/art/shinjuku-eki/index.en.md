@@ -20,7 +20,7 @@ I painted with two different whites — zinc white, cool and slightly
 gray, for the hazy background, and titanium white, warmed up with a
 touch of chromium yellow, for her pullover in the foreground. The
 photo was taken at Shinjuku Station in Tokyo, which gave me the
-title: “Shinjuku-eki”, Japanese for “Shinjuku Station”.
+title: “Shinjuku-eki”. (“Eki” is Japanese for “station”).
 
 Once the painting was done, I emailed Eutah a photo of it — a photo
 of a painting of a photo, which could in principle go on forever if
