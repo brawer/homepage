@@ -18,11 +18,7 @@ _[Overly Attached
 Girlfriend](https://en.wikipedia.org/wiki/Overly_Attached_Girlfriend)_
 is built around one unblinking stare into the camera, captioned with
 lines that turn ordinary affection into something a few notches past
-healthy. I’ll admit I never quite got the joke, though: if anything, I
-think people should care more about each other, not less. Sure,
-there’s a line where caring tips into something else — but crossing
-that line isn’t funny either, just concerning. So the whole subtext of
-this meme is honestly lost on me.
+healthy.
 
 For my oil painting class, I picked her as a subject purely to
 practice skin and hair — they make or break a portrait, and I find

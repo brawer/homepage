@@ -10,7 +10,7 @@ height_cm: 40
 width_cm: 40
 image: "success-kid.webp"
 ---
-This one joins my [Memes](/tags/memes/) series — internet memes
+This painting joins my [Memes](/tags/memes/) series — internet memes
 reimagined in oil.
 
 [Success Kid](https://en.wikipedia.org/wiki/Success_Kid) started life
