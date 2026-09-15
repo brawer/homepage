@@ -19,6 +19,9 @@ experience:
         at [cradle.bio](https://cradle.bio/) to keep their
         infrastructure running, cut machine costs, and automate lab
         workflows.
+      - >-
+        Since Oct 2025, advising [Mapterhorn](https://mapterhorn.com/)
+        on technology and strategy.
   - date_range: "Oct 2019 – Sep 2021"
     logo: "niantic.svg"
     location: "Zürich, Switzerland"
