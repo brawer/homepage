@@ -11,7 +11,7 @@ experience:
         Wissensgraph-Entitäten anhand der Seitenaufrufe auf Wikipedia,
         Wikitravel und anderen Wikimedia-Projekten einstuft.
       - >-
-        Baute [OSMViews](https://osmviews.toolforge.org/), das
+        Baute [OSMViews](https://osmviews.brawer.ch/), das
         geografische Orte anhand von OpenStreetMap-Tile-Logs einstuft.
       - >-
         Baute [Cadaref](/de/publications/maschinelles-georeferenzieren-archivierter-katasterpläne/),
