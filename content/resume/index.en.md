@@ -12,7 +12,7 @@ experience:
         knowledge graph entities by analyzing page views on Wikipedia,
         Wikitravel and other Wikimedia sites.
       - >-
-        Built [OSMViews](https://osmviews.toolforge.org/), ranking
+        Built [OSMViews](https://osmviews.brawer.ch/), ranking
         geographic locations based on OpenStreetMap tile logs.
       - >-
         Built [Cadaref](/publications/maschinelles-georeferenzieren-archivierter-katasterpläne/),
