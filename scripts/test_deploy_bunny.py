@@ -36,6 +36,8 @@ class FakeBackend:
 
     def __init__(self):
         self.store: dict[str, tuple[bytes, str]] = {}
+        # Every write, in the order it arrived: ("PUT" | "DELETE", key).
+        self.log: list[tuple[str, str]] = []
 
     def list_dir(self, prefix: str):
         # Mimic Bunny's listing: direct children of `prefix` only, with
@@ -81,11 +83,13 @@ def fake_request_for(backend: FakeBackend):
             sha = (extra_headers or {}).get("Checksum") \
                 or hashlib.sha256(data).hexdigest().upper()
             backend.store[key] = (data, sha)
+            backend.log.append((method, key))
             return b""
         if method == "DELETE":
             if key not in backend.store:
                 raise not_found(key)
             del backend.store[key]
+            backend.log.append((method, key))
             return b""
         raise AssertionError(f"unexpected {method} {key}")
 
@@ -133,6 +137,40 @@ class OrphanGraceTest(unittest.TestCase):
         self.assertIn("index.html", self.backend.store)
         self.assertIn("css/main.min.HASHAAA.css", self.backend.store)
         self.assertEqual(self.state(), {})
+
+    def test_assets_upload_before_html_and_deletes_come_last(self):
+        """Hashed assets are cached at the edge for 30 days
+        (brawer/production#45), 404s included -- so no page may be
+        uploaded before every asset it could reference is in the zone,
+        and nothing may be deleted before the new pages are."""
+        self.write("index.html", "<html>v1</html>")
+        self.write("css/main.min.HASHAAA.css", "body{color:red}")
+        self.deploy(T0)
+
+        self.remove("css/main.min.HASHAAA.css")
+        self.deploy(T0 + 3600)  # the old CSS is first seen orphaned here
+
+        self.write("css/main.min.HASHBBB.css", "body{color:blue}")
+        self.write("js/nav.min.HASHCCC.js", "1")
+        self.write("fonts/karla.woff2", "font")
+        self.write("art/piece_hu_HASHDDD.webp", "img")
+        self.write("index.html", "<html>v2</html>")
+        self.write("de/index.html", "<html>v2 de</html>")
+        self.write("sitemap.xml", "<urlset/>")
+        self.write("robots.txt", "User-agent: *")
+        del self.backend.log[:]
+        self.deploy(T0 + 74 * 3600)  # old CSS is now past the 72h grace
+
+        log = [entry for entry in self.backend.log
+               if entry[1] != deploy_bunny.STATE_KEY]
+        pages = {"index.html", "de/index.html", "sitemap.xml", "robots.txt"}
+        assets = {"css/main.min.HASHBBB.css", "js/nav.min.HASHCCC.js",
+                  "fonts/karla.woff2", "art/piece_hu_HASHDDD.webp"}
+        self.assertEqual({key for _, key in log[:len(assets)]}, assets)
+        self.assertEqual(
+            {key for _, key in log[len(assets):len(assets) + len(pages)]}, pages)
+        self.assertEqual(log[len(assets) + len(pages):],
+                         [("DELETE", "css/main.min.HASHAAA.css")])
 
     def test_orphaned_file_is_kept_not_deleted_within_grace(self):
         self.write("index.html", "x")

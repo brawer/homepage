@@ -3,7 +3,7 @@
 Personal Hugo site for Sascha Brawer. Deployed via GitHub Actions to a
 Bunny CDN storage zone (see "Static assets & fingerprinting" below) —
 **live at brawer.ch since 2026-09-14** (the old staging domain,
-dandelis.ch, is being retired to a parked domain; see "Known open
+dandelis.ch, has since been decommissioned; see "Known open
 items"). Content-first order (filling in real content before building
 templates/CSS via `/design` mode) is now largely complete — see
 "Templates" below for the design passes that have shipped.
@@ -1094,11 +1094,16 @@ content-hashed URLs, not edge purges.
 - `minify` is in the template (not only the deploy `hugo --minify`) so
   `hugo server` serves the same bytes as production and the hash is the
   hash of what ships.
-- **`/fonts/*` is cached immutably at the edge** — `main.css` still
+- **`/fonts/*` is cached immutably for 30 days, at the edge and in
+  browsers** — `main.css` still
   references `url("/fonts/karla-latin-variable.woff2")` by a stable
   name. If a font file ever changes, give it a **new filename in the
   same commit** (making `main.css` a Hugo template just to rewrite one
-  `url()` isn't worth it for a file that changes ~never).
+  `url()` isn't worth it for a file that changes ~never). This rule
+  has real teeth since 2026-10-04: the TTL used to be 600s, so a slip
+  healed itself in ten minutes; at 30 days it doesn't, and a CDN purge
+  only clears the edge — it can't reach copies already in visitors'
+  browsers.
 
 - **Deploy pipeline** (issue #81 Stage 2, added 2026-09-10):
   `.github/workflows/deploy.yml` runs on push to `main` and manual
@@ -1117,8 +1122,11 @@ content-hashed URLs, not edge purges.
     stayed orphaned past a grace period**. That upload-then-delete
     order is load-bearing: a visitor loading a page mid-deploy never
     gets HTML referencing a hashed asset that hasn't uploaded yet, nor
-    one pointing at a deleted file — and it's the precondition for the
-    long immutable edge TTL (brawer/production#13). No cache purge (CI
+    one pointing at a deleted file — and it's what the 30-day immutable
+    TTL on hashed assets depends on (brawer/production#45): a hashed
+    asset requested before it's uploaded would get its 404 cached at
+    the edge for 30 days. `test_deploy_bunny.py` covers the order. No
+    cache purge (CI
     holds only the one-zone storage password, never the un-scopeable
     account key). Env: `BUNNY_STORAGE_PASSWORD` (the `production`
     GitHub environment, branch-restricted to `main`),
@@ -1149,21 +1157,30 @@ content-hashed URLs, not edge purges.
       already-public asset paths to timestamps, so that was an accepted
       tradeoff, not an oversight). Losing/corrupting that file fails
       safe: every tracked orphan's clock just restarts, meaning it's kept
-      a bit longer, never deleted early. **72h must stay ≥ whatever HTML
-      max-age ends up being in `brawer/production`'s `bunny/cdn.tf`** —
-      sized as ~3x an assumed 24h max-age, for clock skew/staggered
-      per-PoP edge expiry margin; revisit together if that max-age
-      changes. Right after this shipped, anything already orphaned
+      a bit longer, never deleted early. **72h must stay ≥ the HTML
+      max-age in `brawer/production`'s `bunny/cdn.tf`** — that's 300s
+      and not planned to rise (72h was originally sized as ~3x a
+      planned 24h max-age; that plan was dropped 2026-10-04,
+      brawer/production#19), so it's now a very wide margin for clock
+      skew/staggered per-PoP edge expiry. The 300s is only a real bound
+      because the `brawer.ch` pull zone doesn't serve an expired copy
+      while revalidating (`cache_stale` without `"updating"`,
+      brawer/production#49) — before that, the first request after an
+      idle spell could get HTML of any age. Revisit together if either
+      setting changes. Right after this shipped, anything already orphaned
       *before* the feature existed gets a fresh 72h grace period too
       (first-seen defaults to "now" for anything untracked) — expected,
       not a bug, and self-resolves after one grace-period's worth of
       deploys.
   - Edge cache TTLs are **not** set in this repo — storage origins drop
     `Cache-Control`. They're pull-zone Edge Rules in `brawer/production`
-    (`bunny/cdn.tf`), already in place: 300s default, longer for the
-    hashed-asset globs. (HTML's default was ~300s as of 2026-09-10;
-    revisit the orphan-grace note above if this ever moves to something
-    like 24h.)
+    (`bunny/cdn.tf`), as of 2026-10-04: 300s default (HTML, feeds —
+    staying there, brawer/production#19), and 30 days for the
+    content-hashed globs and `/fonts/*`, at the edge and in browsers
+    (`immutable_max_age = 2592000`, brawer/production#45; was 600s).
+    No stale-while-revalidate on the `brawer.ch` pull zone
+    (brawer/production#49), so the 300s is a real upper bound on HTML
+    age — which the orphan-grace note above relies on.
   - **`DEPLOY.md`** covers manual instant propagation of a *changed*
     stable-URL file (a page edit, a replaced PDF, the launch `noindex`
     flip) — a Bunny purge from a trusted machine with the account key,
@@ -2129,8 +2146,8 @@ list). `assets/css/main.css` only — no JS, no markup change.
     the `.Section` clause when Projects is ready.
   - **dandelis.ch → brawer.ch domain cutover, 2026-09-14**: the
     `brawer-homepage` Bunny storage zone now fronts `brawer.ch` as the
-    live domain; `dandelis.ch` (the old staging domain, same zone) is
-    being retired to a parked domain rather than torn down outright.
+    live domain; `dandelis.ch` (the old staging domain, same zone) was
+    decommissioned by 2026-10-04 and no longer fronts the zone.
     Updated to match: `hugo.toml`'s `baseURL` (already `brawer.ch` —
     this predates the actual cutover, since it only affects generated
     URLs, not which hostname serves them), `deploy.yml`'s `environment.url`
