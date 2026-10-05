@@ -119,7 +119,7 @@ uglyURLs = false
   fullName = "Sascha Brawer"
 
   # Staging switch -- flipped off 2026-09-14: the site now serves live
-  # from brawer.ch (dandelis.ch is being retired to a parked domain).
+  # from brawer.ch (dandelis.ch, the old staging domain, is decommissioned).
   # While true, every page got <meta name="robots" content="noindex,
   # nofollow"> (head.html) and robots.txt was a blanket Disallow
   # (layouts/robots.txt). Kept here as an explicit `false`, not

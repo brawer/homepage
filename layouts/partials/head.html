@@ -185,7 +185,7 @@
    this attribute is a *different* cache entry the browser then
    silently fetches a second time. Stable, un-fingerprinted path (see
    "Static assets & fingerprinting" in CLAUDE.md: /fonts/* is cached
-   immutably at the edge under a fixed filename), so unlike main.css
+   immutably for 30 days under a fixed filename), so unlike main.css
    this can be a plain literal href. */ -}}
 <link rel="preload" href="/fonts/karla-latin-variable.woff2" as="font" type="font/woff2" crossorigin>
 {{- /* Content-hashed URL so the Bunny edge can cache it forever (issue

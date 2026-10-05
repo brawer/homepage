@@ -86,8 +86,7 @@ jobs:
         run: python3 scripts/deploy_bunny.py public
 
       # brawer.ch has been the live domain since 2026-09-14 (dandelis.ch,
-      # the old staging domain fronting the same brawer-homepage zone, is
-      # being retired to a parked domain -- see DEPLOY.md).
+      # the old staging domain, is decommissioned -- see DEPLOY.md).
       - name: Smoke-test the live site
         run: |
           for i in 1 2 3 4 5; do

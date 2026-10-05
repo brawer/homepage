@@ -35,9 +35,12 @@ Upload ORDER matters and is the whole point of this script over a naive sync:
 A visitor who loads a page mid-deploy then always gets a consistent set --
 never new HTML referencing a content-hashed asset that has not finished
 uploading (which the browser would cache as a 404), and never HTML pointing at
-a file already deleted. This ordering is the precondition for raising the edge
-immutable TTL -- brawer/production#13 -- and for keeping the Bunny account API
-key out of CI entirely (no purge step; brawer/homepage#81).
+a file already deleted. This ordering is what the 30-day immutable TTL on
+content-hashed assets and /fonts/* depends on (immutable_max_age = 2592000 in
+brawer/production's bunny/cdn.tf, brawer/production#45): a hashed asset
+requested before it has been uploaded would get its 404 cached at the edge for
+those 30 days. It is also what keeps the Bunny account API key out of CI
+entirely (no purge step; brawer/homepage#81).
 
 Diffing is by SHA256: Bunny returns an uppercase-hex Checksum per object, we
 compare it to the local file's and only PUT on a miss or mismatch. A first
@@ -45,7 +48,7 @@ deploy (empty zone) uploads everything and deletes nothing.
 
 Orphan grace period (brawer/homepage#121, found while verifying #39's own
 fix): there is no cache purge on deploy, so for up to the HTML
-Cache-Control max-age (brawer/production's bunny/cdn.tf), a visitor's
+Cache-Control max-age (300s, brawer/production's bunny/cdn.tf), a visitor's
 browser -- or the CDN edge itself -- can still be holding PRE-deploy HTML
 that references a content-hashed CSS/JS/image whose bytes just changed
 underneath it. Deleting the old hash file in the SAME deploy that orphans
@@ -86,10 +89,16 @@ HTML_EXACT = ("robots.txt",)
 # Default for BUNNY_ORPHAN_GRACE_HOURS (hours an orphaned remote file is
 # kept before actual deletion) -- see the "Orphan grace period" module
 # docstring above for why this exists. Must stay >= the HTML Cache-Control
-# max-age set in brawer/production's bunny/cdn.tf (planned: 24h) -- 72h/3
-# days gives roughly 3x margin over that for clock skew, staggered per-PoP
-# edge expiry, and any intermediate cache that doesn't strictly honour
-# max-age. Revisit together if that max-age ever changes. Like every other
+# max-age set in brawer/production's bunny/cdn.tf. That is 300s and not
+# planned to rise (the idea of raising it to 24h was dropped,
+# brawer/production#19), so 72h/3 days is a very wide margin for clock
+# skew, staggered per-PoP edge expiry, and any intermediate cache that
+# doesn't strictly honour max-age. The 300s is only a real bound because
+# the brawer.ch pull zone does not serve an expired copy while
+# revalidating (cache_stale without "updating", brawer/production#49);
+# with stale-while-revalidate on, the first request after an idle spell
+# could get HTML of any age, and no grace period would be long enough.
+# Revisit together if either setting ever changes. Like every other
 # env-driven setting here, actually read inside main(), not at import time.
 DEFAULT_ORPHAN_GRACE_HOURS = 72
 
