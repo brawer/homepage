@@ -146,10 +146,35 @@
     {{ $isApp := eq .Params.kind "patent_application" }}
     {{ $blockLabel := "patent_family_label" }}
     {{ if $isApp }}{{ $blockLabel = "patent_application_label" }}{{ else if eq (len $fam) 1 }}{{ $blockLabel = "patent_one_label" }}{{ end }}
+    {{/* Headline year, computed BEFORE the markup so the headline can
+         lead the block (design pass 2026-10-07: it is the answer the
+         reader came for; the ledger below is its evidence). An
+         abandoned application has been free to use since it published
+         (never granted, nothing to expire) -- same "since {year}" line
+         as an expired patent; the badge and the "application abandoned"
+         member line already say it never granted. A granted family uses
+         "since {latest expiry}" if all dead, else "from {latest expiry
+         among the still-active members}". */}}
+    {{ $pdYear := "" }}
+    {{ $pdKey := "patent_pd_since" }}
+    {{ if $isApp }}
+      {{ range $fam }}{{ with .published }}{{ $pdYear = (time .).Format "2006" }}{{ end }}{{ end }}
+    {{ else }}
+      {{ $pool := cond (gt (len $active) 0) $active $fam }}
+      {{ range $pool }}{{ with .expires }}{{ $y := (time .).Format "2006" }}{{ if gt $y $pdYear }}{{ $pdYear = $y }}{{ end }}{{ end }}{{ end }}
+      {{ if gt (len $active) 0 }}{{ $pdKey = "patent_pd_from" }}{{ end }}
+    {{ end }}
+    {{/* The i18n labels end in a colon ("Patent family:"); as a small
+         caps heading over a ledger the colon is noise, so it is trimmed
+         here rather than forking the strings. */}}
+    {{ $label := strings.TrimSuffix ":" (i18n $blockLabel) }}
     <div class="patent-block">
-      {{ with .Params.assignee }}<p><strong>{{ i18n "assignee_label" }}</strong> {{ . }}</p>{{ end }}
-      <p><strong>{{ i18n $blockLabel }}</strong></p>
-      <ul class="patent-family">
+      {{ with $pdYear }}<p class="patent-pd">{{ i18n $pdKey (dict "Year" .) }}</p>{{ end }}
+      <div class="patent-head">
+        <span class="patent-label" aria-hidden="true">{{ $label }}</span>
+        {{ with .Params.assignee }}<span class="patent-assignee">{{ i18n "assignee_label" }} {{ . }}</span>{{ end }}
+      </div>
+      <ul class="patent-family" aria-label="{{ $label }}">
         {{ range $fam }}
           {{/* "US 10,133,737 B2" / "KR 10-1890835 B1" /
                "US 2015/0088997 A1" -> the compact form Google Patents
@@ -157,35 +182,24 @@
           {{ $pn := .number | replaceRE `[ ,/-]` "" }}
           {{ $meta := "" }}
           {{ if .expires }}{{ $meta = (time .expires).Format "2006" }}{{ end }}
-          <li>
-            <a href="https://patents.google.com/patent/{{ $pn }}"><span lang="en">{{ .number }}</span></a>
-            <span class="patent-member-meta">— {{ i18n (printf "patent_office_%s" .office) }},
-              {{- if eq .status "active" }} {{ i18n "patent_member_active" (dict "Year" $meta) }}
-              {{- else if eq .status "expired" }} {{ i18n "patent_member_expired" (dict "Year" $meta) }}
-              {{- else if eq .status "lapsed" }} {{ i18n "patent_member_lapsed" (dict "Year" $meta) }}
-              {{- else }} {{ i18n "patent_member_abandoned" }}{{ end }}</span>
+          <li class="patent-member{{ if eq .status "active" }} is-active{{ end }}">
+            <a class="patent-number" href="https://patents.google.com/patent/{{ $pn }}"><span lang="en">{{ .number }}</span></a>
+            {{/* Office + status travel as one group: on a phone the
+                 row is a wrapping flex line, so the group sits beside
+                 the number when it fits and drops below it, as a unit,
+                 when it doesn't (see .patent-detail in main.css). */}}
+            <span class="patent-detail">
+            <span class="patent-office">{{ i18n (printf "patent_office_%s" .office) }}</span>
+            <span class="patent-status">
+              {{- if eq .status "active" }}{{ i18n "patent_member_active" (dict "Year" $meta) }}
+              {{- else if eq .status "expired" }}{{ i18n "patent_member_expired" (dict "Year" $meta) }}
+              {{- else if eq .status "lapsed" }}{{ i18n "patent_member_lapsed" (dict "Year" $meta) }}
+              {{- else }}{{ i18n "patent_member_abandoned" }}{{ end -}}
+            </span>
+            </span>
           </li>
         {{ end }}
       </ul>
-      {{/* Headline: an abandoned application has been free to use since
-           it published (never granted, nothing to expire) -- same
-           "since {year}" line as an expired patent; the badge and the
-           "application abandoned" member line already say it never
-           granted. A granted family uses "since {latest expiry}" if all
-           dead, else "from {latest expiry among the still-active
-           members}". */}}
-      {{ if $isApp }}
-        {{ $pubYear := "" }}
-        {{ range $fam }}{{ with .published }}{{ $pubYear = (time .).Format "2006" }}{{ end }}{{ end }}
-        {{ with $pubYear }}<p class="patent-pd">{{ i18n "patent_pd_since" (dict "Year" .) }}</p>{{ end }}
-      {{ else }}
-        {{ $pdYear := "" }}
-        {{ $pool := cond (gt (len $active) 0) $active $fam }}
-        {{ range $pool }}{{ with .expires }}{{ $y := (time .).Format "2006" }}{{ if gt $y $pdYear }}{{ $pdYear = $y }}{{ end }}{{ end }}{{ end }}
-        {{ with $pdYear }}
-        <p class="patent-pd">{{ i18n (cond (gt (len $active) 0) "patent_pd_from" "patent_pd_since") (dict "Year" .) }}</p>
-        {{ end }}
-      {{ end }}
     </div>
   {{ end }}
 

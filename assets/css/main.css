@@ -1646,27 +1646,123 @@ article > h1 {
   text-wrap: balance;
 }
 
-/* Patent invention page: assignee + patent family list + the
-   public-domain headline. Pre-/design, kept as minimal as .byline
-   above. */
+/* Patent invention page -- design pass 2026-10-07. Three parts, in
+   reading order:
+     1. .patent-pd, the plain-language headline ("Free for public use
+        since 2026.") -- FIRST, because it is the answer; the ledger is
+        the evidence for it.
+     2. .patent-head, a small caps label + the assignee.
+     3. .patent-family, a ledger: number | office | status in aligned
+        columns with hairline rules. Alignment is what lets the eye run
+        down ONE column (all the statuses, say); the old one-sentence-
+        per-row list had no columns to run down.
+   Status is the column that differs row to row, so it carries the
+   emphasis: a member still in force is --ink at 600, a dead one
+   --ink-faint. Weight and tone only -- filled/hollow status dots were
+   tried and dropped (Sascha): a second code for what the words ("in
+   force until 2034" / "lapsed 2025") already say.
+   Country-code tiles were considered and dropped: the code is already
+   the first two letters of every number, and the office name spells it
+   out again.
+   36rem cap = the hero frame's, like .subtitle. Tokens, not the old
+   blanket `opacity: .85`. */
 .patent-block {
+  max-width: 36rem;
+  /* Generous margins: the ledger is a self-contained data block
+     between the byline and the abstract's prose -- the gaps are what
+     set it apart (more below than above, so it still reads as
+     belonging to the title cluster). Not an indent: the block shares
+     the left edge of the title, hero and text, and a second left edge
+     would need a reason. */
+  margin: 1.75rem 0 2.5rem;
   font-size: .9rem;
-  opacity: .85;
-  margin: 1rem 0 1.25rem;
 }
-.patent-block > p { margin: .2rem 0; }
+.patent-pd {
+  margin: 0 0 .9rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--ink);
+}
+.patent-head {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: .15rem 1rem;
+  padding-bottom: .4rem;
+}
+.patent-label {
+  font-size: .72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ink);
+}
+.patent-assignee {
+  font-size: .82rem;
+  color: var(--ink-faint);
+}
 .patent-family {
   list-style: none;
-  margin: .2rem 0 0;
+  margin: 0;
   padding: 0;
+  display: grid;
+  grid-template-columns: max-content 1fr max-content;
+  column-gap: 1.5rem;
+  border-bottom: 1px solid var(--line);
 }
-.patent-family li { margin: .15rem 0; }
-.patent-family a { font-variant-numeric: tabular-nums; }
-.patent-member-meta { color: var(--ink-faint); }
-.patent-pd {
-  font-weight: 700;
-  opacity: 1;
-  margin-top: .6rem !important;
+.patent-member {
+  display: grid;
+  grid-template-columns: subgrid;
+  grid-column: 1 / -1;
+  align-items: baseline;
+  padding: .5rem 0;
+  border-top: 1px solid var(--line);
+}
+.patent-number {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  color: var(--accent);
+  text-decoration: underline;
+  text-decoration-color: var(--accent-soft);
+  text-underline-offset: 2px;
+}
+.patent-number:hover { text-decoration-color: var(--accent); }
+.patent-office { color: var(--ink-soft); }
+/* Right-aligned: the status ends in a year, so flush right lines the
+   years up in a column at the ledger's edge (and matches the phone
+   layout, where the status is pushed to the right edge anyway). */
+.patent-status {
+  color: var(--ink-faint);
+  white-space: nowrap;
+  text-align: right;
+}
+.is-active .patent-status { color: var(--ink); font-weight: 600; }
+/* Desktop: the office/status group dissolves so its two spans are
+   direct cells of the subgrid row. */
+.patent-detail { display: contents; }
+/* Phone: a row stays on ONE line whenever it fits ("US 7,769,742 B1 /
+   United States / lapsed 2019" does) and folds to two only when it
+   can't (a long number, "application abandoned"). The browser decides
+   per row from the real text width -- a wrapping flex line, not a
+   breakpoint guess. The office/status group wraps as a unit and then
+   spans the row: office left, status right. The number's min-width
+   keeps the office column aligned across one-line rows whose numbers
+   differ in length. */
+@media (max-width: 30rem) {
+  .patent-family { display: block; }
+  .patent-member {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .1rem 1rem;
+  }
+  .patent-number { min-width: 9.5em; }
+  .patent-detail {
+    display: flex;
+    flex: 1 1 auto;
+    justify-content: space-between;
+    gap: 1rem;
+  }
 }
 
 /* Resume — timeline layout ("Paper & Plum Résumé"), ported 2026-09-07
