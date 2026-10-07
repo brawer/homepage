@@ -2192,9 +2192,39 @@ or i18n change. Load-bearing decisions:
 - **Space, not an indent**, separates the block from the byline above
   (1.75rem) and the abstract below (2.5rem) — it shares the page's one
   left edge.
-- Patent numbers use the résumé's plum link style. Other content links
-  (byline venue, body prose) are still browser-default blue — a
-  site-wide content-link pass is open.
+- Patent numbers use the résumé's plum link style (content links
+  site-wide followed the same day — see "Content links" below).
+
+### Content links, 2026-10-07
+
+Every classless link inside `<main>` was still browser-default blue —
+the one colour on the site that came from no token: Markdown body
+prose, publications' `venue`/`abstract`, the imprint, the
+lecture-series lists, the `/tags/` index, the home page's contact row.
+Found by a headless-browser audit of every built page's computed link
+colours, not by reading CSS. `assets/css/main.css` only.
+
+- **One rule**, right after `main {}`: `:where(main a:not([class]))` →
+  `--accent` text, 1px underline at 45% of `currentColor`, full
+  strength on hover.
+- **The underline stays** — colour alone can't mark a link in running
+  text (plum vs. `--ink` is ~2.3:1, under the 3:1 WCAG asks of a
+  colour-only cue) — but at 45%, because full-strength rules make a
+  link-heavy paragraph look striped.
+- **`:where()` = zero specificity, on purpose**: every component rule
+  (`.pager a`, `.kbd-hint a`, `.identity-contact a`, …) still wins
+  without out-specifying it, and `a[class]` is skipped outright (a
+  classed link is a component). The before/after audit diff confirmed
+  only the previously-blue links changed — plus `.identity-note a` on
+  the résumé, whose underline went from full to 45%.
+- **New content needs nothing**: a plain Markdown link gets the style.
+  A new *component* link should carry a class.
+- **Tag pages' back arrow** (`.back-arrow`) was blue + underlined too;
+  now a quiet `--ink-faint` control, plum on hover, like `.backlink`.
+- Left alone: `.entry-highlights a` (résumé) and `.patent-number` keep
+  their fainter `--accent-soft` underline; the header/drawer logo and
+  the skip link compute to blue but never show it (emoji / own colours
+  on focus).
 
 ## Known open items (as of last content session)
 

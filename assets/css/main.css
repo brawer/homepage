@@ -255,6 +255,34 @@ main {
   padding: 2rem max(1rem, env(safe-area-inset-right)) 3rem max(1rem, env(safe-area-inset-left));
 }
 
+/* Content links -- every link in <main> that has no class of its own:
+   Markdown body prose, a publication's venue/abstract, the imprint, the
+   lecture-series lists, the /tags/ index, the home page's contact row.
+   These were browser-default blue until 2026-10-07 -- the one colour on
+   the page that came from no token. Plum (--accent) is already what
+   "link" means everywhere else here (nav hover, résumé, patent numbers).
+   The underline stays, at 45% of the link's own colour: colour alone
+   can't mark a link inside running text (plum against --ink is only
+   ~2.3:1, under the 3:1 WCAG asks of a colour-only cue), but a
+   full-strength rule under every link makes a link-heavy paragraph
+   look striped. Hover/focus brings it to full strength.
+   :where() gives the selector ZERO specificity on purpose, so any
+   component rule (.pager a, .kbd-hint a, .identity-contact a, ...)
+   still wins without having to out-specify this; a[class] is skipped
+   outright because a classed link is a component with its own design.
+   currentColor, not a root token: it follows the link's colour in
+   every theme and in the résumé's print overrides for free. */
+:where(main a:not([class])) {
+  color: var(--accent);
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-decoration-color: color-mix(in srgb, currentColor 45%, transparent);
+  text-underline-offset: 2px;
+}
+:where(main a:not([class])):hover {
+  text-decoration-color: currentColor;
+}
+
 /* Accessibility primitive, not visual design — see
    NAVIGATION_DESIGN_SPEC.md implementation plan §1. Off-canvas until
    focused, since this pass adds a drawer trigger (and, at desktop
@@ -936,6 +964,19 @@ body.drawer-open {
   align-items: baseline;
   gap: .8rem;
   margin-bottom: .8rem;
+}
+/* Tag pages' back arrow -- a control, not a text link: quiet
+   --ink-faint with no underline, plum on hover, the same language as
+   the detail pages' .backlink. Was browser-default blue + underlined. */
+.back-arrow {
+  color: var(--ink-faint);
+  text-decoration: none;
+}
+.back-arrow:hover { color: var(--accent); }
+.back-arrow:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+  border-radius: 2px;
 }
 
 .item-count {
