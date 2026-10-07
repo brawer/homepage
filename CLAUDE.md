@@ -463,7 +463,8 @@ verified against source for patents), `venue`, `abstract`.
     ISO-date strings (`expires` estimated from Google Patents —
     Sascha, who is patent-literate, verifies each). `date` (page-level)
     is the **priority date** (when the work was done), not a grant
-    date. The template renders the family as a list plus one headline:
+    date. The template renders the family as a ledger led by one headline
+    (see "Patent block design pass" below):
     `patent_pd_since` ("Free for public use since {year}") when every
     member is dead, else `patent_pd_from` ("… from {year}") using the
     latest `expires` among the still-active members. Folder slug is the
@@ -2151,6 +2152,49 @@ light + dark, EN + DE). Load-bearing decisions:
 - Not italic, not accent-coloured: plum means "link" on this site (same
   reasoning as the résumé section headings), and Karla has no real
   italic in the self-hosted file (it would be a synthesised oblique).
+
+### Patent block design pass, 2026-10-07
+
+The patent metadata block on publications detail pages
+(`layouts/publications/single.html`, `.patent-*` in
+`assets/css/main.css`) got its real treatment, iterated with Sascha on
+a local branch via `hugo server` (no mockup Artifact). No content-model
+or i18n change. Load-bearing decisions:
+
+- **Headline first.** `patent_pd_since` / `patent_pd_from` ("Free for
+  public use since 2026.") now LEADS the block — it's the answer the
+  reader came for; the list is its evidence. The year is computed
+  before the markup for that reason.
+- **Header row**: the block label as a small tracked-caps heading (the
+  i18n value's trailing colon is trimmed in the template with
+  `strings.TrimSuffix`, not by forking the strings) on the left,
+  "Assigned to: …" quiet on the right.
+- **A ledger, not sentences**: number | office | status in aligned
+  columns (CSS grid + `subgrid`) with hairline rules, capped at 36rem
+  like the hero and `.subtitle`. Alignment is what lets the eye run
+  down one column.
+- **Status carries the emphasis by weight and tone only** — in force =
+  `--ink` at 600, dead = `--ink-faint`; right-aligned so the years line
+  up. **Filled/hollow status dots were tried and rejected by Sascha** —
+  don't re-add them.
+- **Country-code tiles (résumé-logo style) were considered and
+  rejected**: the code is already the first two letters of every
+  number and the office name spells it out again; a code in a box is
+  text in a box (same reason the résumé has no initial monograms).
+  Flags are out too — `EP`/`WO` aren't countries.
+- **Phone: fit-or-fold per row, decided by the browser.** Below 30rem a
+  row is a wrapping flex line: office + status are wrapped in
+  `.patent-detail`, which sits beside the number when the real text
+  fits and drops below it as a unit when it doesn't. So rows in one
+  family can differ in height (a long `EP`/`DE` number folds, a `US`
+  one doesn't) — accepted. On desktop `.patent-detail` is
+  `display: contents` so its spans are subgrid cells.
+- **Space, not an indent**, separates the block from the byline above
+  (1.75rem) and the abstract below (2.5rem) — it shares the page's one
+  left edge.
+- Patent numbers use the résumé's plum link style. Other content links
+  (byline venue, body prose) are still browser-default blue — a
+  site-wide content-link pass is open.
 
 ## Known open items (as of last content session)
 
