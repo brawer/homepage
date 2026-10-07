@@ -499,8 +499,8 @@ verified against source for patents), `venue`, `abstract`.
   `context-free-grammar-for-german`) — the explanatory second half of a
   long paper title, kept out of `title` so it can render smaller (a
   `<p class="subtitle">` under the `<h1>` in
-  `layouts/publications/single.html`; minimal pre-/design CSS, real
-  treatment deferred). Output as plain text, not `markdownify` — it's
+  `layouts/publications/single.html`; styled 2026-10-07, see "Subtitle
+  design pass" below). Output as plain text, not `markdownify` — it's
   title-like, same as `.Title`. Per-language like `title`: carried by
   whichever language file the underlying document actually gives a
   subtitle in — `context-free-grammar-for-german` only on the EN file
@@ -2121,6 +2121,36 @@ list). `assets/css/main.css` only — no JS, no markup change.
 - Not verifiable without a browser — needs a manual `hugo server`
   check (both dialogs, both themes, reduced-motion, and the art
   viewer's `?view=full` auto-open path).
+
+### Subtitle design pass, 2026-10-07 (issue #129)
+
+The publications `subtitle` (`patti`, `patti-talk`,
+`context-free-grammar-for-german`) got its real treatment — CSS only
+(`.subtitle` in `assets/css/main.css`), no template or content change.
+Small enough that it skipped the mockup-Artifact step: designed against
+headless-browser screenshots of the three real pages (phone + desktop,
+light + dark, EN + DE). Load-bearing decisions:
+
+- **It's a deck — part of the title, not metadata.** So it hugs the
+  `<h1>` (zero top margin; the h1's own `.35rem` is the whole gap) and
+  the bigger gap (`.9rem`) comes *after* it, before the chips: proximity
+  is what says "these two lines are one title".
+- **Steps down from the h1 on three axes at once** — size (1.9 →
+  1.15rem), weight (700 → 400), colour (`--ink` → `--ink-soft`) — while
+  staying clearly above the `.9rem` byline / original-title lines, so
+  the page reads title → subtitle → metadata as three distinct levels.
+- **`--ink-soft`, not the placeholder's `opacity: .85`** — a token has
+  a checked contrast (7.0:1 light / 9.6:1 dark on `--paper`); opacity
+  blends with whatever is behind it. (`.byline`/`.caption`/
+  `.original-title`/`.patent-block` still use opacity — untouched here,
+  a candidate for the same cleanup.)
+- **`max-width: 36rem`** — the hero frame's own cap, directly above, so
+  the subtitle's right edge lines up with the frame. Before this it ran
+  the full 60rem column on desktop: ~95 characters a line and a
+  two-word last line. Plus **`text-wrap: balance`**, same as the h1.
+- Not italic, not accent-coloured: plum means "link" on this site (same
+  reasoning as the résumé section headings), and Karla has no real
+  italic in the self-hosted file (it would be a synthesised oblique).
 
 ## Known open items (as of last content session)
 
