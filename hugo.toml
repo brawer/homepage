@@ -140,8 +140,15 @@ uglyURLs = false
 # Image processing defaults used when rendering responsive art thumbnails.
 [imaging]
   resampleFilter = "Lanczos"
-  quality = 85
   anchor = "smart"
+  # Quality is set per format: the single `imaging.quality` key was
+  # deprecated in Hugo v0.163.0. Same value as before for all three.
+  [imaging.jpeg]
+    quality = 85
+  [imaging.webp]
+    quality = 85
+  [imaging.avif]
+    quality = 85
 
 [markup]
   [markup.goldmark]
