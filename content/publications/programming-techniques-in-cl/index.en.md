@@ -17,7 +17,8 @@ abstract: >
   techniques; the summer part goes deeper into chart parsing, efficient
   Prolog techniques, and formal language hierarchies. It comes with six
   downloadable Prolog programs as starting points for exercises.
-image: "teaser.webp"
+image: "slide.webp"
+teaser: "teaser.webp"
 ---
 University of Zurich, [Department of Informatics](http://www.ifi.uzh.ch/),
 Computational Linguistics — winter semester 1997/98 through summer

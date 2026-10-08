@@ -283,7 +283,7 @@ the physical top-to-bottom measurement regardless of orientation),
   automatically derived from `medium`).
 - `teaser_is_document` (required boolean, added 2026-08-26 alongside
   the grid port) — every current art piece is `false`. Controls the
-  grid's document wash/filter/blur treatment (see "Templates" below);
+  grid's document treatment (see "Sheet tiles" under "Templates" below);
   deliberately hand-set per item rather than derived from section, so
   a future black-and-white sketch could set this `true` if its teaser
   would genuinely benefit from the same treatment scanned documents
@@ -382,7 +382,8 @@ matter value itself.
 `"Japanisches Patent"` instead of plain "Patent", since the original
 document being Japanese is genuinely informative and worth surfacing
 at a glance), `teaser_is_document` (required boolean — whether the
-grid teaser gets the document wash/filter/blur treatment; `true` for
+grid teaser counts as a flat document — see "Sheet tiles" under
+"Templates" below for what that still controls; `true` for
 `JP6511221B2`, `modellieren-raumbezogener-daten`, and
 `programming-techniques-in-cl`, all genuinely flat scans/diagrams;
 `false` for `transliteration-with-icu`, whose teaser is a colorful
@@ -1410,7 +1411,8 @@ as a design decision, just a structural one.
 - Publications detail page's hero image: `pdf_preview` if present, else
   falls back to the `image` teaser (added 2026-08-24, so the
   lecture-series item — no `pdf_preview`, no single PDF to preview —
-  keeps showing its teaser unchanged). The gallery grid always uses
+  keeps showing its teaser unchanged). (**Superseded 2026-10-08**: the
+  grid now shows `pdf_preview` too — see "Sheet tiles" below.) The gallery grid always uses
   `image` regardless — the two are deliberately independent fields,
   not a "detail page mode" switch on one field, so they can vary
   independently. Kept as its own isolated block in the template (not
@@ -1972,7 +1974,8 @@ about to add many publications):
 - **Desktop: 4 columns, not ~5.** `@media (min-width: 768px)` min track
   `minmax(9rem)` → `minmax(13rem)` — the old grid gave ~5 tight columns
   (~170px) and cropped every title.
-- **Titles wrap to two lines.** `.tile-title` was `white-space: nowrap`
+- **Titles wrap to two lines** (three since 2026-10-08, one for art —
+  see "Sheet tiles" below). `.tile-title` was `white-space: nowrap`
   + ellipsis; now `-webkit-line-clamp: 2`. `.tile-caption` gets a
   `min-height` reserving 2 lines + the kind label so a row's cards keep
   a level text block. `.tile-kind` gains a hairline top margin (was
@@ -2225,6 +2228,65 @@ colours, not by reading CSS. `assets/css/main.css` only.
   their fainter `--accent-soft` underline; the header/drawer logo and
   the skip link compute to blue but never show it (emoji / own colours
   on focus).
+
+### Sheet tiles, 2026-10-08
+
+Visitors found the blurred document teasers confusing, so the grid's
+publication tiles were redesigned — prototyped on a local branch and
+judged from headless-browser screenshots plus Sascha's `hugo server`,
+no mockup Artifact. `layouts/partials/gallery-grid.html`,
+`assets/css/main.css` (`.tile-page`, `.tile-sheet`), one content
+change. Load-bearing decisions:
+
+- **Why the blur went**: on the web, blur already means "still
+  loading", "locked/paywalled" or "sensitive, click to reveal" — all
+  about the image's *state*. It was meant as "a document, don't try to
+  read it", which it says nowhere else. Don't bring it back.
+- **A publication tile shows the whole page or slide as a small sheet
+  lying on the card** — uncropped, sharp, too small to read; the page
+  thumbnail every file browser shows. Hairline + shadow give a white
+  sheet its edge on the card's `--paper-dim`. Portrait pages are sized
+  by height, landscape slides by width (`.tile-sheet-wide`); the
+  sheet's `aspect-ratio` is set inline from the image's real size so
+  the edge hugs the page.
+- **Source = the uncropped image the item already has**: `pdf_preview`
+  (so it now feeds the grid as well as the detail hero), else — for a
+  `teaser_is_document` item with a hand-cropped `teaser` — the full
+  `image` the teaser was cut from. That second case is `iso-19137`
+  and, new, `programming-techniques-in-cl`: its `image` is now
+  `slide.webp` (the whole slide, `slides/ss-06-chart-parsing.pdf`
+  page 12, made with the usual `pdftoppm -r 200` + `cwebp` commands)
+  and the old square diagram crop moved to `teaser`. Its detail hero
+  shows the whole slide as a result.
+- **Talks too** (Sascha's call once he saw the documents): a square
+  crop cut a title slide off at both sides. Consequence:
+  `transliteration-with-icu`'s grid tile is its title slide now, not
+  the colourful map teaser — the map still feeds the social-share
+  image. A per-item opt-out was offered and not asked for.
+- **Art is untouched** — no `pdf_preview`, never `teaser_is_document`
+  with a `teaser`, so a painting still fills its tile.
+- **What `teaser_is_document` still does**: gates the `image` sheet
+  source above, and gives a square-cropped tile with no sheet (today
+  only `text-rendering-tests`) the brightness/contrast tone-map + wash,
+  without blur. For an item with a `pdf_preview` it no longer changes
+  anything.
+- **The square `teaser.webp` of a publication with a `pdf_preview` is
+  no longer shown in the grid** — it remains the OpenGraph image
+  source (`head.html`), so it is still required.
+- **Dark theme**: `--sheet-brightness: .86` dims every sheet (a white
+  page glared on the dark card); `1` in light.
+- **Title lines**: up to three everywhere, one in the art grid
+  (`--title-lines` on `.gallery-grid--art`). Sascha's reasoning: with
+  art the image is the content; with publications the image is only a
+  teaser and the title carries the meaning. The caption reserves two
+  lines, not three (`--title-lines-reserved`) — reserving three left a
+  blank line under most titles — so a row with a three-line title is
+  one line taller than its neighbours. Tag pages and `/projects` get
+  three lines as well.
+- Known, left alone: `overflow-wrap: break-word` splits
+  "Transcription/Transliteration" mid-word (no break opportunity after
+  the slash); "Overly Attached Girlfriend" is cut to one line in the
+  art grid.
 
 ## Known open items (as of last content session)
 

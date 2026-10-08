@@ -38,14 +38,27 @@
   static/css/main.css and CLAUDE.md's "Grid design pass" note for the
   full rationale, not repeated here):
     .tile-frame > .tile-image-clip > (picture + optional .tile-scrim)
+    .tile-frame.tile-page > .tile-sheet > picture   (sheet tiles)
     .tile-caption > (optional .tile-kind) + .tile-title
 
-  `teaser_is_document` (required boolean, every content type) decides
-  whether a teaser gets the document wash/filter/blur treatment —
-  hand-set per item, NOT derived from .Section, since a publication's
-  teaser can be as colorful as artwork (transliteration-with-icu) and
-  a future art piece could conceivably want the opposite (a
-  black-and-white sketch). See CLAUDE.md's front-matter sections.
+  Sheet tiles: a publication shows its WHOLE page or slide as a small
+  sheet lying on the card (.tile-page), not a square crop filling it —
+  sharp but too small to read, which is how a page thumbnail looks in
+  any file browser. It replaces the earlier blurred crop of document
+  teasers (blur reads as "still loading" or "locked", not as
+  "document"), and a talk's title slide is no longer cut off at both
+  sides. The sheet's source is the uncropped image the item already
+  has: `pdf_preview`, else — for a document item with a hand-cropped
+  `teaser` — the full `image` that teaser was cut from (iso-19137's
+  cover, programming-techniques-in-cl's slide). Art never matches
+  either, so a painting still fills its tile.
+
+  `teaser_is_document` (required boolean, every content type) marks a
+  teaser as a flat document (scan, screenshot) rather than a picture —
+  hand-set per item, NOT derived from .Section. Besides gating the
+  `image` sheet source above, it gives a square-cropped tile (one with
+  no sheet: text-rendering-tests) the tone-map + wash. See CLAUDE.md's
+  front-matter sections.
 
   `kind_label` (required, every content type) replaces the old
   generic "PDF"/"</>" grid badges — see CLAUDE.md for why; omitted
@@ -67,13 +80,28 @@
       {{ $img = $page.Resources.GetMatch $page.Params.image }}
     {{ end }}
     {{ $isDoc := $page.Params.teaser_is_document }}
+    {{/* The uncropped page or slide behind a sheet tile — see the header. */}}
+    {{ $sheet := "" }}
+    {{ if $page.Params.pdf_preview }}
+      {{ $sheet = $page.Resources.GetMatch $page.Params.pdf_preview }}
+    {{ else if and $isDoc $page.Params.teaser $page.Params.image }}
+      {{ $sheet = $page.Resources.GetMatch $page.Params.image }}
+    {{ end }}
     <a class="gallery-item" href="{{ $page.RelPermalink }}">
+      {{ if $sheet }}
+      <div class="tile-frame tile-page">
+        <div class="tile-sheet{{ if gt $sheet.Width $sheet.Height }} tile-sheet-wide{{ end }}" style="aspect-ratio: {{ $sheet.Width }} / {{ $sheet.Height }}">
+          {{ partial "picture.html" (dict "image" $sheet "alt" $page.Title "widths" (slice 200 400 600) "sizes" "(min-width: 48rem) 9rem, 30vw") }}
+        </div>
+      </div>
+      {{ else }}
       <div class="tile-frame{{ if $isDoc }} tile-doc-filter{{ end }}">
         <div class="tile-image-clip">
           {{ with $img }}{{ partial "picture-thumbnail.html" (dict "image" . "alt" $page.Title "anchor" $thumbAnchor) }}{{ end }}
           {{ if $isDoc }}<div class="tile-scrim"></div>{{ end }}
         </div>
       </div>
+      {{ end }}
       <div class="tile-caption">
         <h3 class="tile-title">{{ $page.Title }}</h3>
         {{ with $page.Params.kind_label }}<p class="tile-kind">{{ . }}</p>{{ end }}
