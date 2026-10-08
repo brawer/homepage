@@ -116,17 +116,66 @@ warns against, and it fights the hreflang tags):
   "just this once" mode. Disclosed in the imprint's Cookies section
   ("saved locally in your browser … never sent anywhere" / de:
   informal *du*) so "does not use cookies" stays complete.
-  - **CSP follow-up parked in #81**: the inline script's body is not
-    byte-identical across pages (it embeds this page's `{lang: url}`
-    map), so one static `sha256-` hash can't cover the whole site.
-    Before a Content-Security-Policy lands, refactor it to read the
-    per-page data from the DOM (a `<script type="application/json">`
-    island — *not* the hreflang tags, which sit below it in the head
-    and are absent under noindex) so the executable body collapses to
-    one hashable constant. Not done now: the payoff is inert until a
-    CSP exists, and the CSP design (edge rule vs. `<meta http-equiv>`,
-    or just `script-src 'unsafe-inline'` for a zero-third-party site)
-    isn't decided.
+  - **Since 2026-10-08 (issue #106) the script is a constant**,
+    `assets/js/lang-redirect.js`, inlined by `head.html`; the page's
+    `{lang: url}` map travels in a `<script type="application/json"
+    id="lang-urls">` block just above it, and the page's own language
+    is read from `<html lang>`. See "Content-Security-Policy" below
+    for why, and for the one-variable rule that file has to keep.
+
+## Content-Security-Policy (issue #106)
+
+Added 2026-10-08. Optional hardening for a static site with no user
+input — Sascha's call to do it, via the `<meta>` route.
+
+- **Where**: a `<meta http-equiv="Content-Security-Policy">` near the
+  top of `layouts/partials/head.html`, on every page that uses it
+  (not the `alias.html` redirect stubs, which run no script). A meta
+  tag, not an HTTP header: a Bunny storage origin drops custom
+  headers, and an Edge Rule in `brawer/production` would mean
+  hand-copying a script hash into another repo, where a stale copy
+  silently kills the language redirect.
+- **Policy**: `default-src 'self'; script-src 'self' 'sha256-…';
+  style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self';
+  object-src 'none'; base-uri 'none'; form-action 'none'`.
+  `'unsafe-inline'` for styles is needed by the `style=""` attributes
+  on the résumé markers and the grid's sheet tiles. No
+  `frame-ancestors` — browsers ignore it in a meta tag. Under `hugo
+  server` only, `connect-src 'self' ws:` is appended for live reload.
+- **The hash is computed by Hugo, never typed**: `head.html` does
+  `resources.Get "js/lang-redirect.js" | minify`, inlines that
+  `.Content`, and puts `(… | fingerprint "sha256").Data.Integrity`
+  (already in CSP's `sha256-<base64>` form) into the policy. Reading
+  `.Content` / `.Data.Integrity` publishes no file.
+- **The meta tag must stay above the inline script** — a meta policy
+  only governs what the parser reaches after it.
+- **Footgun, found by the checker before it shipped**: `hugo --minify`
+  (the deploy build) minifies the page a second time, inline script
+  included, and that pass is not idempotent — with two local variables
+  it swapped their short names, so the shipped bytes no longer matched
+  the hash. `hugo server` / plain `hugo build` showed no problem.
+  `[minify] disableJS = true` is NOT the fix: it also turns off the
+  asset pipeline's `| minify`, shipping `nav.js` unminified (10.7 KB
+  instead of 3.1 KB). The fix is that `lang-redirect.js` uses **one
+  local variable, reused**, which re-minifies to the same bytes. Keep
+  it that way.
+- **`scripts/check_csp.py`** (stdlib only) reads every built page and
+  fails if an inline script's hash is missing from that page's
+  `script-src`, a script sits above or without the policy, a script
+  comes from another origin, or an element has an inline event
+  handler. It runs in `check-content.yml` on a `--minify` build and in
+  `deploy.yml` on the tree about to ship. Locally: `hugo --gc --minify
+  --cleanDestinationDir && python3 scripts/check_csp.py public`.
+- **What will be blocked from now on, silently (console message
+  only)**: any new inline `<script>`, `onclick=`-style handlers, and
+  any script, stylesheet, image, font, frame or fetch from another
+  origin (an embedded video, an analytics snippet, a hot-linked
+  image). Extend the policy in `head.html` in the same change. The
+  checker covers scripts and handlers, not images/fonts/frames.
+- Verified in headless Chromium on the `--minify` build: no policy
+  violations on twelve page types, the stored-`de` redirect works on
+  list and detail pages, and a page with an altered inline script is
+  blocked and does not redirect. Not tested in Safari or Firefox.
 
 ## Typography (applies to content, not just templates)
 

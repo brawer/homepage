@@ -80,6 +80,12 @@ jobs:
             exit 1
           fi
 
+      # The tree about to ship, not a rebuild: an inline script the
+      # policy's hash does not match would be silently blocked in every
+      # browser. See scripts/check_csp.py.
+      - name: Check built pages against their Content-Security-Policy
+        run: python3 scripts/check_csp.py public
+
       - name: Sync to Bunny storage
         env:
           BUNNY_STORAGE_PASSWORD: ${{ secrets.BUNNY_STORAGE_PASSWORD }}
