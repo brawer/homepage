@@ -10,6 +10,28 @@
    valid default), so removing it isn't a regression on its own — but
    it WOULD silently zero out every safe-area rule below, since env()
    only returns non-zero once the page has opted into cover mode. */}}
+{{/* Content-Security-Policy (issue #106). A <meta> tag, not an HTTP
+   header: a Bunny storage origin drops custom headers, and this way
+   the policy is built by the same template that emits what it has to
+   allow. It must stay ABOVE the inline script below -- a meta policy
+   only governs what the parser reaches after it.
+   - script-src: our own files, plus the one inline script, allowed by
+     the hash of its exact bytes. Hugo computes that hash here, from
+     the very text it inlines, so the two cannot drift apart.
+   - style-src needs 'unsafe-inline' for the style="" attributes on
+     the resume markers and the grid's sheet tiles (CSP cannot hash
+     those). Stylesheets themselves are still own-origin only.
+   - Not here: frame-ancestors, which browsers ignore in a meta tag.
+   - `hugo server` only: its live reload opens a WebSocket, which
+     'self' does not cover in every browser.
+   A new inline <script>, or a script/style/image/font from another
+   origin, will be blocked until this policy allows it -- silently,
+   with only a console message. scripts/check_csp.py (CI + deploy)
+   catches the inline-script case on the built pages. */}}
+{{- $langJS := resources.Get "js/lang-redirect.js" | minify }}
+{{- $csp := printf "default-src 'self'; script-src 'self' '%s'; style-src 'self' 'unsafe-inline'; img-src 'self'; font-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'" ($langJS | fingerprint "sha256").Data.Integrity }}
+{{- if hugo.IsServer }}{{ $csp = printf "%s; connect-src 'self' ws:" $csp }}{{ end }}
+<meta http-equiv="Content-Security-Policy" content="{{ $csp }}">
 {{/* Remembered language choice. If the visitor has previously picked
    a language with the switcher (footer/drawer), that choice is stored
    in localStorage and honoured here: a page shown in the other
@@ -22,19 +44,16 @@
    never lands in history (Back stays sane). Redirects on every page,
    not just the home page: "I told this site my language" should hold
    for deep links too. Storage access can throw (private mode); the
-   catch just means the preference isn't applied, which is fine. */}}
+   catch just means the preference isn't applied, which is fine.
+   The script itself is assets/js/lang-redirect.js, the same bytes on
+   every page (the policy above allows it by hash); this page's
+   {lang: url} map travels in the JSON block, which is data and so
+   needs no permission. */}}
 {{- if .IsTranslated }}
 {{- $urls := dict }}
 {{- range .AllTranslations }}{{ $urls = merge $urls (dict .Lang .RelPermalink) }}{{ end }}
-<script>
-(function () {
-  try {
-    var pref = localStorage.getItem("preferred-lang");
-    var urls = {{ $urls }};
-    if (pref && pref !== {{ .Lang }} && urls[pref]) location.replace(urls[pref]);
-  } catch (e) {}
-})();
-</script>
+<script type="application/json" id="lang-urls">{{ $urls | jsonify | safeJS }}</script>
+<script>{{ $langJS.Content | safeJS }}</script>
 {{ end }}
 {{/* `noindex`: the whole staging site while site.Params.noindex is
      true (flipped off at launch), plus /projects and everything under

@@ -156,3 +156,13 @@ jobs:
           hugo build --gc --cleanDestinationDir
           rm -f layouts/index.html
           rm -rf public resources .hugo_build.lock
+
+      # Built with --minify, like deploy.yml: minifying rewrites the
+      # inline script, and the policy's hash has to match the bytes
+      # that ship. See scripts/check_csp.py.
+      - name: Check built pages against their Content-Security-Policy
+        run: |
+          set -e
+          hugo --gc --minify --cleanDestinationDir
+          python3 scripts/check_csp.py public
+          rm -rf public resources .hugo_build.lock
