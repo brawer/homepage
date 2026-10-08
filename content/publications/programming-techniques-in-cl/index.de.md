@@ -14,7 +14,8 @@ abstract: >
   der Sommerteil vertieft Chart-Parsing, effiziente Prolog-Techniken und
   formale Sprachhierarchien. Dazu gibt es sechs herunterladbare
   Prolog-Programme als Ausgangspunkt für Übungsaufgaben.
-image: "teaser.webp"
+image: "slide.webp"
+teaser: "teaser.webp"
 ---
 Universität Zürich, [Institut für Informatik](http://www.ifi.uzh.ch/),
 Computerlinguistik – Wintersemester 1997/98 bis und mit Sommersemester 1999

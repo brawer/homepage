@@ -1,6 +1,6 @@
 /* Grid view design ("Paper & Plum"), ported 2026-08-26 from an
    extensively hand-tuned HTML/CSS mockup Artifact (colors, type,
-   shadows, corner treatment, document wash/filter/blur -- see
+   shadows, corner treatment, document tiles -- see
    CLAUDE.md's "Grid design pass" note for the full history/rationale
    behind every value below; not reproduced here to avoid duplicating
    that write-up). Body-level font/background/color had to move to the
@@ -59,9 +59,10 @@
      guesses. */
   --doc-brightness: .9;
   --doc-contrast: 1.5;
-  --doc-blur: 1.6px;
   --doc-wash-opacity: .2;
   --doc-wash-color: #fbf5eb;
+  /* A white page glares on the dark theme's card; dimmed there only. */
+  --sheet-brightness: 1;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -82,6 +83,7 @@
     --shadow-op-hover-2: .20;
     --shadow-op-image: .10;
     --doc-wash-color: var(--paper);
+    --sheet-brightness: .86;
   }
 }
 
@@ -102,6 +104,7 @@
   --shadow-op-hover-2: .20;
   --shadow-op-image: .10;
   --doc-wash-color: var(--paper);
+  --sheet-brightness: .86;
 }
 
 /* Self-hosted, not a Google Fonts CDN link -- keeps the "no
@@ -1427,6 +1430,12 @@ article > h1 {
    partial's `dense` param (eq .Section "art"); tag pages never pass it. */
 .gallery-grid--art {
   grid-template-columns: repeat(3, minmax(0, 1fr));
+  /* With art the image is the content and the title a mere label: one
+     line. Everywhere else the image is only a teaser and the title is
+     what tells two items apart, so it gets up to three (the default,
+     on .tile-title below). */
+  --title-lines: 1;
+  --title-lines-reserved: 1;
 }
 
 /* Responsive column count. Uses auto-fill/minmax per
@@ -1538,26 +1547,50 @@ article > h1 {
   object-fit: cover;
 }
 
-/* Document/project teaser treatment -- dulls the glaring white of a
-   scanned document/screenshot while keeping its text at MORE
-   contrast, not less: brightness() scales down multiplicatively from
-   zero, so it barely touches already-dark pixels while pulling the
-   near-white background down a lot; contrast() then widens that gap
-   back out, deepening the (now dimmer) blacks further; blur() (added
-   after both, softening the already tone-mapped image rather than the
-   raw scan) settles the scanned-text noise a bit more, kept as its
-   own conservative-by-default value since too much stops it reading
-   as a document at all. Combined with a soft wash (.tile-scrim) for a
-   touch of physical "paper" softness. Deliberately NOT applied to
-   artwork -- confirmed by direct comparison that it dulls paintings
-   in a way that looks bad, not calmer, unlike documents. Which tiles
-   get it is the `teaser_is_document` front-matter field (hand-set per
-   item, not derived from .Section -- transliteration-with-icu is a
-   publication whose teaser is a colorful map, not a flat scan, so it
-   opts out; a future b&w art sketch could opt in the other direction).
-   See gallery-grid.html and CLAUDE.md's front-matter sections. */
+/* Document tiles (`teaser_is_document`, see gallery-grid.html): the
+   whole page as a small sheet lying on the card, sharp but too small
+   to read -- a page thumbnail as in any file browser. Replaces a
+   blurred square crop, which people read as "still loading" or
+   "locked" rather than "document". The card's own --paper-dim is the
+   surface; hairline + shadow give a white sheet its edge on it.
+   The sheet's aspect-ratio is set inline from the image's real size,
+   so the box (and its edge) hugs the page: a portrait page is sized
+   by height, a landscape one (.tile-sheet-wide) by width. */
+.tile-page {
+  box-sizing: border-box;
+  display: grid;
+  place-items: center;
+  padding: 9% 9% 5%;
+}
+
+.tile-sheet {
+  height: 100%;
+  border-radius: 2px;
+  overflow: hidden;
+  box-shadow: 0 0 0 1px var(--line),
+              0 1px 2px rgba(var(--shadow-color), var(--shadow-op-card-1)),
+              0 5px 12px rgba(var(--shadow-color), var(--shadow-op-card-2));
+}
+
+.tile-sheet-wide {
+  width: 100%;
+  height: auto;
+}
+
+.tile-sheet img {
+  filter: brightness(var(--sheet-brightness));
+}
+
+/* Square-crop fallback for a document teaser with no page image to
+   show whole (a diagram, a code screenshot): dulls the glaring white
+   while keeping its text at MORE contrast, not less -- brightness()
+   scales down multiplicatively from zero, so it barely touches
+   already-dark pixels while pulling the near-white background down a
+   lot; contrast() then widens that gap back out. Plus a soft wash
+   (.tile-scrim). No blur -- see above. Deliberately NOT applied to
+   artwork: it dulls paintings in a way that looks bad, not calmer. */
 .tile-doc-filter img {
-  filter: brightness(var(--doc-brightness)) contrast(var(--doc-contrast)) blur(var(--doc-blur));
+  filter: brightness(var(--doc-brightness)) contrast(var(--doc-contrast));
 }
 
 .tile-scrim {
@@ -1574,9 +1607,11 @@ article > h1 {
    same grid row. */
 .tile-caption {
   position: relative;
-  /* Reserve ~2 title lines + the kind label, so cards in a row keep a
-     level text block even when their own titles differ in length. */
-  min-height: 3.6rem;
+  /* Reserve the usual number of title lines + the kind label, so most
+     rows come out the same height. That is two lines, not the three a
+     title may run to: reserving three would leave a blank line under
+     most titles, so a row holding a three-line title grows instead. */
+  min-height: calc(var(--title-lines-reserved, 2) * 1.3rem + 1rem);
   padding: 0 .95rem .8rem;
 }
 
@@ -1587,10 +1622,10 @@ article > h1 {
   line-height: 1.3;
   /* The gap above the title, separating it from the image. */
   margin: .45em 0 0;
-  /* Wrap to two lines, then ellipsis -- long titles (publications
-     especially) were hard-cropped to a single line before 2026-09-08. */
+  /* Wrap, then ellipsis: up to three lines, one in the art grid --
+     see --title-lines on .gallery-grid--art. */
   display: -webkit-box;
-  -webkit-line-clamp: 2;
+  -webkit-line-clamp: var(--title-lines, 3);
   -webkit-box-orient: vertical;
   overflow: hidden;
   overflow-wrap: break-word;
